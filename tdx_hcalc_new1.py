@@ -260,7 +260,7 @@ def get_data(codelist, st_start, st_end, type):
 
     # return data_day
 
-def tdx_func_mp(func_name, codelist, type='', backTime=''):
+def tdx_func_mp(func_name, sort_type, codelist, type='', backTime=''):
     start_t = datetime.datetime.now()
     # if start_t.time() < datetime.time(9, 30, 00):
     #     print("read web data from tencent begin-time:", start_t)
@@ -289,7 +289,7 @@ def tdx_func_mp(func_name, codelist, type='', backTime=''):
     for key in range(pool_size):
         # tdx_func(databuf_mongo[key])
         # task_list.append(executor_func.submit(tdx_func, databuf_mongo[key], newdatas, func_name, type=type))
-        task_list.append(executor_func.submit(tdx_func, key, newdatas, func_name, type=type))
+        task_list.append(executor_func.submit(tdx_func, key, newdatas, func_name, sort_type, type=type))
     # pool.close()
     # pool.join()
 
@@ -356,7 +356,7 @@ def tdx_func_upd_hist_order(func_name):
 
 
 # def tdx_func(datam, newdatas, func_name, code_list = None, type=''):
-def tdx_func(key, newdatas, func_name, code_list = None, type=''):
+def tdx_func(key, newdatas, func_names, sort_types, code_list = None, type=''):
     """
     准备数据
     """
@@ -367,64 +367,86 @@ def tdx_func(key, newdatas, func_name, code_list = None, type=''):
     mongo_np = MongoIo()
     start_t = datetime.datetime.now()
     print("begin-tdx_func:", start_t)
-    dataR = pd.DataFrame()
+    dataER = pd.DataFrame()
     if code_list is None:
         code_list = datam.index.levels[1]
-    for code in code_list:
-        data=datam.query("code=='%s'" % code)
-        # pb_value = pba_calc(code)
-        # if not pb_value:
-        #     print("pb < 0 code=%s" % code)
-        #     continue
-        try:
-            if type == 'B':
-                newdata0 = newdatas.query("code=='%s'" % code)
-                if len(newdata0) > 0:
-                    newdata = newdata0.iloc[-1]
+    func_nameA = func_names.split(',')
+    sort_typeA = sort_types.split(',')
+    is_idx = 0
+    for func_name in func_nameA:
+        dataR = pd.DataFrame()
+        sort_type = int(sort_typeA[is_idx])
+        is_idx = is_idx + 1
+        for code in code_list:
+            data=datam.query("code=='%s'" % code)
+            # pb_value = pba_calc(code)
+            # if not pb_value:
+            #     print("pb < 0 code=%s" % code)
+            #     continue
+            try:
+                if type == 'B':
+                    newdata0 = newdatas.query("code=='%s'" % code)
+                    if len(newdata0) > 0:
+                        newdata = newdata0.iloc[-1]
+                    else:
+                        # print("data-len=0, code=", code)
+                        continue
                 else:
-                    # print("data-len=0, code=", code)
+                    newdata = newdatas[code]
+                now_price = newdata['now']
+                last_price = newdata['now']
+                if type == 'B':
+                    try:
+                        datal=datam_r.query("code=='%s'" % code)
+                        last_price = datal['close'][-1]
+                    except:
+                        print("last-date=0, code=", code)
+                        last_price = 0
+                        continue
+                # if (code == '003001'):
+                #     print(data)
+                #     print(newdata)
+                data = new_df(data.copy(), newdata, now_price)
+                # chk_flg, _ = tdx_dhmcl(df_day)
+                # tdx_base_func(data, "tdx_dhmcl", code)
+                # tdx_base_func(data.copy(), "tdx_dhmcl", code)
+                # tdx_base_func(data, "tdx_sxp", code)
+                # tdx_base_func(data.copy(), "tdx_hmdr", code)
+                calcR = tdx_base_func(data.copy(), func_name, code, newdata, last_price, mongo_np)
+                if calcR == {}:
                     continue
-            else:
-                newdata = newdatas[code]
-            now_price = newdata['now']
-            last_price = newdata['now']
-            if type == 'B':
-                try:
-                    datal=datam_r.query("code=='%s'" % code) 
-                    last_price = datal['close'][-1]
-                except:
-                    print("last-date=0, code=", code)
-                    last_price = 0
-                    continue
-            # if (code == '003001'):
-            #     print(data)
-            #     print(newdata)
-            data = new_df(data.copy(), newdata, now_price)
-            # chk_flg, _ = tdx_dhmcl(df_day)
-            # tdx_base_func(data, "tdx_dhmcl", code)
-            # tdx_base_func(data.copy(), "tdx_dhmcl", code)
-            # tdx_base_func(data, "tdx_sxp", code)
-            # tdx_base_func(data.copy(), "tdx_hmdr", code)
-            calcR = tdx_base_func(data.copy(), func_name, code, newdata, last_price, mongo_np)
-            if calcR == {}:
-                continue
-            dataR = dataR.append(calcR, ignore_index=True)
-            # if len(dataR):
-            #     dataR = pd.DataFrame(calcR)
-            # else:
-            #     dataR.append(pd.DataFrame(calcR))
-        except Exception as e:
-            print("error code=%s" % code)
-            print("error code=", e)
-            # return
-    end_t = datetime.datetime.now()
-    print(end_t, 'tdx_func spent:{}'.format((end_t - start_t)))
-    print("tdx-fun-result-len", len(dataR))
-    return dataR
+                dataR = dataR.append(calcR, ignore_index=True)
+                # if len(dataR):
+                #     dataR = pd.DataFrame(calcR)
+                # else:
+                #     dataR.append(pd.DataFrame(calcR))
+            except Exception as e:
+                print("error code=%s" % code)
+                print("error code=", e)
+                # return
+        end_t = datetime.datetime.now()
+        print(end_t, 'tdx_func spent:{}'.format((end_t - start_t)))
+        print("tdx-fun-result-len", len(dataR))
+
+        if len(dataR) > 0:
+            dataR = dataR.fillna(0)
+            dataR = dataR.sort_values(by="dao")
+            if sort_type > 0:
+                dataR = dataR.tail(sort_type)
+            elif sort_type < 0:
+                dataR = dataR.tail(abs(sort_type))
+
+            dataER = dataR
+            code_list = dataR.code.to_list()
+        else:
+            return pd.DataFrame()
+
+
+    return dataER
 
 
 # print("pool size=%d" % pool_size)
-def tdx_base_func(data, func_names, code, newData, lastPrice, mongo_np, code_list = None):
+def tdx_base_func(data, func_name, code, newData, lastPrice, mongo_np, code_list = None):
     """
     准备数据
     """
@@ -458,19 +480,14 @@ def tdx_base_func(data, func_names, code, newData, lastPrice, mongo_np, code_lis
 
     #if timeStr > "09:36:00":
     #    insFlg = False
-    for func_name in func_names.split(","):
-#         print("func-name", func_name)
-        try:
-            tdx_func_result, tdx_func_sell_result, next_buy = eval(func_name)(data)
-            if tdx_func_result[-1] == 0 or tdx_func_result[-2] == 0:
-#             if dao <= 0:
-                return {}
-            # tdx_func_result, next_buy = tdx_a06_zsd(data)
-        # 斜率
-        except:
-            return {}
-#             print("calc %s code=%s ERROR:FUNC-CALC-ERROR " % (func_name, code))
-#             tdx_func_result, tdx_func_sell_result, next_buy = [0], [0], False
+
+    try:
+        tdx_func_result, tdx_func_sell_result, next_buy = eval(func_name)(data)
+        # tdx_func_result, next_buy = tdx_a06_zsd(data)
+    # 斜率
+    except:
+        print("calc %s code=%s ERROR:FUNC-CALC-ERROR " % (func_name, code))
+        tdx_func_result, tdx_func_sell_result, next_buy = [0], [0], False
         
     # print("calc %s code=%s to PCT-20 dao=%5.3f " % (func_name, code, tdx_func_result[-1]))
     # if tdx_func_result[-1] > 0:
@@ -503,8 +520,9 @@ def main_param(argv):
     type = ''
     back_time = ''
     all_data = ''
+    sort = ''
     try:
-        opts, args = getopt.getopt(argv[1:], "hb:e:f:t:r:a:", ["st-begin=", "st-end=", "func=", "type=", "realdata-date=", 'all-data='])
+        opts, args = getopt.getopt(argv[1:], "hb:e:f:t:r:a:s:", ["st-begin=", "st-end=", "func=", "type=", "realdata-date=", 'all-data=', 'sort-type='])
     except getopt.GetoptError:
         print(argv[0], ' -b <st-begin> [-e <st-end>] [-f <func-name:dhm> -t T -c <back-test-date>]')
         sys.exit(2)
@@ -517,14 +535,16 @@ def main_param(argv):
         elif opt in ("-e", "--st-end"):
             st_end = arg
         elif opt in ("-f", "--func"):
-            func = '%s' % arg
+            func = arg
+        elif opt in ("-s", "--sort"):
+            sort = arg
         elif opt in ("-t", "--type"):
             type = arg
         elif opt in ("-r", "--realdata-date"):
             back_time = arg
         elif opt in ("-a", "--all-date"):
             all_data = arg
-    return st_begin, st_end, func, type, back_time, all_data
+    return st_begin, st_end, func, sort, type, back_time, all_data
 
 if __name__ == '__main__':
     start_t = datetime.datetime.now()
@@ -532,13 +552,13 @@ if __name__ == '__main__':
 
     # st_start, st_end, func = main_param(sys.argv)
     # print("input", st_start, st_end, func)
-    st_start, st_end, func, type, back_time, all_data = main_param(sys.argv)
+    st_start, st_end, func, sort, type, back_time, all_data = main_param(sys.argv)
     if all_data == '':
         all_data = 'position'
     codelist = getCodeList(all_data)
     # st_start = "2019-01-01"
     # func = "test"
-    print("input st-start=%s, st-end=%s, func=%s, type=%s, back-time=%s, all_data = %s" % (st_start, st_end, func, type, back_time, all_data))
+    print("input st-start=%s, st-end=%s, func=%s, sort=%s, type=%s, back-time=%s, all_data = %s" % (st_start, st_end, func, sort, type, back_time, all_data))
     # 1, 读取数据（多进程，读入缓冲）
     # 开始日期
     # data_day = get_data(st_start)
@@ -577,7 +597,7 @@ if __name__ == '__main__':
             
             time.sleep(10)
         print("*** loop calc begin ***")
-        tdx_func_mp(func, codelist, type=type, backTime=back_time)
+        tdx_func_mp(func, sort, codelist, type=type, backTime=back_time)
 
         if type == 'B' or type == 'T':
             input()

@@ -1,0 +1,1817 @@
+begin-time: 2020-09-19 19:30:29.826939
+begin-get_data: 2020-09-19 19:30:29.844907
+2020-09-19 19:30:31.522686 get_data spent:0:00:01.677779
+begin-tdx_func_mp : 2020-09-19 19:30:31.523042
+begin-tdx_func: 2020-09-19 19:30:31.683006
+buy  : date=2020-08-27 00:00:00 code=300337 price=5.00
+pct= 20 , sell : date=2020-08-28 00:00:00 code=300337  price=4.96
+buy  : date=2020-02-28 00:00:00 code=300345 price=7.45
+pct= 10 , sell : date=2020-02-28 00:00:00 code=300345  price=7.45
+buy  : date=2020-06-01 00:00:00 code=300345 price=6.70
+pct= 20 , sell : date=2020-06-02 00:00:00 code=300345  price=6.81
+buy  : date=2020-05-07 00:00:00 code=300346 price=27.30
+pct= 10 , sell : date=2020-05-07 00:00:00 code=300346  price=27.30
+buy  : date=2020-08-05 00:00:00 code=300351 price=12.82
+pct= 90 , sell : date=2020-09-10 00:00:00 code=300351  price=10.13
+buy  : date=2020-07-02 00:00:00 code=300356 price=6.49
+pct= 90 , sell : date=2020-07-24 00:00:00 code=300356  price=5.90
+buy  : date=2020-05-26 00:00:00 code=300358 price=9.19
+pct= 20 , sell : date=2020-05-27 00:00:00 code=300358  price=9.36
+buy  : date=2020-03-12 00:00:00 code=300362 price=2.15
+pct= 10 , sell : date=2020-03-12 00:00:00 code=300362  price=2.15
+buy  : date=2020-01-17 00:00:00 code=300364 price=4.47
+pct= 10 , sell : date=2020-01-17 00:00:00 code=300364  price=4.47
+buy  : date=2020-09-15 00:00:00 code=300365 price=12.89
+buy  : date=2020-05-25 00:00:00 code=300367 price=3.29
+pct= 90 , sell : date=2020-06-10 00:00:00 code=300367  price=3.80
+buy  : date=2020-03-16 00:00:00 code=300368 price=8.19
+pct= 10 , sell : date=2020-03-16 00:00:00 code=300368  price=8.19
+buy  : date=2020-04-08 00:00:00 code=300368 price=7.51
+pct= 90 , sell : date=2020-04-29 00:00:00 code=300368  price=9.25
+buy  : date=2020-06-29 00:00:00 code=300373 price=33.70
+pct= 90 , sell : date=2020-07-16 00:00:00 code=300373  price=31.44
+buy  : date=2020-09-16 00:00:00 code=300378 price=30.62
+buy  : date=2020-06-01 00:00:00 code=300382 price=7.60
+pct= 20 , sell : date=2020-06-02 00:00:00 code=300382  price=7.20
+buy  : date=2020-04-16 00:00:00 code=300385 price=12.38
+pct= 90 , sell : date=2020-05-21 00:00:00 code=300385  price=6.67
+buy  : date=2020-08-27 00:00:00 code=300385 price=8.38
+pct= 90 , sell : date=2020-09-10 00:00:00 code=300385  price=7.83
+buy  : date=2020-04-17 00:00:00 code=300386 price=16.61
+pct= 10 , sell : date=2020-04-17 00:00:00 code=300386  price=16.61
+buy  : date=2020-05-22 00:00:00 code=300387 price=8.59
+pct= 10 , sell : date=2020-05-22 00:00:00 code=300387  price=8.59
+buy  : date=2020-02-05 00:00:00 code=300390 price=8.14
+pct= 10 , sell : date=2020-02-05 00:00:00 code=300390  price=8.14
+buy  : date=2020-06-17 00:00:00 code=300390 price=13.18
+buy  : date=2020-04-14 00:00:00 code=300391 price=11.67
+pct= 20 , sell : date=2020-04-15 00:00:00 code=300391  price=11.90
+buy  : date=2020-02-25 00:00:00 code=300394 price=52.82
+pct= 20 , sell : date=2020-02-26 00:00:00 code=300394  price=52.73
+buy  : date=2020-09-09 00:00:00 code=300399 price=23.08
+pct= 10 , sell : date=2020-09-09 00:00:00 code=300399  price=23.08
+buy  : date=2020-04-20 00:00:00 code=300401 price=16.16
+buy  : date=2020-06-18 00:00:00 code=300406 price=23.22
+pct= 10 , sell : date=2020-06-18 00:00:00 code=300406  price=23.22
+buy  : date=2020-06-16 00:00:00 code=300410 price=6.77
+pct= 10 , sell : date=2020-06-16 00:00:00 code=300410  price=6.77
+buy  : date=2020-09-04 00:00:00 code=300414 price=17.10
+pct= 10 , sell : date=2020-09-04 00:00:00 code=300414  price=17.10
+buy  : date=2020-08-28 00:00:00 code=300416 price=28.95
+buy  : date=2020-04-22 00:00:00 code=300419 price=7.25
+pct= 10 , sell : date=2020-04-22 00:00:00 code=300419  price=7.25
+buy  : date=2020-08-04 00:00:00 code=300420 price=7.11
+pct= 10 , sell : date=2020-08-04 00:00:00 code=300420  price=7.11
+buy  : date=2020-09-09 00:00:00 code=300425 price=5.96
+pct= 10 , sell : date=2020-09-09 00:00:00 code=300425  price=5.96
+buy  : date=2020-04-17 00:00:00 code=300427 price=21.17
+pct= 30 , sell : date=2020-04-28 00:00:00 code=300427  price=18.96
+buy  : date=2020-07-21 00:00:00 code=300427 price=20.20
+pct= 40 , sell : date=2020-07-24 00:00:00 code=300427  price=22.86
+buy  : date=2020-05-26 00:00:00 code=300432 price=12.83
+pct= 40 , sell : date=2020-05-29 00:00:00 code=300432  price=8.24
+buy  : date=2020-06-19 00:00:00 code=300433 price=24.35
+buy  : date=2020-06-29 00:00:00 code=300438 price=17.26
+pct= 90 , sell : date=2020-07-16 00:00:00 code=300438  price=17.85
+buy  : date=2020-07-14 00:00:00 code=300439 price=22.77
+pct= 10 , sell : date=2020-07-14 00:00:00 code=300439  price=22.77
+buy  : date=2020-08-28 00:00:00 code=300444 price=5.18
+pct= 10 , sell : date=2020-08-28 00:00:00 code=300444  price=5.18
+buy  : date=2020-03-11 00:00:00 code=300445 price=19.14
+pct= 10 , sell : date=2020-03-11 00:00:00 code=300445  price=19.14
+buy  : date=2020-08-26 00:00:00 code=300446 price=12.35
+pct= 10 , sell : date=2020-08-26 00:00:00 code=300446  price=12.35
+buy  : date=2020-09-08 00:00:00 code=300449 price=17.51
+pct= 30 , sell : date=2020-09-10 00:00:00 code=300449  price=15.79
+buy  : date=2020-09-16 00:00:00 code=300450 price=47.20
+buy  : date=2020-04-13 00:00:00 code=300452 price=20.94
+pct= 30 , sell : date=2020-04-15 00:00:00 code=300452  price=22.40
+buy  : date=2020-06-11 00:00:00 code=300453 price=19.25
+pct= 90 , sell : date=2020-09-09 00:00:00 code=300453  price=17.05
+buy  : date=2020-02-07 00:00:00 code=300454 price=184.00
+pct= 20 , sell : date=2020-02-10 00:00:00 code=300454  price=180.00
+buy  : date=2020-01-21 00:00:00 code=300455 price=12.78
+pct= 10 , sell : date=2020-01-21 00:00:00 code=300455  price=12.78
+buy  : date=2020-07-07 00:00:00 code=300458 price=41.61
+pct= 10 , sell : date=2020-07-07 00:00:00 code=300458  price=41.61
+buy  : date=2020-05-20 00:00:00 code=300460 price=16.02
+pct= 10 , sell : date=2020-05-20 00:00:00 code=300460  price=16.02
+buy  : date=2020-08-07 00:00:00 code=300460 price=15.50
+pct= 10 , sell : date=2020-08-07 00:00:00 code=300460  price=15.50
+buy  : date=2020-03-11 00:00:00 code=300461 price=20.61
+pct= 10 , sell : date=2020-03-11 00:00:00 code=300461  price=20.61
+buy  : date=2020-06-08 00:00:00 code=300466 price=4.95
+pct= 10 , sell : date=2020-06-08 00:00:00 code=300466  price=4.95
+buy  : date=2020-04-17 00:00:00 code=300468 price=37.46
+pct= 10 , sell : date=2020-04-17 00:00:00 code=300468  price=37.46
+buy  : date=2020-07-29 00:00:00 code=300469 price=12.23
+pct= 10 , sell : date=2020-07-29 00:00:00 code=300469  price=12.23
+buy  : date=2020-09-10 00:00:00 code=300475 price=12.33
+pct= 10 , sell : date=2020-09-10 00:00:00 code=300475  price=12.33
+buy  : date=2020-04-10 00:00:00 code=300479 price=15.59
+pct= 10 , sell : date=2020-04-10 00:00:00 code=300479  price=15.59
+buy  : date=2020-05-22 00:00:00 code=300484 price=10.45
+pct= 10 , sell : date=2020-05-22 00:00:00 code=300484  price=10.45
+buy  : date=2020-09-08 00:00:00 code=300484 price=16.07
+pct= 20 , sell : date=2020-09-09 00:00:00 code=300484  price=13.83
+buy  : date=2020-02-21 00:00:00 code=300485 price=10.40
+buy  : date=2020-07-13 00:00:00 code=300496 price=108.41
+pct= 30 , sell : date=2020-07-15 00:00:00 code=300496  price=100.29
+buy  : date=2020-03-04 00:00:00 code=300497 price=27.40
+pct= 90 , sell : date=2020-05-18 00:00:00 code=300497  price=17.87
+buy  : date=2020-01-23 00:00:00 code=300502 price=51.90
+pct= 10 , sell : date=2020-01-23 00:00:00 code=300502  price=51.90
+buy  : date=2020-07-14 00:00:00 code=300502 price=81.42
+pct= 20 , sell : date=2020-07-15 00:00:00 code=300502  price=73.28
+buy  : date=2020-08-14 00:00:00 code=300509 price=9.10
+buy  : date=2020-04-08 00:00:00 code=300510 price=4.66
+pct= 10 , sell : date=2020-04-08 00:00:00 code=300510  price=4.66
+buy  : date=2020-04-17 00:00:00 code=300510 price=5.17
+pct= 10 , sell : date=2020-04-17 00:00:00 code=300510  price=5.17
+buy  : date=2020-07-14 00:00:00 code=300511 price=16.56
+pct= 20 , sell : date=2020-07-15 00:00:00 code=300511  price=16.30
+buy  : date=2020-07-28 00:00:00 code=300512 price=12.88
+pct= 10 , sell : date=2020-07-28 00:00:00 code=300512  price=12.88
+buy  : date=2020-06-23 00:00:00 code=300518 price=32.33
+pct= 10 , sell : date=2020-06-23 00:00:00 code=300518  price=32.33
+buy  : date=2020-07-13 00:00:00 code=300522 price=21.80
+pct= 30 , sell : date=2020-07-15 00:00:00 code=300522  price=21.20
+buy  : date=2020-08-25 00:00:00 code=300526 price=102.60
+pct= 10begin-tdx_func: 2020-09-19 19:30:31.646206
+buy  : date=2020-02-03 00:00:00 code=601999 price=7.23
+pct= 10 , sell : date=2020-02-03 00:00:00 code=601999  price=7.23
+buy  : date=2020-07-22 00:00:00 code=601999 price=8.89
+pct= 30 , sell : date=2020-07-24 00:00:00 code=601999  price=7.60
+buy  : date=2020-01-16 00:00:00 code=603000 price=24.00
+pct= 10 , sell : date=2020-01-16 00:00:00 code=603000  price=24.00
+buy  : date=2020-03-03 00:00:00 code=603003 price=10.00
+pct= 20 , sell : date=2020-03-04 00:00:00 code=603003  price=9.63
+buy  : date=2020-07-23 00:00:00 code=603007 price=8.08
+pct= 10 , sell : date=2020-07-23 00:00:00 code=603007  price=8.08
+buy  : date=2020-08-14 00:00:00 code=603009 price=7.09
+pct= 10 , sell : date=2020-08-14 00:00:00 code=603009  price=7.09
+buy  : date=2020-02-19 00:00:00 code=603010 price=17.23
+pct= 20 , sell : date=2020-02-20 00:00:00 code=603010  price=17.07
+buy  : date=2020-04-30 00:00:00 code=603012 price=7.18
+buy  : date=2020-03-31 00:00:00 code=603018 price=13.78
+pct= 20 , sell : date=2020-04-01 00:00:00 code=603018  price=13.40
+buy  : date=2020-04-23 00:00:00 code=603020 price=10.10
+pct= 10 , sell : date=2020-04-23 00:00:00 code=603020  price=10.10
+buy  : date=2020-08-18 00:00:00 code=603027 price=40.12
+pct= 90 , sell : date=2020-09-07 00:00:00 code=603027  price=36.90
+buy  : date=2020-04-10 00:00:00 code=603028 price=11.61
+pct= 10 , sell : date=2020-04-10 00:00:00 code=603028  price=11.61
+buy  : date=2020-03-03 00:00:00 code=603032 price=20.45
+pct= 10 , sell : date=2020-03-03 00:00:00 code=603032  price=20.45
+buy  : date=2020-04-15 00:00:00 code=603032 price=20.80
+buy  : date=2020-03-25 00:00:00 code=603033 price=25.85
+pct= 90 , sell : date=2020-06-04 00:00:00 code=603033  price=20.36
+buy  : date=2020-08-10 00:00:00 code=603035 price=15.00
+pct= 20 , sell : date=2020-08-11 00:00:00 code=603035  price=14.74
+buy  : date=2020-01-17 00:00:00 code=603037 price=20.76
+pct= 10 , sell : date=2020-01-17 00:00:00 code=603037  price=20.76
+buy  : date=2020-05-20 00:00:00 code=603042 price=18.60
+pct= 10 , sell : date=2020-05-20 00:00:00 code=603042  price=18.60
+buy  : date=2020-02-18 00:00:00 code=603056 price=11.38
+pct= 10 , sell : date=2020-02-18 00:00:00 code=603056  price=11.38
+buy  : date=2020-04-15 00:00:00 code=603059 price=31.30
+pct= 20 , sell : date=2020-04-16 00:00:00 code=603059  price=29.90
+buy  : date=2020-08-18 00:00:00 code=603066 price=11.82
+buy  : date=2020-08-07 00:00:00 code=603068 price=83.26
+pct= 10 , sell : date=2020-08-07 00:00:00 code=603068  price=83.26
+buy  : date=2020-08-18 00:00:00 code=603076 price=43.32
+pct= 10 , sell : date=2020-08-18 00:00:00 code=603076  price=43.32
+buy  : date=2020-09-09 00:00:00 code=603077 price=1.79
+pct= 20 , sell : date=2020-09-10 00:00:00 code=603077  price=1.61
+buy  : date=2020-08-19 00:00:00 code=603080 price=18.04
+pct= 10 , sell : date=2020-08-19 00:00:00 code=603080  price=18.04
+buy  : date=2020-09-16 00:00:00 code=603080 price=18.09
+buy  : date=2020-06-24 00:00:00 code=603085 price=6.88
+pct= 10 , sell : date=2020-06-24 00:00:00 code=603085  price=6.88
+buy  : date=2020-07-30 00:00:00 code=603085 price=8.78
+pct= 90 , sell : date=2020-09-10 00:00:00 code=603085  price=7.93
+buy  : date=2020-03-03 00:00:00 code=603101 price=8.47
+pct= 20 , sell : date=2020-03-04 00:00:00 code=603101  price=8.31
+buy  : date=2020-06-04 00:00:00 code=603101 price=9.50
+pct= 20 , sell : date=2020-06-05 00:00:00 code=603101  price=8.55
+buy  : date=2020-04-10 00:00:00 code=603105 price=8.42
+pct= 10 , sell : date=2020-04-10 00:00:00 code=603105  price=8.42
+buy  : date=2020-07-23 00:00:00 code=603106 price=11.03
+pct= 10 , sell : date=2020-07-23 00:00:00 code=603106  price=11.03
+buy  : date=2020-06-30 00:00:00 code=603109 price=35.40
+pct= 10 , sell : date=2020-06-30 00:00:00 code=603109  price=35.40
+buy  : date=2020-03-23 00:00:00 code=603116 price=6.87
+pct= 10 , sell : date=2020-03-23 00:00:00 code=603116  price=6.87
+buy  : date=2020-06-23 00:00:00 code=603116 price=8.66
+pct= 20 , sell : date=2020-06-24 00:00:00 code=603116  price=8.54
+buy  : date=2020-05-12 00:00:00 code=603121 price=16.52
+pct= 10 , sell : date=2020-05-12 00:00:00 code=603121  price=16.52
+buy  : date=2020-07-28 00:00:00 code=603121 price=15.82
+pct= 10 , sell : date=2020-07-28 00:00:00 code=603121  price=15.82
+buy  : date=2020-07-13 00:00:00 code=603158 price=28.10
+pct= 90 , sell : date=2020-08-26 00:00:00 code=603158  price=21.31
+buy  : date=2020-08-04 00:00:00 code=603179 price=24.55
+buy  : date=2020-09-01 00:00:00 code=603183 price=9.10
+buy  : date=2020-07-02 00:00:00 code=603198 price=24.66
+pct= 10 , sell : date=2020-07-02 00:00:00 code=603198  price=24.66
+buy  : date=2020-01-22 00:00:00 code=603208 price=74.47
+pct= 20 , sell : date=2020-01-23 00:00:00 code=603208  price=67.07
+buy  : date=2020-05-28 00:00:00 code=603226 price=16.52
+pct= 10 , sell : date=2020-05-28 00:00:00 code=603226  price=16.52
+buy  : date=2020-03-24 00:00:00 code=603229 price=25.90
+pct= 10 , sell : date=2020-03-24 00:00:00 code=603229  price=25.90
+buy  : date=2020-02-25 00:00:00 code=603256 price=15.32
+pct= 10 , sell : date=2020-02-25 00:00:00 code=603256  price=15.32
+buy  : date=2020-02-28 00:00:00 code=603258 price=34.66
+pct= 10 , sell : date=2020-02-28 00:00:00 code=603258  price=34.66
+buy  : date=2020-07-01 00:00:00 code=603258 price=56.29
+pct= 90 , sell : date=2020-07-30 00:00:00 code=603258  price=54.56
+buy  : date=2020-07-09 00:00:00 code=603266 price=13.84
+pct= 10 , sell : date=2020-07-09 00:00:00 code=603266  price=13.84
+buy  : date=2020-01-21 00:00:00 code=603283 price=41.52
+pct= 30 , sell : date=2020-01-23 00:00:00 code=603283  price=44.81
+buy  : date=2020-08-03 00:00:00 code=603283 price=59.25
+pct= 20 , sell : date=2020-08-04 00:00:00 code=603283  price=57.20
+buy  : date=2020-05-06 00:00:00 code=603290 price=152.90
+pct= 90 , sell : date=2020-05-21 00:00:00 code=603290  price=151.19
+buy  : date=2020-06-10 00:00:00 code=603290 price=186.00
+pct= 90 , sell : date=2020-09-09 00:00:00 code=603290  price=158.37
+buy  : date=2020-07-10 00:00:00 code=603308 price=23.70
+pct= 10 , sell : date=2020-07-10 00:00:00 code=603308  price=23.70
+buy  : date=2020-04-09 00:00:00 code=603318 price=7.91
+pct= 10 , sell : date=2020-04-09 00:00:00 code=603318  price=7.91
+buy  : date=2020-05-11 00:00:00 code=603318 price=7.35
+pct= 10 , sell : date=2020-05-11 00:00:00 code=603318  price=7.35
+buy  : date=2020-06-12 00:00:00 code=603318 price=7.72
+buy  : date=2020-03-10 00:00:00 code=603322 price=24.04
+pct= 50 , sell : date=2020-03-16 00:00:00 code=603322  price=20.44
+buy  : date=2020-06-18 00:00:00 code=603329 price=15.35
+pct= 30 , sell : date=2020-06-22 00:00:00 code=603329  price=15.45
+buy  : date=2020-05-12 00:00:00 code=603330 price=18.77
+pct= 10 , sell : date=2020-05-12 00:00:00 code=603330  price=18.77
+buy  : date=2020-04-01 00:00:00 code=603333 price=7.63
+pct= 10 , sell : date=2020-04-01 00:00:00 code=603333  price=7.63
+buy  : date=2020-03-19 00:00:00 code=603336 price=15.58
+pct= 30 , sell : date=2020-03-23 00:00:00 code=603336  price=15.66
+buy  : date=2020-08-19 00:00:00 code=603338 price=105.40
+buy  : date=2020-06-23 00:00:00 code=603348 price=19.58
+buy  : date=2020-04-01 00:00:00 code=603363 price=22.73
+pct= 20 , sell : date=2020-04-02 00:00:00 code=603363  price=21.48
+buy  : date=2020-04-23 00:00:00 code=603363 price=22.19
+pct= 90 , sell : date=2020-06-11 00:00:00 code=603363  price=19.42
+buy  : date=2020-04-17 00:00:00 code=603366 price=5.60
+pct= 10 , sell : date=2020-04-17 00:00:00 code=603366  price=5.60
+buy  : date=2020-06-02 00:00:00 code=603366 price=6.86
+pct= 20 , sell : date=2020-06-03 00:00:00 code=603366  price=6.72
+buy  : date=2020-02-14 00:00:00 code=603387 price=31.75
+pct= 40 , sell : date=2020-02-19 00:00:00 code=603387  price=35.70
+buy  : date=2020-05-27 00:00:00 code=603390 price=14.11
+pct= 10 , sell : date=2020-05-27 00:00:00 code=603390  price=14.11
+buy  : date=2020-06-02 00:00:00 code=603396 price=24.05
+buy  : date=2020-07-17 00:00:00 code=603398 price=10.00
+buy  : date=2020-02-10 00:00:00 code=603429 price=47.00
+pct= 90 , sell : date=2020-02-28 00:00:00 code=603429  price=39.90
+buy  : date=2020-07-10 00:00:00 code=603444 price=634.26
+buy  : date=2020-07-22 00:00:00 code=603456 price=35.85begin-tdx_func: 2020-09-19 19:30:31.727390
+buy  : date=2020-04-20 00:00:00 code=002480 price=5.78
+pct= 90 , sell : date=2020-05-29 00:00:00 code=002480  price=5.43
+buy  : date=2020-04-23 00:00:00 code=002481 price=15.97
+pct= 20 , sell : date=2020-04-24 00:00:00 code=002481  price=14.37
+buy  : date=2020-07-10 00:00:00 code=002481 price=18.82
+pct= 10 , sell : date=2020-07-10 00:00:00 code=002481  price=18.82
+buy  : date=2020-02-26 00:00:00 code=002503 price=3.00
+pct= 20 , sell : date=2020-02-27 00:00:00 code=002503  price=2.91
+buy  : date=2020-06-16 00:00:00 code=002503 price=2.98
+pct= 10 , sell : date=2020-06-16 00:00:00 code=002503  price=2.98
+buy  : date=2020-01-20 00:00:00 code=002504 price=3.22
+pct= 10 , sell : date=2020-01-20 00:00:00 code=002504  price=3.22
+buy  : date=2020-04-28 00:00:00 code=002504 price=2.89
+pct= 10 , sell : date=2020-04-28 00:00:00 code=002504  price=2.89
+buy  : date=2020-04-08 00:00:00 code=002505 price=2.28
+pct= 10 , sell : date=2020-04-08 00:00:00 code=002505  price=2.28
+buy  : date=2020-04-24 00:00:00 code=002505 price=2.33
+pct= 10 , sell : date=2020-04-24 00:00:00 code=002505  price=2.33
+buy  : date=2020-08-06 00:00:00 code=002506 price=3.77
+pct= 20 , sell : date=2020-08-07 00:00:00 code=002506  price=3.92
+buy  : date=2020-03-25 00:00:00 code=002515 price=6.13
+pct= 90 , sell : date=2020-04-15 00:00:00 code=002515  price=5.90
+buy  : date=2020-07-10 00:00:00 code=002516 price=3.73
+buy  : date=2020-03-23 00:00:00 code=002522 price=6.33
+pct= 10 , sell : date=2020-03-23 00:00:00 code=002522  price=6.33
+buy  : date=2020-03-18 00:00:00 code=002533 price=6.06
+pct= 10 , sell : date=2020-03-18 00:00:00 code=002533  price=6.06
+buy  : date=2020-04-28 00:00:00 code=002533 price=6.29
+pct= 10 , sell : date=2020-04-28 00:00:00 code=002533  price=6.29
+buy  : date=2020-02-27 00:00:00 code=002540 price=5.96
+pct= 20 , sell : date=2020-02-28 00:00:00 code=002540  price=5.36
+buy  : date=2020-03-03 00:00:00 code=002548 price=9.08
+pct= 90 , sell : date=2020-06-15 00:00:00 code=002548  price=7.10
+buy  : date=2020-04-23 00:00:00 code=002564 price=4.88
+pct= 10 , sell : date=2020-04-23 00:00:00 code=002564  price=4.88
+buy  : date=2020-03-23 00:00:00 code=002565 price=4.96
+pct= 10 , sell : date=2020-03-23 00:00:00 code=002565  price=4.96
+buy  : date=2020-06-22 00:00:00 code=002565 price=5.37
+pct= 20 , sell : date=2020-06-23 00:00:00 code=002565  price=5.27
+buy  : date=2020-08-14 00:00:00 code=002565 price=5.50
+pct= 10 , sell : date=2020-08-14 00:00:00 code=002565  price=5.50
+buy  : date=2020-04-01 00:00:00 code=002567 price=8.48
+pct= 90 , sell : date=2020-05-29 00:00:00 code=002567  price=8.54
+buy  : date=2020-08-04 00:00:00 code=002568 price=60.00
+buy  : date=2020-08-18 00:00:00 code=002570 price=8.86
+pct= 20 , sell : date=2020-08-19 00:00:00 code=002570  price=8.43
+buy  : date=2020-07-14 00:00:00 code=002582 price=14.59
+pct= 20 , sell : date=2020-07-15 00:00:00 code=002582  price=13.13
+buy  : date=2020-07-07 00:00:00 code=002583 price=8.90
+pct= 10 , sell : date=2020-07-07 00:00:00 code=002583  price=8.90
+buy  : date=2020-04-27 00:00:00 code=002592 price=12.28
+pct= 10 , sell : date=2020-04-27 00:00:00 code=002592  price=12.28
+buy  : date=2020-03-11 00:00:00 code=002596 price=9.06
+pct= 20 , sell : date=2020-03-12 00:00:00 code=002596  price=9.20
+buy  : date=2020-07-09 00:00:00 code=002600 price=13.03
+buy  : date=2020-01-21 00:00:00 code=002603 price=15.61
+pct= 20 , sell : date=2020-01-22 00:00:00 code=002603  price=15.20
+buy  : date=2020-06-16 00:00:00 code=002603 price=31.44
+pct= 30 , sell : date=2020-06-18 00:00:00 code=002603  price=34.38
+buy  : date=2020-07-24 00:00:00 code=002610 price=2.27
+pct= 20 , sell : date=2020-07-27 00:00:00 code=002610  price=2.32
+buy  : date=2020-06-09 00:00:00 code=002612 price=10.08
+pct= 50 , sell : date=2020-06-15 00:00:00 code=002612  price=11.59
+buy  : date=2020-06-30 00:00:00 code=002613 price=4.48
+pct= 30 , sell : date=2020-07-02 00:00:00 code=002613  price=4.69
+buy  : date=2020-08-12 00:00:00 code=002621 price=7.33
+pct= 90 , sell : date=2020-09-10 00:00:00 code=002621  price=6.46
+buy  : date=2020-04-10 00:00:00 code=002623 price=28.25
+pct= 10 , sell : date=2020-04-10 00:00:00 code=002623  price=28.25
+buy  : date=2020-07-14 00:00:00 code=002623 price=50.20
+pct= 20 , sell : date=2020-07-15 00:00:00 code=002623  price=47.15
+buy  : date=2020-07-22 00:00:00 code=002625 price=10.91
+pct= 10 , sell : date=2020-07-22 00:00:00 code=002625  price=10.91
+buy  : date=2020-07-10 00:00:00 code=002626 price=32.07
+pct= 50 , sell : date=2020-07-16 00:00:00 code=002626  price=40.73
+buy  : date=2020-01-23 00:00:00 code=002635 price=24.60
+pct= 10 , sell : date=2020-01-23 00:00:00 code=002635  price=24.60
+buy  : date=2020-06-19 00:00:00 code=002635 price=24.60
+pct= 90 , sell : date=2020-09-10 00:00:00 code=002635  price=21.70
+buy  : date=2020-06-24 00:00:00 code=002638 price=2.33
+pct= 10 , sell : date=2020-06-24 00:00:00 code=002638  price=2.33
+buy  : date=2020-02-21 00:00:00 code=002639 price=9.60
+pct= 10 , sell : date=2020-02-21 00:00:00 code=002639  price=9.60
+buy  : date=2020-03-25 00:00:00 code=002645 price=10.80
+pct= 50 , sell : date=2020-03-31 00:00:00 code=002645  price=10.72
+buy  : date=2020-04-23 00:00:00 code=002645 price=11.80
+pct= 10 , sell : date=2020-04-23 00:00:00 code=002645  price=11.80
+buy  : date=2020-06-18 00:00:00 code=002653 price=26.33
+pct= 10 , sell : date=2020-06-18 00:00:00 code=002653  price=26.33
+buy  : date=2020-07-30 00:00:00 code=002653 price=28.28
+pct= 10 , sell : date=2020-07-30 00:00:00 code=002653  price=28.28
+buy  : date=2020-07-20 00:00:00 code=002655 price=13.05
+buy  : date=2020-08-14 00:00:00 code=002659 price=6.99
+pct= 90 , sell : date=2020-09-11 00:00:00 code=002659  price=6.25
+buy  : date=2020-05-25 00:00:00 code=002661 price=21.92
+pct= 70 , sell : date=2020-06-02 00:00:00 code=002661  price=22.44
+buy  : date=2020-04-27 00:00:00 code=002662 price=3.41
+pct= 30 , sell : date=2020-04-29 00:00:00 code=002662  price=3.77
+buy  : date=2020-07-16 00:00:00 code=002662 price=4.15
+pct= 10 , sell : date=2020-07-16 00:00:00 code=002662  price=4.15
+buy  : date=2020-07-27 00:00:00 code=002664 price=16.46
+pct= 10 , sell : date=2020-07-27 00:00:00 code=002664  price=16.46
+buy  : date=2020-09-09 00:00:00 code=002665 price=2.93
+pct= 10 , sell : date=2020-09-09 00:00:00 code=002665  price=2.93
+buy  : date=2020-06-19 00:00:00 code=002666 price=7.02
+pct= 20 , sell : date=2020-06-22 00:00:00 code=002666  price=7.24
+buy  : date=2020-07-30 00:00:00 code=002669 price=19.92
+buy  : date=2020-08-26 00:00:00 code=002677 price=19.06
+pct= 10 , sell : date=2020-08-26 00:00:00 code=002677  price=19.06
+buy  : date=2020-01-21 00:00:00 code=002683 price=24.42
+buy  : date=2020-05-08 00:00:00 code=002689 price=3.52
+pct= 10 , sell : date=2020-05-08 00:00:00 code=002689  price=3.52
+buy  : date=2020-05-28 00:00:00 code=002689 price=3.96
+pct= 20 , sell : date=2020-05-29 00:00:00 code=002689  price=3.93
+buy  : date=2020-01-16 00:00:00 code=002696 price=6.53
+pct= 10 , sell : date=2020-01-16 00:00:00 code=002696  price=6.53
+buy  : date=2020-04-17 00:00:00 code=002699 price=5.65
+pct= 10 , sell : date=2020-04-17 00:00:00 code=002699  price=5.65
+buy  : date=2020-06-01 00:00:00 code=002699 price=6.07
+pct= 20 , sell : date=2020-06-02 00:00:00 code=002699  price=6.27
+buy  : date=2020-08-03 00:00:00 code=002699 price=9.20
+pct= 30 , sell : date=2020-08-05 00:00:00 code=002699  price=9.12
+buy  : date=2020-04-24 00:00:00 code=002702 price=5.50
+pct= 10 , sell : date=2020-04-24 00:00:00 code=002702  price=5.50
+buy  : date=2020-05-11 00:00:00 code=002702 price=6.34
+pct= 10 , sell : date=2020-05-11 00:00:00 code=002702  price=6.34
+buy  : date=2020-03-31 00:00:00 code=002706 price=11.82
+pct= 10 , sell : date=2020-03-31 00:00:00 code=002706  price=11.82
+buy  : date=2020-03-17 00:00:00 code=002708 price=7.35
+pct= 20 , sell : date=2020-03-18 00:00:00 code=002708  price=7.00
+buy  : date=2020-04-03 00:00:00 code=002708 price=6.92
+buy  : date=2020-07-15 00:00:00 code=002721 price=4.58
+pct= 10 , sell : date=2020-07-15 00:00:00 code=002721  price=4.58
+buy  : date=2020-05-20 00:00:00 code=002725 price=10.34
+buy  : date=2020-06-16 00:00:00 code=002726 price=8.70begin-tdx_func: 2020-09-19 19:30:31.705535
+buy  : date=2020-07-14 00:00:00 code=002007 price=55.50
+pct= 30 , sell : date=2020-07-16 00:00:00 code=002007  price=49.99
+buy  : date=2020-08-06 00:00:00 code=002019 price=32.55
+pct= 10 , sell : date=2020-08-06 00:00:00 code=002019  price=32.55
+buy  : date=2020-07-30 00:00:00 code=002020 price=15.10
+pct= 90 , sell : date=2020-08-25 00:00:00 code=002020  price=12.34
+buy  : date=2020-04-21 00:00:00 code=002022 price=18.04
+pct= 10 , sell : date=2020-04-21 00:00:00 code=002022  price=18.04
+buy  : date=2020-07-21 00:00:00 code=002025 price=42.98
+pct= 40 , sell : date=2020-07-24 00:00:00 code=002025  price=45.90
+buy  : date=2020-04-16 00:00:00 code=002030 price=22.53
+pct= 70 , sell : date=2020-04-24 00:00:00 code=002030  price=25.74
+buy  : date=2020-08-12 00:00:00 code=002041 price=18.30
+pct= 10 , sell : date=2020-08-12 00:00:00 code=002041  price=18.30
+buy  : date=2020-08-06 00:00:00 code=002043 price=11.99
+pct= 10 , sell : date=2020-08-06 00:00:00 code=002043  price=11.99
+buy  : date=2020-09-02 00:00:00 code=002046 price=10.23
+pct= 10 , sell : date=2020-09-02 00:00:00 code=002046  price=10.23
+buy  : date=2020-05-13 00:00:00 code=002049 price=69.98
+pct= 90 , sell : date=2020-06-15 00:00:00 code=002049  price=61.87
+buy  : date=2020-06-03 00:00:00 code=002055 price=14.92
+buy  : date=2020-04-09 00:00:00 code=002059 price=5.40
+pct= 90 , sell : date=2020-05-14 00:00:00 code=002059  price=4.46
+buy  : date=2020-07-09 00:00:00 code=002059 price=6.01
+pct= 10 , sell : date=2020-07-09 00:00:00 code=002059  price=6.01
+buy  : date=2020-08-11 00:00:00 code=002062 price=5.10
+pct= 10 , sell : date=2020-08-11 00:00:00 code=002062  price=5.10
+buy  : date=2020-03-27 00:00:00 code=002063 price=14.10
+pct= 10 , sell : date=2020-03-27 00:00:00 code=002063  price=14.10
+buy  : date=2020-07-30 00:00:00 code=002064 price=6.88
+buy  : date=2020-08-12 00:00:00 code=002068 price=5.58
+pct= 10 , sell : date=2020-08-12 00:00:00 code=002068  price=5.58
+buy  : date=2020-02-17 00:00:00 code=002082 price=12.12
+pct= 90 , sell : date=2020-03-11 00:00:00 code=002082  price=11.16
+buy  : date=2020-07-22 00:00:00 code=002084 price=11.70
+pct= 30 , sell : date=2020-07-24 00:00:00 code=002084  price=10.72
+buy  : date=2020-08-20 00:00:00 code=002084 price=12.90
+pct= 10 , sell : date=2020-08-20 00:00:00 code=002084  price=12.90
+buy  : date=2020-03-02 00:00:00 code=002087 price=4.13
+pct= 10 , sell : date=2020-03-02 00:00:00 code=002087  price=4.13
+buy  : date=2020-08-03 00:00:00 code=002103 price=6.61
+pct= 10 , sell : date=2020-08-03 00:00:00 code=002103  price=6.61
+buy  : date=2020-01-21 00:00:00 code=002107 price=12.20
+pct= 20 , sell : date=2020-01-22 00:00:00 code=002107  price=11.33
+buy  : date=2020-07-14 00:00:00 code=002112 price=10.26
+pct= 10 , sell : date=2020-07-14 00:00:00 code=002112  price=10.26
+buy  : date=2020-04-01 00:00:00 code=002124 price=12.20
+pct= 90 , sell : date=2020-05-20 00:00:00 code=002124  price=10.64
+buy  : date=2020-08-18 00:00:00 code=002126 price=15.28
+pct= 90 , sell : date=2020-09-09 00:00:00 code=002126  price=12.29
+buy  : date=2020-02-26 00:00:00 code=002129 price=19.94
+pct= 10 , sell : date=2020-02-26 00:00:00 code=002129  price=19.94
+buy  : date=2020-02-25 00:00:00 code=002134 price=12.26
+pct= 10 , sell : date=2020-02-25 00:00:00 code=002134  price=12.26
+buy  : date=2020-02-27 00:00:00 code=002135 price=7.42
+pct= 10 , sell : date=2020-02-27 00:00:00 code=002135  price=7.42
+buy  : date=2020-04-01 00:00:00 code=002136 price=8.50
+buy  : date=2020-08-05 00:00:00 code=002137 price=9.18
+pct= 90 , sell : date=2020-09-10 00:00:00 code=002137  price=7.60
+buy  : date=2020-02-28 00:00:00 code=002140 price=7.16
+pct= 10 , sell : date=2020-02-28 00:00:00 code=002140  price=7.16
+buy  : date=2020-05-18 00:00:00 code=002141 price=3.16
+buy  : date=2020-07-30 00:00:00 code=002151 price=45.93
+pct= 20 , sell : date=2020-07-31 00:00:00 code=002151  price=46.49
+buy  : date=2020-04-17 00:00:00 code=002152 price=10.73
+pct= 10 , sell : date=2020-04-17 00:00:00 code=002152  price=10.73
+buy  : date=2020-04-01 00:00:00 code=002157 price=18.70
+pct= 20 , sell : date=2020-04-02 00:00:00 code=002157  price=17.98
+buy  : date=2020-01-21 00:00:00 code=002166 price=10.01
+pct= 20 , sell : date=2020-01-22 00:00:00 code=002166  price=10.00
+buy  : date=2020-02-20 00:00:00 code=002173 price=6.03
+pct= 90 , sell : date=2020-03-17 00:00:00 code=002173  price=5.77
+buy  : date=2020-02-07 00:00:00 code=002174 price=32.16
+pct= 20 , sell : date=2020-02-10 00:00:00 code=002174  price=30.40
+buy  : date=2020-07-23 00:00:00 code=002177 price=5.40
+pct= 10 , sell : date=2020-07-23 00:00:00 code=002177  price=5.40
+buy  : date=2020-06-05 00:00:00 code=002181 price=5.24
+pct= 10 , sell : date=2020-06-05 00:00:00 code=002181  price=5.24
+buy  : date=2020-06-24 00:00:00 code=002183 price=5.48
+pct= 10 , sell : date=2020-06-24 00:00:00 code=002183  price=5.48
+buy  : date=2020-05-08 00:00:00 code=002193 price=8.34
+buy  : date=2020-07-21 00:00:00 code=002197 price=12.22
+pct= 10 , sell : date=2020-07-21 00:00:00 code=002197  price=12.22
+buy  : date=2020-07-30 00:00:00 code=002198 price=6.04
+pct= 10 , sell : date=2020-07-30 00:00:00 code=002198  price=6.04
+buy  : date=2020-09-01 00:00:00 code=002198 price=6.05
+buy  : date=2020-03-30 00:00:00 code=002205 price=14.83
+pct= 30 , sell : date=2020-04-01 00:00:00 code=002205  price=14.39
+buy  : date=2020-07-31 00:00:00 code=002211 price=6.63
+pct= 10 , sell : date=2020-07-31 00:00:00 code=002211  price=6.63
+buy  : date=2020-07-20 00:00:00 code=002216 price=29.28
+buy  : date=2020-03-06 00:00:00 code=002218 price=3.63
+pct= 10 , sell : date=2020-03-06 00:00:00 code=002218  price=3.63
+buy  : date=2020-03-26 00:00:00 code=002223 price=37.59
+pct= 30 , sell : date=2020-03-30 00:00:00 code=002223  price=38.12
+buy  : date=2020-03-11 00:00:00 code=002231 price=8.55
+pct= 10 , sell : date=2020-03-11 00:00:00 code=002231  price=8.55
+buy  : date=2020-08-28 00:00:00 code=002235 price=10.41
+pct= 90 , sell : date=2020-09-15 00:00:00 code=002235  price=9.56
+buy  : date=2020-07-10 00:00:00 code=002236 price=21.50
+pct= 10 , sell : date=2020-07-10 00:00:00 code=002236  price=21.50
+buy  : date=2020-08-10 00:00:00 code=002236 price=22.95
+pct= 90 , sell : date=2020-09-10 00:00:00 code=002236  price=20.70
+buy  : date=2020-06-12 00:00:00 code=002239 price=3.48
+buy  : date=2020-04-28 00:00:00 code=002243 price=14.18
+pct= 10 , sell : date=2020-04-28 00:00:00 code=002243  price=14.18
+buy  : date=2020-06-17 00:00:00 code=002258 price=17.75
+buy  : date=2020-05-07 00:00:00 code=002262 price=14.59
+buy  : date=2020-04-15 00:00:00 code=002264 price=4.59
+pct= 90 , sell : date=2020-04-29 00:00:00 code=002264  price=4.47
+buy  : date=2020-04-09 00:00:00 code=002269 price=2.52
+pct= 20 , sell : date=2020-04-10 00:00:00 code=002269  price=2.40
+buy  : date=2020-06-03 00:00:00 code=002269 price=2.19
+pct= 90 , sell : date=2020-06-29 00:00:00 code=002269  price=2.04
+buy  : date=2020-04-08 00:00:00 code=002270 price=5.05
+pct= 10 , sell : date=2020-04-08 00:00:00 code=002270  price=5.05
+buy  : date=2020-03-20 00:00:00 code=002277 price=3.65
+pct= 10 , sell : date=2020-03-20 00:00:00 code=002277  price=3.65
+buy  : date=2020-04-23 00:00:00 code=002277 price=3.93
+pct= 10 , sell : date=2020-04-23 00:00:00 code=002277  price=3.93
+buy  : date=2020-06-03 00:00:00 code=002277 price=4.89
+pct= 10 , sell : date=2020-06-03 00:00:00 code=002277  price=4.89
+buy  : date=2020-07-15 00:00:00 code=002277 price=4.85
+pct= 10 , sell : date=2020-07-15 00:00:00 code=002277  price=4.85
+buy  : date=2020-05-12 00:00:00 code=002284 price=4.90
+buy  : date=2020-03-18 00:00:00 code=002286 price=9.31
+pct= 30 , sell : date=2020-03-20 00:00:00 code=002286  price=9.30
+buy  : date=2020-06-08 00:00:00 code=002286 price=8.14
+pct= 10 , sell : date=2020-06-08 00:00:00 code=002286  price=8.14
+buy  : date=2020-07-13 00:00:00 code=002286 price=11.04
+pct= 20 , sell : date=2020-07-14 00:00:00 code=002286  price=11.38
+buy  : date=2020-08-12 00:00:00 code=002288 price=7.97
+pct= 10 , sell : date=2020-08-12 00:00:00 code=002288  price=7.97
+buy  : date=2020-05-12 00:00:00 code=002291 price=21.36
+pct= 10 , sell : date=2020-05-12 00:00:00 code=002291  price=21.36begin-tdx_func: 2020-09-19 19:30:31.669342
+buy  : date=2020-06-30 00:00:00 code=000799 price=76.51
+pct= 30 , sell : date=2020-07-02 00:00:00 code=000799  price=80.44
+buy  : date=2020-08-31 00:00:00 code=000799 price=92.80
+pct= 30 , sell : date=2020-09-02 00:00:00 code=000799  price=88.00
+buy  : date=2020-03-06 00:00:00 code=000821 price=7.02
+pct= 10 , sell : date=2020-03-06 00:00:00 code=000821  price=7.02
+buy  : date=2020-07-21 00:00:00 code=000829 price=8.20
+pct= 30 , sell : date=2020-07-23 00:00:00 code=000829  price=8.66
+buy  : date=2020-07-21 00:00:00 code=000831 price=14.52
+pct= 90 , sell : date=2020-09-07 00:00:00 code=000831  price=13.18
+buy  : date=2020-03-09 00:00:00 code=000850 price=5.13
+pct= 10 , sell : date=2020-03-09 00:00:00 code=000850  price=5.13
+buy  : date=2020-04-08 00:00:00 code=000850 price=4.49
+pct= 10 , sell : date=2020-04-08 00:00:00 code=000850  price=4.49
+buy  : date=2020-03-06 00:00:00 code=000875 price=4.40
+pct= 20 , sell : date=2020-03-09 00:00:00 code=000875  price=4.37
+buy  : date=2020-04-01 00:00:00 code=000876 price=31.99
+pct= 90 , sell : date=2020-05-20 00:00:00 code=000876  price=28.81
+buy  : date=2020-08-11 00:00:00 code=000877 price=21.80
+pct= 30 , sell : date=2020-08-13 00:00:00 code=000877  price=23.45
+buy  : date=2020-03-03 00:00:00 code=000881 price=8.47
+pct= 90 , sell : date=2020-03-31 00:00:00 code=000881  price=6.72
+buy  : date=2020-08-26 00:00:00 code=000881 price=11.65
+pct= 20 , sell : date=2020-08-27 00:00:00 code=000881  price=11.70
+buy  : date=2020-07-31 00:00:00 code=000886 price=5.60
+pct= 10 , sell : date=2020-07-31 00:00:00 code=000886  price=5.60
+buy  : date=2020-03-24 00:00:00 code=000889 price=10.02
+pct= 40 , sell : date=2020-03-27 00:00:00 code=000889  price=10.45
+buy  : date=2020-08-17 00:00:00 code=000901 price=13.55
+buy  : date=2020-07-08 00:00:00 code=000903 price=6.05
+pct= 70 , sell : date=2020-07-16 00:00:00 code=000903  price=7.03
+buy  : date=2020-09-02 00:00:00 code=000903 price=7.11
+pct= 10 , sell : date=2020-09-02 00:00:00 code=000903  price=7.11
+buy  : date=2020-07-03 00:00:00 code=000905 price=7.31
+pct= 10 , sell : date=2020-07-03 00:00:00 code=000905  price=7.31
+buy  : date=2020-08-06 00:00:00 code=000910 price=19.80
+pct= 90 , sell : date=2020-09-04 00:00:00 code=000910  price=20.01
+buy  : date=2020-08-19 00:00:00 code=000937 price=4.08
+pct= 10 , sell : date=2020-08-19 00:00:00 code=000937  price=4.08
+buy  : date=2020-08-20 00:00:00 code=000962 price=8.70
+pct= 10 , sell : date=2020-08-20 00:00:00 code=000962  price=8.70
+buy  : date=2020-02-26 00:00:00 code=000973 price=6.79
+pct= 20 , sell : date=2020-02-27 00:00:00 code=000973  price=6.13
+buy  : date=2020-05-18 00:00:00 code=000987 price=12.09
+pct= 10 , sell : date=2020-05-18 00:00:00 code=000987  price=12.09
+buy  : date=2020-07-13 00:00:00 code=000990 price=17.89
+pct= 10 , sell : date=2020-07-13 00:00:00 code=000990  price=17.89
+buy  : date=2020-05-08 00:00:00 code=000998 price=18.30
+buy  : date=2020-07-30 00:00:00 code=001696 price=9.51
+pct= 10 , sell : date=2020-07-30 00:00:00 code=001696  price=9.51
+buy  : date=2020-08-05 00:00:00 code=001872 price=19.73
+pct= 10 , sell : date=2020-08-05 00:00:00 code=001872  price=19.73
+buy  : date=2020-02-17 00:00:00 code=001914 price=26.49
+pct= 90 , sell : date=2020-03-19 00:00:00 code=001914  price=20.80
+buy  : date=2020-03-16 00:00:00 code=300002 price=4.32
+pct= 10 , sell : date=2020-03-16 00:00:00 code=300002  price=4.32
+buy  : date=2020-09-15 00:00:00 code=300006 price=7.65
+buy  : date=2020-07-15 00:00:00 code=300008 price=4.60
+pct= 20 , sell : date=2020-07-16 00:00:00 code=300008  price=4.14
+buy  : date=2020-01-16 00:00:00 code=300010 price=14.31
+buy  : date=2020-07-09 00:00:00 code=300013 price=8.03
+pct= 90 , sell : date=2020-07-24 00:00:00 code=300013  price=8.02
+buy  : date=2020-02-28 00:00:00 code=300018 price=5.27
+pct= 10 , sell : date=2020-02-28 00:00:00 code=300018  price=5.27
+buy  : date=2020-05-13 00:00:00 code=300018 price=6.67
+pct= 10 , sell : date=2020-05-13 00:00:00 code=300018  price=6.67
+buy  : date=2020-09-03 00:00:00 code=300022 price=6.92
+pct= 10 , sell : date=2020-09-03 00:00:00 code=300022  price=6.92
+buy  : date=2020-06-17 00:00:00 code=300025 price=5.23
+pct= 10 , sell : date=2020-06-17 00:00:00 code=300025  price=5.23
+buy  : date=2020-04-09 00:00:00 code=300026 price=5.22
+pct= 10 , sell : date=2020-04-09 00:00:00 code=300026  price=5.22
+buy  : date=2020-06-04 00:00:00 code=300026 price=5.29
+buy  : date=2020-02-20 00:00:00 code=300032 price=5.01
+pct= 20 , sell : date=2020-02-21 00:00:00 code=300032  price=4.73
+buy  : date=2020-05-06 00:00:00 code=300035 price=7.50
+buy  : date=2020-04-23 00:00:00 code=300040 price=6.21
+pct= 10 , sell : date=2020-04-23 00:00:00 code=300040  price=6.21
+buy  : date=2020-03-18 00:00:00 code=300041 price=12.74
+pct= 30 , sell : date=2020-03-20 00:00:00 code=300041  price=12.98
+buy  : date=2020-04-17 00:00:00 code=300042 price=15.94
+pct= 10 , sell : date=2020-04-17 00:00:00 code=300042  price=15.94
+buy  : date=2020-09-09 00:00:00 code=300051 price=8.73
+pct= 10 , sell : date=2020-09-09 00:00:00 code=300051  price=8.73
+buy  : date=2020-02-26 00:00:00 code=300058 price=8.25
+pct= 10 , sell : date=2020-02-26 00:00:00 code=300058  price=8.25
+buy  : date=2020-01-17 00:00:00 code=300061 price=6.68
+pct= 10 , sell : date=2020-01-17 00:00:00 code=300061  price=6.68
+buy  : date=2020-06-30 00:00:00 code=300061 price=6.03
+pct= 20 , sell : date=2020-07-01 00:00:00 code=300061  price=5.79
+buy  : date=2020-05-29 00:00:00 code=300063 price=5.61
+pct= 10 , sell : date=2020-05-29 00:00:00 code=300063  price=5.61
+buy  : date=2020-07-14 00:00:00 code=300064 price=2.66
+pct= 20 , sell : date=2020-07-15 00:00:00 code=300064  price=2.39
+buy  : date=2020-07-21 00:00:00 code=300065 price=15.00
+buy  : date=2020-06-17 00:00:00 code=300069 price=17.32
+pct= 20 , sell : date=2020-06-18 00:00:00 code=300069  price=17.39
+buy  : date=2020-02-18 00:00:00 code=300078 price=15.80
+pct= 90 , sell : date=2020-03-09 00:00:00 code=300078  price=14.16
+buy  : date=2020-02-28 00:00:00 code=300080 price=5.96
+pct= 10 , sell : date=2020-02-28 00:00:00 code=300080  price=5.96
+buy  : date=2020-01-22 00:00:00 code=300086 price=5.24
+pct= 10 , sell : date=2020-01-22 00:00:00 code=300086  price=5.24
+buy  : date=2020-07-28 00:00:00 code=300087 price=16.46
+pct= 10 , sell : date=2020-07-28 00:00:00 code=300087  price=16.46
+buy  : date=2020-08-12 00:00:00 code=300094 price=5.00
+pct= 10 , sell : date=2020-08-12 00:00:00 code=300094  price=5.00
+buy  : date=2020-07-22 00:00:00 code=300095 price=10.91
+pct= 10 , sell : date=2020-07-22 00:00:00 code=300095  price=10.91
+buy  : date=2020-07-22 00:00:00 code=300096 price=9.62
+pct= 10 , sell : date=2020-07-22 00:00:00 code=300096  price=9.62
+buy  : date=2020-09-10 00:00:00 code=300096 price=10.93
+pct= 10 , sell : date=2020-09-10 00:00:00 code=300096  price=10.93
+buy  : date=2020-05-07 00:00:00 code=300097 price=10.48
+buy  : date=2020-09-04 00:00:00 code=300102 price=8.76
+pct= 40 , sell : date=2020-09-09 00:00:00 code=300102  price=11.63
+buy  : date=2020-05-18 00:00:00 code=300106 price=7.81
+pct= 30 , sell : date=2020-06-03 00:00:00 code=300106  price=7.79
+buy  : date=2020-04-21 00:00:00 code=300109 price=16.58
+buy  : date=2020-08-17 00:00:00 code=300114 price=15.46
+buy  : date=2020-06-17 00:00:00 code=300115 price=21.01
+buy  : date=2020-02-03 00:00:00 code=300123 price=9.20
+pct= 10 , sell : date=2020-02-03 00:00:00 code=300123  price=9.20
+buy  : date=2020-07-07 00:00:00 code=300123 price=13.38
+pct= 10 , sell : date=2020-07-07 00:00:00 code=300123  price=13.38
+buy  : date=2020-02-07 00:00:00 code=300132 price=13.97
+pct= 90 , sell : date=2020-03-23 00:00:00 code=300132  price=11.65
+buy  : date=2020-05-08 00:00:00 code=300132 price=17.49
+pct= 20 , sell : date=2020-05-11 00:00:00 code=300132  price=17.40
+buy  : date=2020-07-01 00:00:00 code=300136 price=53.66
+pct= 90 , sell : date=2020-07-16 00:00:00 code=300136  price=50.34
+buy  : date=2020-08-03 00:00:00 code=300136 price=59.20
+buy  : date=2020-03-06 00:00:00 code=300141 price=8.50
+pct= 10 , sell : date=2020-03-06 00:00:00 code=300141  price=8.50
+buy  : date=2020-02-28 00:00:00 code=300145 price=3.91begin-tdx_func: 2020-09-19 19:30:31.656772
+buy  : date=2020-05-14 00:00:00 code=000004 price=33.09
+pct= 10 , sell : date=2020-05-14 00:00:00 code=000004  price=33.09
+buy  : date=2020-07-02 00:00:00 code=000006 price=7.48
+pct= 10 , sell : date=2020-07-02 00:00:00 code=000006  price=7.48
+buy  : date=2020-08-04 00:00:00 code=000012 price=6.65
+pct= 90 , sell : date=2020-09-10 00:00:00 code=000012  price=5.23
+buy  : date=2020-04-09 00:00:00 code=000023 price=18.41
+pct= 90 , sell : date=2020-04-29 00:00:00 code=000023  price=16.36
+buy  : date=2020-08-20 00:00:00 code=000025 price=22.77
+pct= 10 , sell : date=2020-08-20 00:00:00 code=000025  price=22.77
+buy  : date=2020-04-07 00:00:00 code=000038 price=9.80
+pct= 10 , sell : date=2020-04-07 00:00:00 code=000038  price=9.80
+buy  : date=2020-08-04 00:00:00 code=000066 price=20.00
+pct= 10 , sell : date=2020-08-04 00:00:00 code=000066  price=20.00
+buy  : date=2020-04-28 00:00:00 code=000068 price=3.91
+pct= 20 , sell : date=2020-04-29 00:00:00 code=000068  price=3.53
+buy  : date=2020-01-21 00:00:00 code=000078 price=4.43
+pct= 20 , sell : date=2020-01-22 00:00:00 code=000078  price=4.38
+buy  : date=2020-08-04 00:00:00 code=000089 price=11.25
+pct= 10 , sell : date=2020-08-04 00:00:00 code=000089  price=11.25
+buy  : date=2020-02-21 00:00:00 code=000100 price=6.67
+pct= 10 , sell : date=2020-02-21 00:00:00 code=000100  price=6.67
+buy  : date=2020-03-19 00:00:00 code=000150 price=4.78
+pct= 10 , sell : date=2020-03-19 00:00:00 code=000150  price=4.78
+buy  : date=2020-03-03 00:00:00 code=000401 price=20.53
+pct= 10 , sell : date=2020-03-03 00:00:00 code=000401  price=20.53
+buy  : date=2020-07-16 00:00:00 code=000428 price=3.83
+pct= 10 , sell : date=2020-07-16 00:00:00 code=000428  price=3.83
+buy  : date=2020-07-22 00:00:00 code=000503 price=13.81
+pct= 30 , sell : date=2020-07-24 00:00:00 code=000503  price=12.70
+buy  : date=2020-08-14 00:00:00 code=000505 price=9.44
+pct= 10 , sell : date=2020-08-14 00:00:00 code=000505  price=9.44
+buy  : date=2020-01-21 00:00:00 code=000518 price=4.54
+pct= 80 , sell : date=2020-02-07 00:00:00 code=000518  price=7.86
+buy  : date=2020-07-30 00:00:00 code=000518 price=5.81
+pct= 30 , sell : date=2020-08-03 00:00:00 code=000518  price=6.56
+buy  : date=2020-04-23 00:00:00 code=000525 price=11.06
+pct= 10 , sell : date=2020-04-23 00:00:00 code=000525  price=11.06
+buy  : date=2020-02-26 00:00:00 code=000526 price=41.00
+pct= 20 , sell : date=2020-02-27 00:00:00 code=000526  price=40.88
+buy  : date=2020-06-18 00:00:00 code=000526 price=52.84
+pct= 20 , sell : date=2020-06-19 00:00:00 code=000526  price=54.55
+buy  : date=2020-08-04 00:00:00 code=000531 price=11.64
+pct= 90 , sell : date=2020-09-09 00:00:00 code=000531  price=9.36
+buy  : date=2020-02-18 00:00:00 code=000534 price=9.93
+buy  : date=2020-09-02 00:00:00 code=000547 price=22.03
+pct= 40 , sell : date=2020-09-07 00:00:00 code=000547  price=20.63
+buy  : date=2020-08-04 00:00:00 code=000560 price=4.95
+pct= 90 , sell : date=2020-08-19 00:00:00 code=000560  price=4.26
+buy  : date=2020-07-31 00:00:00 code=000591 price=4.87
+pct= 20 , sell : date=2020-08-03 00:00:00 code=000591  price=5.02
+buy  : date=2020-01-21 00:00:00 code=000597 price=9.12
+pct= 20 , sell : date=2020-01-22 00:00:00 code=000597  price=8.55
+buy  : date=2020-05-07 00:00:00 code=000599 price=4.06
+buy  : date=2020-07-01 00:00:00 code=000609 price=6.08
+pct= 10 , sell : date=2020-07-01 00:00:00 code=000609  price=6.08
+buy  : date=2020-08-21 00:00:00 code=000610 price=10.30
+pct= 10 , sell : date=2020-08-21 00:00:00 code=000610  price=10.30
+buy  : date=2020-03-19 00:00:00 code=000615 price=4.68
+pct= 20 , sell : date=2020-03-20 00:00:00 code=000615  price=4.84
+buy  : date=2020-07-02 00:00:00 code=000620 price=3.49
+pct= 10 , sell : date=2020-07-02 00:00:00 code=000620  price=3.49
+buy  : date=2020-07-13 00:00:00 code=000620 price=4.19
+buy  : date=2020-09-15 00:00:00 code=000638 price=6.96
+buy  : date=2020-03-26 00:00:00 code=000639 price=5.37
+pct= 90 , sell : date=2020-04-15 00:00:00 code=000639  price=5.73
+buy  : date=2020-06-16 00:00:00 code=000652 price=6.66
+pct= 90 , sell : date=2020-09-09 00:00:00 code=000652  price=5.43
+buy  : date=2020-01-16 00:00:00 code=000676 price=10.76
+pct= 10 , sell : date=2020-01-16 00:00:00 code=000676  price=10.76
+buy  : date=2020-05-15 00:00:00 code=000676 price=8.95
+pct= 20 , sell : date=2020-05-18 00:00:00 code=000676  price=8.55
+buy  : date=2020-04-14 00:00:00 code=000680 price=3.75
+pct= 90 , sell : date=2020-05-29 00:00:00 code=000680  price=3.43
+buy  : date=2020-07-23 00:00:00 code=000691 price=6.39
+pct= 20 , sell : date=2020-07-24 00:00:00 code=000691  price=6.60
+buy  : date=2020-04-14 00:00:00 code=000698 price=3.98
+pct= 90 , sell : date=2020-04-28 00:00:00 code=000698  price=3.17
+buy  : date=2020-06-12 00:00:00 code=000700 price=8.26
+buy  : date=2020-09-02 00:00:00 code=000701 price=6.49
+pct= 10 , sell : date=2020-09-02 00:00:00 code=000701  price=6.49
+buy  : date=2020-04-07 00:00:00 code=000702 price=6.56
+pct= 20 , sell : date=2020-04-08 00:00:00 code=000702  price=6.70
+buy  : date=2020-05-22 00:00:00 code=000710 price=52.99
+pct= 10 , sell : date=2020-05-22 00:00:00 code=000710  price=52.99
+buy  : date=2020-04-23 00:00:00 code=000713 price=12.19
+pct= 10 , sell : date=2020-04-23 00:00:00 code=000713  price=12.19
+buy  : date=2020-08-06 00:00:00 code=000713 price=12.35
+pct= 10 , sell : date=2020-08-06 00:00:00 code=000713  price=12.35
+buy  : date=2020-04-23 00:00:00 code=000716 price=4.23
+pct= 10 , sell : date=2020-04-23 00:00:00 code=000716  price=4.23
+buy  : date=2020-05-20 00:00:00 code=000716 price=4.24
+pct= 10 , sell : date=2020-05-20 00:00:00 code=000716  price=4.24
+buy  : date=2020-03-17 00:00:00 code=000721 price=4.21
+pct= 10 , sell : date=2020-03-17 00:00:00 code=000721  price=4.21
+buy  : date=2020-06-02 00:00:00 code=000732 price=4.57
+buy  : date=2020-07-20 00:00:00 code=000738 price=19.33
+pct= 20 , sell : date=2020-07-21 00:00:00 code=000738  price=18.91
+buy  : date=2020-07-21 00:00:00 code=000750 price=6.00
+pct= 10 , sell : date=2020-07-21 00:00:00 code=000750  price=6.00
+buy  : date=2020-08-03 00:00:00 code=000757 price=5.57
+pct= 30 , sell : date=2020-08-05 00:00:00 code=000757  price=5.60
+buy  : date=2020-07-07 00:00:00 code=000758 price=5.15
+pct= 10 , sell : date=2020-07-07 00:00:00 code=000758  price=5.15
+buy  : date=2020-02-10 00:00:00 code=000782 price=4.27
+pct= 10 , sell : date=2020-02-10 00:00:00 code=000782  price=4.27
+buy  : date=2020-05-20 00:00:00 code=000788 price=6.91
+buy  : date=2020-07-31 00:00:00 code=000789 price=19.42
+buy  : date=2020-06-01 00:00:00 code=603956 price=17.81
+pct= 90 , sell : date=2020-07-27 00:00:00 code=603956  price=15.38
+buy  : date=2020-08-17 00:00:00 code=603959 price=10.80
+pct= 20 , sell : date=2020-08-18 00:00:00 code=603959  price=10.95
+buy  : date=2020-02-18 00:00:00 code=603967 price=15.13
+buy  : date=2020-09-14 00:00:00 code=603969 price=4.82
+pct= 10 , sell : date=2020-09-14 00:00:00 code=603969  price=4.82
+buy  : date=2020-05-06 00:00:00 code=603986 price=305.60
+pct= 90 , sell : date=2020-05-22 00:00:00 code=603986  price=205.00
+buy  : date=2020-07-07 00:00:00 code=603986 price=266.12
+pct= 10 , sell : date=2020-07-07 00:00:00 code=603986  price=266.12
+buy  : date=2020-07-01 00:00:00 code=603988 price=13.53
+pct= 90 , sell : date=2020-09-09 00:00:00 code=603988  price=14.09
+buy  : date=2020-08-04 00:00:00 code=603989 price=34.36
+pct= 10 , sell : date=2020-08-04 00:00:00 code=603989  price=34.36
+buy  : date=2020-07-15 00:00:00 code=603991 price=39.40
+pct= 20 , sell : date=2020-07-16 00:00:00 code=603991  price=38.40
+buy  : date=2020-03-26 00:00:00 code=603992 price=21.45
+pct= 20 , sell : date=2020-03-27 00:00:00 code=603992  price=19.98
+buy  : date=2020-01-16 00:00:00 code=603999 price=8.35
+pct= 10 , sell : date=2020-01-16 00:00:00 code=603999  price=8.35
+buy  : date=2020-09-01 00:00:00 code=605288 price=137.74
+buy  : date=2020-05-27 00:00:00 code=688001 price=44.15
+pct= 10 , sell : date=2020-05-27 00:00:00 code=688001  price=44.15
+buy  : date=2020-01-15 00:00:00 code=688005 price=34.82
+pct= 10 , sell : date=2020-01-15 00:00:00 code=688005  price=34.82
+buy  : date=2020-05-21 00:00:00 code=688005 price=33.10begin-tdx_func: 2020-09-19 19:30:31.635117
+buy  : date=2020-02-05 00:00:00 code=600636 price=12.10
+pct= 50 , sell : date=2020-02-11 00:00:00 code=600636  price=14.58
+buy  : date=2020-02-24 00:00:00 code=600640 price=23.27
+pct= 30 , sell : date=2020-02-26 00:00:00 code=600640  price=23.51
+buy  : date=2020-04-10 00:00:00 code=600640 price=20.12
+pct= 10 , sell : date=2020-04-10 00:00:00 code=600640  price=20.12
+buy  : date=2020-06-22 00:00:00 code=600640 price=21.90
+pct= 10 , sell : date=2020-06-22 00:00:00 code=600640  price=21.90
+buy  : date=2020-07-30 00:00:00 code=600662 price=9.47
+pct= 10 , sell : date=2020-07-30 00:00:00 code=600662  price=9.47
+buy  : date=2020-01-16 00:00:00 code=600667 price=9.20
+pct= 20 , sell : date=2020-01-17 00:00:00 code=600667  price=9.06
+buy  : date=2020-03-03 00:00:00 code=600678 price=8.68
+pct= 90 , sell : date=2020-03-30 00:00:00 code=600678  price=6.74
+buy  : date=2020-07-21 00:00:00 code=600678 price=7.57
+pct= 10 , sell : date=2020-07-21 00:00:00 code=600678  price=7.57
+buy  : date=2020-05-06 00:00:00 code=600685 price=15.48
+buy  : date=2020-04-09 00:00:00 code=600691 price=2.13
+pct= 10 , sell : date=2020-04-09 00:00:00 code=600691  price=2.13
+buy  : date=2020-07-13 00:00:00 code=600695 price=9.39
+pct= 30 , sell : date=2020-07-15 00:00:00 code=600695  price=9.46
+buy  : date=2020-07-03 00:00:00 code=600697 price=17.15
+pct= 10 , sell : date=2020-07-03 00:00:00 code=600697  price=17.15
+buy  : date=2020-07-22 00:00:00 code=600707 price=4.94
+pct= 30 , sell : date=2020-07-24 00:00:00 code=600707  price=4.55
+buy  : date=2020-07-14 00:00:00 code=600711 price=5.85
+pct= 20 , sell : date=2020-07-15 00:00:00 code=600711  price=5.41
+buy  : date=2020-04-28 00:00:00 code=600712 price=5.92
+pct= 10 , sell : date=2020-04-28 00:00:00 code=600712  price=5.92
+buy  : date=2020-07-21 00:00:00 code=600722 price=4.27
+pct= 10 , sell : date=2020-07-21 00:00:00 code=600722  price=4.27
+buy  : date=2020-07-31 00:00:00 code=600724 price=4.57
+buy  : date=2020-02-26 00:00:00 code=600739 price=18.55
+pct= 10 , sell : date=2020-02-26 00:00:00 code=600739  price=18.55
+buy  : date=2020-05-06 00:00:00 code=600741 price=21.51
+buy  : date=2020-08-14 00:00:00 code=600742 price=11.90
+pct= 10 , sell : date=2020-08-14 00:00:00 code=600742  price=11.90
+buy  : date=2020-06-16 00:00:00 code=600746 price=6.96
+pct= 10 , sell : date=2020-06-16 00:00:00 code=600746  price=6.96
+buy  : date=2020-03-16 00:00:00 code=600748 price=6.82
+pct= 20 , sell : date=2020-03-17 00:00:00 code=600748  price=6.42
+buy  : date=2020-09-08 00:00:00 code=600748 price=6.30
+pct= 20 , sell : date=2020-09-09 00:00:00 code=600748  price=6.26
+buy  : date=2020-03-04 00:00:00 code=600751 price=3.50
+pct= 20 , sell : date=2020-03-05 00:00:00 code=600751  price=3.51
+buy  : date=2020-08-17 00:00:00 code=600753 price=16.89
+pct= 10 , sell : date=2020-08-17 00:00:00 code=600753  price=16.89
+buy  : date=2020-07-16 00:00:00 code=600754 price=36.55
+pct= 40 , sell : date=2020-07-21 00:00:00 code=600754  price=38.81
+buy  : date=2020-07-20 00:00:00 code=600765 price=14.19
+pct= 20 , sell : date=2020-07-21 00:00:00 code=600765  price=13.96
+buy  : date=2020-04-17 00:00:00 code=600769 price=5.78
+pct= 10 , sell : date=2020-04-17 00:00:00 code=600769  price=5.78
+buy  : date=2020-08-19 00:00:00 code=600770 price=6.94
+pct= 10 , sell : date=2020-08-19 00:00:00 code=600770  price=6.94
+buy  : date=2020-02-21 00:00:00 code=600774 price=11.15
+pct= 10 , sell : date=2020-02-21 00:00:00 code=600774  price=11.15
+buy  : date=2020-03-16 00:00:00 code=600775 price=10.69
+pct= 10 , sell : date=2020-03-16 00:00:00 code=600775  price=10.69
+buy  : date=2020-01-21 00:00:00 code=600789 price=9.41
+pct= 80 , sell : date=2020-02-07 00:00:00 code=600789  price=16.13
+buy  : date=2020-03-03 00:00:00 code=600801 price=26.56
+pct= 10 , sell : date=2020-03-03 00:00:00 code=600801  price=26.56
+buy  : date=2020-06-19 00:00:00 code=600804 price=8.49
+pct= 10 , sell : date=2020-06-19 00:00:00 code=600804  price=8.49
+buy  : date=2020-06-10 00:00:00 code=600827 price=10.87
+pct= 90 , sell : date=2020-06-24 00:00:00 code=600827  price=13.43
+buy  : date=2020-08-28 00:00:00 code=600831 price=8.81
+pct= 10 , sell : date=2020-08-28 00:00:00 code=600831  price=8.81
+buy  : date=2020-06-03 00:00:00 code=600838 price=7.15
+pct= 20 , sell : date=2020-06-04 00:00:00 code=600838  price=7.12
+buy  : date=2020-08-06 00:00:00 code=600845 price=73.98
+pct= 10 , sell : date=2020-08-06 00:00:00 code=600845  price=73.98
+buy  : date=2020-08-07 00:00:00 code=600850 price=31.00
+pct= 10 , sell : date=2020-08-07 00:00:00 code=600850  price=31.00
+buy  : date=2020-07-07 00:00:00 code=600854 price=4.47
+pct= 10 , sell : date=2020-07-07 00:00:00 code=600854  price=4.47
+buy  : date=2020-07-29 00:00:00 code=600861 price=18.75
+pct= 10 , sell : date=2020-07-29 00:00:00 code=600861  price=18.75
+buy  : date=2020-08-04 00:00:00 code=600862 price=24.12
+pct= 50 , sell : date=2020-08-10 00:00:00 code=600862  price=27.29
+buy  : date=2020-04-22 00:00:00 code=600869 price=4.79
+pct= 10 , sell : date=2020-04-22 00:00:00 code=600869  price=4.79
+buy  : date=2020-08-04 00:00:00 code=600873 price=6.33
+pct= 10 , sell : date=2020-08-04 00:00:00 code=600873  price=6.33
+buy  : date=2020-04-21 00:00:00 code=600883 price=8.97
+buy  : date=2020-08-03 00:00:00 code=600885 price=45.56
+buy  : date=2020-07-27 00:00:00 code=600890 price=7.57
+pct= 10 , sell : date=2020-07-27 00:00:00 code=600890  price=7.57
+buy  : date=2020-06-08 00:00:00 code=600895 price=19.33
+buy  : date=2020-08-04 00:00:00 code=600909 price=8.76
+buy  : date=2020-04-07 00:00:00 code=600962 price=8.25
+pct= 10 , sell : date=2020-04-07 00:00:00 code=600962  price=8.25
+buy  : date=2020-03-09 00:00:00 code=600966 price=8.46
+buy  : date=2020-04-07 00:00:00 code=600981 price=3.79
+pct= 10 , sell : date=2020-04-07 00:00:00 code=600981  price=3.79
+buy  : date=2020-08-31 00:00:00 code=600984 price=25.62
+pct= 10 , sell : date=2020-08-31 00:00:00 code=600984  price=25.62
+buy  : date=2020-07-08 00:00:00 code=600986 price=5.76
+pct= 30 , sell : date=2020-07-10 00:00:00 code=600986  price=5.81
+buy  : date=2020-07-28 00:00:00 code=600988 price=17.08
+pct= 10 , sell : date=2020-07-28 00:00:00 code=600988  price=17.08
+buy  : date=2020-02-27 00:00:00 code=601038 price=6.66
+pct= 10 , sell : date=2020-02-27 00:00:00 code=601038  price=6.66
+buy  : date=2020-07-03 00:00:00 code=601066 price=47.70
+pct= 90 , sell : date=2020-07-24 00:00:00 code=601066  price=45.83
+buy  : date=2020-03-20 00:00:00 code=601116 price=13.13
+pct= 20 , sell : date=2020-03-23 00:00:00 code=601116  price=11.82
+buy  : date=2020-04-07 00:00:00 code=601127 price=9.32
+pct= 10 , sell : date=2020-04-07 00:00:00 code=601127  price=9.32
+buy  : date=2020-05-11 00:00:00 code=601162 price=6.08
+buy  : date=2020-07-21 00:00:00 code=601336 price=56.45
+pct= 10 , sell : date=2020-07-21 00:00:00 code=601336  price=56.45
+buy  : date=2020-03-10 00:00:00 code=601515 price=7.19
+pct= 10 , sell : date=2020-03-10 00:00:00 code=601515  price=7.19
+buy  : date=2020-04-15 00:00:00 code=601599 price=2.98
+pct= 90 , sell : date=2020-05-22 00:00:00 code=601599  price=2.31
+buy  : date=2020-07-21 00:00:00 code=601600 price=3.43
+pct= 10 , sell : date=2020-07-21 00:00:00 code=601600  price=3.43
+buy  : date=2020-07-09 00:00:00 code=601609 price=14.75
+pct= 20 , sell : date=2020-07-10 00:00:00 code=601609  price=13.70
+buy  : date=2020-02-05 00:00:00 code=601689 price=24.86
+pct= 90 , sell : date=2020-02-27 00:00:00 code=601689  price=21.62
+buy  : date=2020-07-08 00:00:00 code=601689 price=35.00
+buy  : date=2020-07-06 00:00:00 code=601696 price=28.04
+pct= 90 , sell : date=2020-07-17 00:00:00 code=601696  price=31.22
+buy  : date=2020-04-21 00:00:00 code=601698 price=19.08
+pct= 40 , sell : date=2020-04-24 00:00:00 code=601698  price=17.10
+buy  : date=2020-07-09 00:00:00 code=601698 price=23.18
+pct= 20 , sell : date=2020-07-10 00:00:00 code=601698  price=23.97
+buy  : date=2020-03-02 00:00:00 code=601718 price=4.86
+pct= 10 , sell : date=2020-03-02 00:00:00 code=601718  price=4.86
+buy  : date=2020-03-26 00:00:00 code=601777 price=2.99
+buy  : date=2020-03-03 00:00:00 code=601789 price=4.56
+pct= 10 , sell : date=2020-03-03 00:00:00 code=601789  price=4.56 , sell : date=2020-08-25 00:00:00 code=300526  price=102.60
+buy  : date=2020-03-23 00:00:00 code=300528 price=7.26
+pct= 10 , sell : date=2020-03-23 00:00:00 code=300528  price=7.26
+buy  : date=2020-06-04 00:00:00 code=300537 price=19.05
+pct= 10 , sell : date=2020-06-04 00:00:00 code=300537  price=19.05
+buy  : date=2020-09-10 00:00:00 code=300561 price=22.68
+pct= 10 , sell : date=2020-09-10 00:00:00 code=300561  price=22.68
+buy  : date=2020-01-21 00:00:00 code=300562 price=18.80
+pct= 30 , sell : date=2020-01-23 00:00:00 code=300562  price=20.39
+buy  : date=2020-01-21 00:00:00 code=300567 price=64.53
+pct= 10 , sell : date=2020-01-21 00:00:00 code=300567  price=64.53
+buy  : date=2020-03-10 00:00:00 code=300568 price=35.84
+pct= 20 , sell : date=2020-03-11 00:00:00 code=300568  price=33.84
+buy  : date=2020-08-04 00:00:00 code=300570 price=23.06
+pct= 10 , sell : date=2020-08-04 00:00:00 code=300570  price=23.06
+buy  : date=2020-05-12 00:00:00 code=300573 price=97.00
+pct= 10 , sell : date=2020-05-12 00:00:00 code=300573  price=97.00
+buy  : date=2020-07-23 00:00:00 code=300573 price=214.15
+pct= 10 , sell : date=2020-07-23 00:00:00 code=300573  price=214.15
+buy  : date=2020-04-23 00:00:00 code=300575 price=32.67
+buy  : date=2020-04-17 00:00:00 code=300579 price=45.35
+pct= 10 , sell : date=2020-04-17 00:00:00 code=300579  price=45.35
+buy  : date=2020-03-24 00:00:00 code=300585 price=14.30
+buy  : date=2020-09-09 00:00:00 code=300588 price=13.76
+pct= 10 , sell : date=2020-09-09 00:00:00 code=300588  price=13.76
+buy  : date=2020-08-04 00:00:00 code=300589 price=15.29
+pct= 10 , sell : date=2020-08-04 00:00:00 code=300589  price=15.29
+buy  : date=2020-07-16 00:00:00 code=300591 price=6.91
+pct= 10 , sell : date=2020-07-16 00:00:00 code=300591  price=6.91
+buy  : date=2020-07-24 00:00:00 code=300593 price=18.64
+pct= 10 , sell : date=2020-07-24 00:00:00 code=300593  price=18.64
+buy  : date=2020-05-11 00:00:00 code=300598 price=264.99
+pct= 90 , sell : date=2020-05-22 00:00:00 code=300598  price=251.20
+buy  : date=2020-07-08 00:00:00 code=300598 price=220.00
+pct= 30 , sell : date=2020-07-10 00:00:00 code=300598  price=234.01
+buy  : date=2020-04-15 00:00:00 code=300599 price=12.70
+buy  : date=2020-08-12 00:00:00 code=300600 price=17.93
+pct= 40 , sell : date=2020-08-17 00:00:00 code=300600  price=17.70
+buy  : date=2020-07-08 00:00:00 code=300603 price=34.40
+pct= 70 , sell : date=2020-07-16 00:00:00 code=300603  price=20.52
+buy  : date=2020-09-14 00:00:00 code=300606 price=31.10
+pct= 20 , sell : date=2020-09-15 00:00:00 code=300606  price=29.11
+buy  : date=2020-04-10 00:00:00 code=300608 price=18.60
+pct= 10 , sell : date=2020-04-10 00:00:00 code=300608  price=18.60
+buy  : date=2020-08-14 00:00:00 code=300610 price=19.45
+pct= 10 , sell : date=2020-08-14 00:00:00 code=300610  price=19.45
+buy  : date=2020-04-22 00:00:00 code=300612 price=14.94
+pct= 10 , sell : date=2020-04-22 00:00:00 code=300612  price=14.94
+buy  : date=2020-01-20 00:00:00 code=300617 price=32.00
+pct= 90 , sell : date=2020-03-30 00:00:00 code=300617  price=27.78
+buy  : date=2020-06-17 00:00:00 code=300618 price=62.17
+buy  : date=2020-07-01 00:00:00 code=300620 price=51.28
+pct= 90 , sell : date=2020-07-16 00:00:00 code=300620  price=51.30
+buy  : date=2020-02-17 00:00:00 code=300636 price=33.89
+pct= 90 , sell : date=2020-04-17 00:00:00 code=300636  price=26.93
+buy  : date=2020-05-19 00:00:00 code=300644 price=36.50
+buy  : date=2020-07-10 00:00:00 code=300648 price=18.60
+pct= 10 , sell : date=2020-07-10 00:00:00 code=300648  price=18.60
+buy  : date=2020-09-03 00:00:00 code=300648 price=35.24
+pct= 10 , sell : date=2020-09-03 00:00:00 code=300648  price=35.24
+buy  : date=2020-09-03 00:00:00 code=300657 price=19.47
+pct= 10 , sell : date=2020-09-03 00:00:00 code=300657  price=19.47
+buy  : date=2020-06-04 00:00:00 code=300658 price=28.19
+pct= 10 , sell : date=2020-06-04 00:00:00 code=300658  price=28.19
+buy  : date=2020-06-15 00:00:00 code=300658 price=32.65
+buy  : date=2020-05-18 00:00:00 code=300661 price=372.00
+pct= 10 , sell : date=2020-05-18 00:00:00 code=300661  price=372.00
+buy  : date=2020-07-15 00:00:00 code=300661 price=380.00
+pct= 10 , sell : date=2020-07-15 00:00:00 code=300661  price=380.00
+buy  : date=2020-07-01 00:00:00 code=300663 price=27.19
+pct= 90 , sell : date=2020-07-16 00:00:00 code=300663  price=32.00
+buy  : date=2020-04-17 00:00:00 code=300676 price=102.19
+pct= 10 , sell : date=2020-04-17 00:00:00 code=300676  price=102.19
+buy  : date=2020-02-04 00:00:00 code=300677 price=25.72
+pct= 10 , sell : date=2020-02-04 00:00:00 code=300677  price=25.72
+buy  : date=2020-03-05 00:00:00 code=300678 price=26.29
+pct= 10 , sell : date=2020-03-05 00:00:00 code=300678  price=26.29
+buy  : date=2020-09-11 00:00:00 code=300678 price=30.78
+pct= 10 , sell : date=2020-09-11 00:00:00 code=300678  price=30.78
+buy  : date=2020-07-30 00:00:00 code=300680 price=23.05
+pct= 10 , sell : date=2020-07-30 00:00:00 code=300680  price=23.05
+buy  : date=2020-06-17 00:00:00 code=300683 price=59.25
+pct= 10 , sell : date=2020-06-17 00:00:00 code=300683  price=59.25
+buy  : date=2020-04-28 00:00:00 code=300688 price=29.00
+pct= 20 , sell : date=2020-04-29 00:00:00 code=300688  price=27.77
+buy  : date=2020-07-21 00:00:00 code=300689 price=43.22
+pct= 90 , sell : date=2020-08-11 00:00:00 code=300689  price=38.81
+buy  : date=2020-08-03 00:00:00 code=300690 price=41.90
+pct= 20 , sell : date=2020-08-04 00:00:00 code=300690  price=39.12
+buy  : date=2020-05-11 00:00:00 code=300693 price=19.39
+buy  : date=2020-09-15 00:00:00 code=300697 price=19.68
+buy  : date=2020-07-30 00:00:00 code=300703 price=14.00
+pct= 90 , sell : date=2020-09-10 00:00:00 code=300703  price=13.21
+buy  : date=2020-07-01 00:00:00 code=300708 price=15.28
+pct= 90 , sell : date=2020-07-27 00:00:00 code=300708  price=14.18
+buy  : date=2020-09-07 00:00:00 code=300708 price=27.98
+pct= 30 , sell : date=2020-09-09 00:00:00 code=300708  price=33.80
+buy  : date=2020-05-06 00:00:00 code=300709 price=100.36
+pct= 90 , sell : date=2020-05-21 00:00:00 code=300709  price=93.30
+buy  : date=2020-06-02 00:00:00 code=300709 price=105.60
+pct= 90 , sell : date=2020-09-09 00:00:00 code=300709  price=73.58
+buy  : date=2020-08-11 00:00:00 code=300715 price=53.99
+buy  : date=2020-08-05 00:00:00 code=300717 price=18.30
+buy  : date=2020-08-04 00:00:00 code=300719 price=15.43
+pct= 10 , sell : date=2020-08-04 00:00:00 code=300719  price=15.43
+buy  : date=2020-08-11 00:00:00 code=300721 price=27.13
+pct= 10 , sell : date=2020-08-11 00:00:00 code=300721  price=27.13
+buy  : date=2020-07-24 00:00:00 code=300722 price=21.99
+pct= 20 , sell : date=2020-07-27 00:00:00 code=300722  price=19.79
+buy  : date=2020-08-04 00:00:00 code=300723 price=55.41
+pct= 40 , sell : date=2020-08-07 00:00:00 code=300723  price=55.70
+buy  : date=2020-06-15 00:00:00 code=300729 price=34.83
+pct= 90 , sell : date=2020-07-17 00:00:00 code=300729  price=44.28
+buy  : date=2020-09-09 00:00:00 code=300730 price=17.00
+pct= 10 , sell : date=2020-09-09 00:00:00 code=300730  price=17.00
+buy  : date=2020-01-20 00:00:00 code=300731 price=39.04
+pct= 20 , sell : date=2020-01-21 00:00:00 code=300731  price=36.73
+buy  : date=2020-07-15 00:00:00 code=300735 price=21.40
+pct= 10 , sell : date=2020-07-15 00:00:00 code=300735  price=21.40
+buy  : date=2020-03-23 00:00:00 code=300737 price=16.93
+pct= 10 , sell : date=2020-03-23 00:00:00 code=300737  price=16.93
+buy  : date=2020-04-22 00:00:00 code=300737 price=21.74
+pct= 20 , sell : date=2020-04-23 00:00:00 code=300737  price=20.44
+buy  : date=2020-05-13 00:00:00 code=300740 price=12.20
+buy  : date=2020-04-28 00:00:00 code=300742 price=22.77
+pct= 10 , sell : date=2020-04-28 00:00:00 code=300742  price=22.77
+buy  : date=2020-05-07 00:00:00 code=300748 price=33.83
+pct= 10 , sell : date=2020-05-07 00:00:00 code=300748  price=33.83
+buy  : date=2020-02-13 00:00:00 code=300751 price=206.46
+pct= 10 , sell : date=2020-02-13 00:00:00 code=300751  price=206.46
+buy  : date=2020-05-20 00:00:00 code=300755 price=28.70
+pct= 10 , sell : date=2020-05-20 00:00:00 code=300755  price=28.70
+buy  : date=2020-02-24 00:00:00 code=300757 price=44.79
+pct= 20 , sell : date=2020-02-25 00:00:00 code=300757  price=45.35
+buy  : date=2020-07-20 00:00:00 code=300758 price=24.57begin-tdx_func: 2020-09-19 19:30:31.624158
+buy  : date=2020-04-10 00:00:00 code=600051 price=6.48
+pct= 10 , sell : date=2020-04-10 00:00:00 code=600051  price=6.48
+buy  : date=2020-07-17 00:00:00 code=600052 price=4.41
+buy  : date=2020-06-29 00:00:00 code=600053 price=28.46
+pct= 10 , sell : date=2020-06-29 00:00:00 code=600053  price=28.46
+buy  : date=2020-07-08 00:00:00 code=600070 price=13.55
+pct= 10 , sell : date=2020-07-08 00:00:00 code=600070  price=13.55
+buy  : date=2020-08-14 00:00:00 code=600071 price=12.77
+pct= 10 , sell : date=2020-08-14 00:00:00 code=600071  price=12.77
+buy  : date=2020-04-03 00:00:00 code=600078 price=5.74
+pct= 10 , sell : date=2020-04-03 00:00:00 code=600078  price=5.74
+buy  : date=2020-05-18 00:00:00 code=600095 price=10.20
+pct= 40 , sell : date=2020-05-22 00:00:00 code=600095  price=10.42
+buy  : date=2020-06-15 00:00:00 code=600095 price=10.79
+buy  : date=2020-07-09 00:00:00 code=600107 price=9.32
+pct= 20 , sell : date=2020-07-10 00:00:00 code=600107  price=9.42
+buy  : date=2020-04-01 00:00:00 code=600108 price=3.62
+pct= 10 , sell : date=2020-04-01 00:00:00 code=600108  price=3.62
+buy  : date=2020-07-03 00:00:00 code=600109 price=13.95
+pct= 90 , sell : date=2020-07-17 00:00:00 code=600109  price=14.35
+buy  : date=2020-07-21 00:00:00 code=600111 price=12.63
+pct= 30 , sell : date=2020-07-23 00:00:00 code=600111  price=13.03
+buy  : date=2020-06-09 00:00:00 code=600114 price=10.45
+buy  : date=2020-07-10 00:00:00 code=600117 price=3.61
+pct= 10 , sell : date=2020-07-10 00:00:00 code=600117  price=3.61
+buy  : date=2020-08-04 00:00:00 code=600118 price=38.42
+pct= 10 , sell : date=2020-08-04 00:00:00 code=600118  price=38.42
+buy  : date=2020-08-04 00:00:00 code=600130 price=4.44
+buy  : date=2020-03-06 00:00:00 code=600143 price=12.00
+pct= 10 , sell : date=2020-03-06 00:00:00 code=600143  price=12.00
+buy  : date=2020-02-26 00:00:00 code=600165 price=4.97
+pct= 20 , sell : date=2020-02-27 00:00:00 code=600165  price=4.71
+buy  : date=2020-06-23 00:00:00 code=600165 price=5.36
+buy  : date=2020-08-03 00:00:00 code=600175 price=0.20
+buy  : date=2020-08-11 00:00:00 code=600189 price=4.71
+pct= 10 , sell : date=2020-08-11 00:00:00 code=600189  price=4.71
+buy  : date=2020-06-24 00:00:00 code=600197 price=19.34
+pct= 10 , sell : date=2020-06-24 00:00:00 code=600197  price=19.34
+buy  : date=2020-06-02 00:00:00 code=600198 price=11.39
+buy  : date=2020-05-07 00:00:00 code=600203 price=10.31
+pct= 10 , sell : date=2020-05-07 00:00:00 code=600203  price=10.31
+buy  : date=2020-08-04 00:00:00 code=600207 price=5.43
+pct= 10 , sell : date=2020-08-04 00:00:00 code=600207  price=5.43
+buy  : date=2020-05-26 00:00:00 code=600211 price=30.19
+buy  : date=2020-03-26 00:00:00 code=600223 price=6.84
+pct= 10 , sell : date=2020-03-26 00:00:00 code=600223  price=6.84
+buy  : date=2020-05-08 00:00:00 code=600223 price=8.08
+pct= 10 , sell : date=2020-05-08 00:00:00 code=600223  price=8.08
+buy  : date=2020-03-10 00:00:00 code=600227 price=3.05
+pct= 10 , sell : date=2020-03-10 00:00:00 code=600227  price=3.05
+buy  : date=2020-02-03 00:00:00 code=600229 price=8.75
+pct= 20 , sell : date=2020-02-04 00:00:00 code=600229  price=8.88
+buy  : date=2020-06-09 00:00:00 code=600230 price=8.91
+buy  : date=2020-09-11 00:00:00 code=600237 price=4.97
+pct= 20 , sell : date=2020-09-14 00:00:00 code=600237  price=4.83
+buy  : date=2020-06-10 00:00:00 code=600242 price=7.26
+pct= 10 , sell : date=2020-06-10 00:00:00 code=600242  price=7.26
+buy  : date=2020-06-04 00:00:00 code=600250 price=5.93
+pct= 10 , sell : date=2020-06-04 00:00:00 code=600250  price=5.93
+buy  : date=2020-04-09 00:00:00 code=600272 price=7.60
+pct= 20 , sell : date=2020-04-10 00:00:00 code=600272  price=7.38
+buy  : date=2020-03-25 00:00:00 code=600297 price=4.34
+pct= 90 , sell : date=2020-04-21 00:00:00 code=600297  price=3.49
+buy  : date=2020-08-25 00:00:00 code=600300 price=4.33
+pct= 10 , sell : date=2020-08-25 00:00:00 code=600300  price=4.33
+buy  : date=2020-04-08 00:00:00 code=600303 price=3.94
+pct= 20 , sell : date=2020-04-09 00:00:00 code=600303  price=3.73
+buy  : date=2020-03-16 00:00:00 code=600313 price=3.51
+pct= 10 , sell : date=2020-03-16 00:00:00 code=600313  price=3.51
+buy  : date=2020-03-27 00:00:00 code=600313 price=3.55
+pct= 10 , sell : date=2020-03-27 00:00:00 code=600313  price=3.55
+buy  : date=2020-08-14 00:00:00 code=600313 price=5.25
+pct= 10 , sell : date=2020-08-14 00:00:00 code=600313  price=5.25
+buy  : date=2020-06-18 00:00:00 code=600315 price=47.80
+pct= 30 , sell : date=2020-06-22 00:00:00 code=600315  price=46.63
+buy  : date=2020-06-18 00:00:00 code=600329 price=18.06
+pct= 10 , sell : date=2020-06-18 00:00:00 code=600329  price=18.06
+buy  : date=2020-07-02 00:00:00 code=600338 price=11.49
+pct= 10 , sell : date=2020-07-02 00:00:00 code=600338  price=11.49
+buy  : date=2020-03-11 00:00:00 code=600355 price=4.60
+pct= 20 , sell : date=2020-03-12 00:00:00 code=600355  price=4.18
+buy  : date=2020-09-01 00:00:00 code=600356 price=9.32
+buy  : date=2020-04-20 00:00:00 code=600366 price=6.10
+buy  : date=2020-07-21 00:00:00 code=600369 price=5.95
+pct= 20 , sell : date=2020-07-22 00:00:00 code=600369  price=5.86
+buy  : date=2020-03-27 00:00:00 code=600371 price=12.45
+pct= 20 , sell : date=2020-03-30 00:00:00 code=600371  price=12.82
+buy  : date=2020-05-28 00:00:00 code=600371 price=16.06
+pct= 90 , sell : date=2020-07-08 00:00:00 code=600371  price=12.22
+buy  : date=2020-08-07 00:00:00 code=600372 price=22.40
+pct= 20 , sell : date=2020-08-10 00:00:00 code=600372  price=20.76
+buy  : date=2020-02-24 00:00:00 code=600378 price=22.52
+pct= 10 , sell : date=2020-02-24 00:00:00 code=600378  price=22.52
+buy  : date=2020-07-23 00:00:00 code=600378 price=23.84
+pct= 20 , sell : date=2020-07-24 00:00:00 code=600378  price=22.01
+buy  : date=2020-08-17 00:00:00 code=600378 price=24.64
+pct= 10 , sell : date=2020-08-17 00:00:00 code=600378  price=24.64
+buy  : date=2020-03-18 00:00:00 code=600379 price=6.21
+pct= 10 , sell : date=2020-03-18 00:00:00 code=600379  price=6.21
+buy  : date=2020-09-04 00:00:00 code=600397 price=2.66
+pct= 10 , sell : date=2020-09-04 00:00:00 code=600397  price=2.66
+buy  : date=2020-08-04 00:00:00 code=600435 price=10.73
+pct= 50 , sell : date=2020-08-10 00:00:00 code=600435  price=11.05
+buy  : date=2020-07-31 00:00:00 code=600438 price=27.30
+buy  : date=2020-07-07 00:00:00 code=600439 price=3.39
+buy  : date=2020-07-07 00:00:00 code=600446 price=22.31
+pct= 90 , sell : date=2020-09-10 00:00:00 code=600446  price=18.46
+buy  : date=2020-07-31 00:00:00 code=600468 price=5.46
+buy  : date=2020-01-16 00:00:00 code=600478 price=5.25
+pct= 10 , sell : date=2020-01-16 00:00:00 code=600478  price=5.25
+buy  : date=2020-03-09 00:00:00 code=600493 price=6.39
+pct= 10 , sell : date=2020-03-09 00:00:00 code=600493  price=6.39
+buy  : date=2020-08-05 00:00:00 code=600496 price=5.80
+pct= 10 , sell : date=2020-08-05 00:00:00 code=600496  price=5.80
+buy  : date=2020-05-28 00:00:00 code=600503 price=3.96
+pct= 10 , sell : date=2020-05-28 00:00:00 code=600503  price=3.96
+buy  : date=2020-05-18 00:00:00 code=600506 price=10.38
+pct= 40 , sell : date=2020-05-21 00:00:00 code=600506  price=11.30
+buy  : date=2020-04-30 00:00:00 code=600510 price=9.26
+pct= 10 , sell : date=2020-04-30 00:00:00 code=600510  price=9.26
+buy  : date=2020-01-21 00:00:00 code=600515 price=5.15
+pct= 10 , sell : date=2020-01-21 00:00:00 code=600515  price=5.15
+buy  : date=2020-05-11 00:00:00 code=600532 price=5.34
+buy  : date=2020-07-14 00:00:00 code=600540 price=6.40
+pct= 20 , sell : date=2020-07-15 00:00:00 code=600540  price=6.63
+buy  : date=2020-06-10 00:00:00 code=600543 price=5.97
+buy  : date=2020-05-06 00:00:00 code=600546 price=10.14
+buy  : date=2020-05-14 00:00:00 code=600550 price=6.09
+pct= 90 , sell : date=2020-09-10 00:00:00 code=600550  price=4.59
+buy  : date=2020-07-03 00:00:00 code=600551 price=9.60
+pct= 10 , sell : date=2020-07-03 00:00:00 code=600551  price=9.60
+buy  : date=2020-07-29 00:00:00 code=600576 price=4.54
+buy  : date=2020-03-03 00:00:00 code=600589 price=6.09
+pct= 10 , sell : date=2020-03-03 00:00:00 code=600589  price=6.09
+buy  : date=2020-08-19 00:00:00 code=600589 price=5.17
+pct= 40 , sell : date=2020-08-24 00:00:00 code=600589  price=5.362020-09-19 19:31:00.572728 tdx_func_mp spent:0:00:29.049686
+begin-buy_sell_fun_mp-01: 2020-09-19 19:31:00.573587
+date
+2020-09-03    168
+2020-09-04    169
+2020-09-07    169
+2020-09-08    169
+2020-09-09    175
+2020-09-10    175
+2020-09-11    175
+2020-09-14    175
+2020-09-15    175
+2020-09-16    175
+Name: position, dtype: int64
+RSRS1_T 交易次数 = 661, 胜率=123.147
+策略净值为= 1.09 最大回撤 19.00 
+2020-09-19 19:31:00.944900 spent:0:00:31.117961
+
+buy  : date=2020-07-15 00:00:00 code=002291 price=25.20
+pct= 10 , sell : date=2020-07-15 00:00:00 code=002291  price=25.20
+buy  : date=2020-07-09 00:00:00 code=002292 price=10.75
+pct= 60 , sell : date=2020-07-16 00:00:00 code=002292  price=9.18
+buy  : date=2020-04-28 00:00:00 code=002300 price=7.22
+pct= 20 , sell : date=2020-04-29 00:00:00 code=002300  price=7.20
+buy  : date=2020-03-23 00:00:00 code=002307 price=5.64
+buy  : date=2020-05-13 00:00:00 code=002308 price=6.61
+buy  : date=2020-08-04 00:00:00 code=002314 price=5.10
+pct= 20 , sell : date=2020-08-05 00:00:00 code=002314  price=4.97
+buy  : date=2020-03-23 00:00:00 code=002317 price=12.40
+pct= 10 , sell : date=2020-03-23 00:00:00 code=002317  price=12.40
+buy  : date=2020-06-30 00:00:00 code=002317 price=17.16
+pct= 90 , sell : date=2020-07-27 00:00:00 code=002317  price=15.09
+buy  : date=2020-04-01 00:00:00 code=002320 price=17.00
+pct= 10 , sell : date=2020-04-01 00:00:00 code=002320  price=17.00
+buy  : date=2020-02-20 00:00:00 code=002321 price=5.61
+pct= 90 , sell : date=2020-03-23 00:00:00 code=002321  price=4.63
+buy  : date=2020-07-13 00:00:00 code=002324 price=18.06
+pct= 10 , sell : date=2020-07-13 00:00:00 code=002324  price=18.06
+buy  : date=2020-04-10 00:00:00 code=002329 price=5.99
+pct= 10 , sell : date=2020-04-10 00:00:00 code=002329  price=5.99
+buy  : date=2020-04-23 00:00:00 code=002331 price=10.81
+buy  : date=2020-04-10 00:00:00 code=002332 price=14.68
+pct= 10 , sell : date=2020-04-10 00:00:00 code=002332  price=14.68
+buy  : date=2020-03-04 00:00:00 code=002334 price=5.34
+pct= 60 , sell : date=2020-03-11 00:00:00 code=002334  price=6.21
+buy  : date=2020-08-04 00:00:00 code=002341 price=6.03
+pct= 10 , sell : date=2020-08-04 00:00:00 code=002341  price=6.03
+buy  : date=2020-07-30 00:00:00 code=002360 price=7.31
+pct= 10 , sell : date=2020-07-30 00:00:00 code=002360  price=7.31
+buy  : date=2020-07-14 00:00:00 code=002367 price=10.25
+pct= 20 , sell : date=2020-07-15 00:00:00 code=002367  price=9.98
+buy  : date=2020-08-25 00:00:00 code=002367 price=12.24
+buy  : date=2020-08-19 00:00:00 code=002370 price=5.68
+pct= 10 , sell : date=2020-08-19 00:00:00 code=002370  price=5.68
+buy  : date=2020-04-22 00:00:00 code=002375 price=9.00
+pct= 10 , sell : date=2020-04-22 00:00:00 code=002375  price=9.00
+buy  : date=2020-05-11 00:00:00 code=002375 price=9.52
+pct= 10 , sell : date=2020-05-11 00:00:00 code=002375  price=9.52
+buy  : date=2020-07-29 00:00:00 code=002378 price=5.63
+pct= 10 , sell : date=2020-07-29 00:00:00 code=002378  price=5.63
+buy  : date=2020-09-09 00:00:00 code=002379 price=3.21
+pct= 10 , sell : date=2020-09-09 00:00:00 code=002379  price=3.21
+buy  : date=2020-07-14 00:00:00 code=002385 price=10.88
+pct= 20 , sell : date=2020-07-15 00:00:00 code=002385  price=10.33
+buy  : date=2020-06-03 00:00:00 code=002388 price=7.56
+buy  : date=2020-05-07 00:00:00 code=002395 price=23.90
+pct= 10 , sell : date=2020-05-07 00:00:00 code=002395  price=23.90
+buy  : date=2020-03-03 00:00:00 code=002396 price=46.09
+pct= 10 , sell : date=2020-03-03 00:00:00 code=002396  price=46.09
+buy  : date=2020-05-29 00:00:00 code=002398 price=12.45
+pct= 90 , sell : date=2020-06-24 00:00:00 code=002398  price=10.60
+buy  : date=2020-07-09 00:00:00 code=002409 price=68.64
+pct= 90 , sell : date=2020-08-26 00:00:00 code=002409  price=53.73
+buy  : date=2020-04-13 00:00:00 code=002412 price=9.16
+pct= 90 , sell : date=2020-05-18 00:00:00 code=002412  price=7.23
+buy  : date=2020-08-06 00:00:00 code=002413 price=10.84
+pct= 10 , sell : date=2020-08-06 00:00:00 code=002413  price=10.84
+buy  : date=2020-04-21 00:00:00 code=002416 price=7.13
+pct= 70 , sell : date=2020-04-29 00:00:00 code=002416  price=7.74
+buy  : date=2020-02-24 00:00:00 code=002417 price=9.14
+pct= 20 , sell : date=2020-02-25 00:00:00 code=002417  price=9.33
+buy  : date=2020-04-03 00:00:00 code=002421 price=3.71
+buy  : date=2020-06-09 00:00:00 code=002425 price=8.11
+pct= 20 , sell : date=2020-06-10 00:00:00 code=002425  price=8.47
+buy  : date=2020-01-15 00:00:00 code=002432 price=5.62
+pct= 10 , sell : date=2020-01-15 00:00:00 code=002432  price=5.62
+buy  : date=2020-02-04 00:00:00 code=002432 price=6.64
+pct= 40 , sell : date=2020-02-07 00:00:00 code=002432  price=6.74
+buy  : date=2020-01-22 00:00:00 code=002436 price=10.82
+pct= 20 , sell : date=2020-01-23 00:00:00 code=002436  price=10.47
+buy  : date=2020-04-16 00:00:00 code=002437 price=3.61
+pct= 20 , sell : date=2020-04-17 00:00:00 code=002437  price=3.34
+buy  : date=2020-08-13 00:00:00 code=002442 price=5.39
+pct= 10 , sell : date=2020-08-13 00:00:00 code=002442  price=5.39
+buy  : date=2020-03-23 00:00:00 code=002448 price=5.11
+buy  : date=2020-02-28 00:00:00 code=002453 price=5.61
+pct= 10 , sell : date=2020-02-28 00:00:00 code=002453  price=5.61
+buy  : date=2020-04-03 00:00:00 code=002455 price=5.30
+pct= 10 , sell : date=2020-04-03 00:00:00 code=002455  price=5.30
+buy  : date=2020-06-22 00:00:00 code=002461 price=9.34
+buy  : date=2020-04-17 00:00:00 code=002464 price=6.74
+pct= 70 , sell : date=2020-04-27 00:00:00 code=002464  price=7.40
+buy  : date=2020-06-01 00:00:00 code=002466 price=21.88
+pct= 30 , sell : date=2020-06-03 00:00:00 code=002466  price=22.28
+buy  : date=2020-08-13 00:00:00 code=002466 price=26.87
+pct= 10 , sell : date=2020-08-13 00:00:00 code=002466  price=26.87
+buy  : date=2020-07-13 00:00:00 code=300825 price=23.99
+pct= 10 , sell : date=2020-07-13 00:00:00 code=300825  price=23.99
+buy  : date=2020-09-10 00:00:00 code=300840 price=18.22
+pct= 10 , sell : date=2020-09-10 00:00:00 code=300840  price=18.22
+2020-09-19 19:30:58.663520 tdx_func spent:0:00:26.957985
+tdx-fun-result-len 85865
+
+pct= 10 , sell : date=2020-07-22 00:00:00 code=603456  price=35.85
+buy  : date=2020-04-01 00:00:00 code=603477 price=12.50
+pct= 10 , sell : date=2020-04-01 00:00:00 code=603477  price=12.50
+buy  : date=2020-07-16 00:00:00 code=603477 price=14.03
+pct= 10 , sell : date=2020-07-16 00:00:00 code=603477  price=14.03
+buy  : date=2020-06-22 00:00:00 code=603486 price=30.25
+buy  : date=2020-05-06 00:00:00 code=603489 price=86.51
+buy  : date=2020-05-07 00:00:00 code=603500 price=16.24
+pct= 90 , sell : date=2020-06-15 00:00:00 code=603500  price=14.26
+buy  : date=2020-02-25 00:00:00 code=603501 price=213.50
+pct= 20 , sell : date=2020-02-26 00:00:00 code=603501  price=194.98
+buy  : date=2020-05-27 00:00:00 code=603519 price=13.47
+pct= 10 , sell : date=2020-05-27 00:00:00 code=603519  price=13.47
+buy  : date=2020-05-14 00:00:00 code=603520 price=78.20
+pct= 10 , sell : date=2020-05-14 00:00:00 code=603520  price=78.20
+buy  : date=2020-06-01 00:00:00 code=603520 price=64.55
+pct= 20 , sell : date=2020-06-02 00:00:00 code=603520  price=60.08
+buy  : date=2020-03-04 00:00:00 code=603527 price=16.08
+pct= 90 , sell : date=2020-03-23 00:00:00 code=603527  price=13.06
+buy  : date=2020-02-21 00:00:00 code=603528 price=7.84
+pct= 10 , sell : date=2020-02-21 00:00:00 code=603528  price=7.84
+buy  : date=2020-06-24 00:00:00 code=603530 price=28.50
+pct= 90 , sell : date=2020-07-17 00:00:00 code=603530  price=25.57
+buy  : date=2020-06-09 00:00:00 code=603533 price=36.07
+pct= 90 , sell : date=2020-07-24 00:00:00 code=603533  price=32.50
+buy  : date=2020-04-08 00:00:00 code=603538 price=32.17
+buy  : date=2020-03-31 00:00:00 code=603557 price=12.44
+pct= 10 , sell : date=2020-03-31 00:00:00 code=603557  price=12.44
+buy  : date=2020-02-26 00:00:00 code=603566 price=18.72
+pct= 10 , sell : date=2020-02-26 00:00:00 code=603566  price=18.72
+buy  : date=2020-02-04 00:00:00 code=603567 price=15.02
+pct= 90 , sell : date=2020-03-30 00:00:00 code=603567  price=11.69
+buy  : date=2020-01-23 00:00:00 code=603595 price=28.41
+pct= 10 , sell : date=2020-01-23 00:00:00 code=603595  price=28.41
+buy  : date=2020-08-17 00:00:00 code=603596 price=39.05
+buy  : date=2020-07-22 00:00:00 code=603600 price=16.20
+pct= 20 , sell : date=2020-07-23 00:00:00 code=603600  price=15.94
+buy  : date=2020-08-05 00:00:00 code=603600 price=17.60
+buy  : date=2020-03-03 00:00:00 code=603602 price=24.06
+pct= 30 , sell : date=2020-03-05 00:00:00 code=603602  price=24.77
+buy  : date=2020-08-11 00:00:00 code=603606 price=25.98
+pct= 10 , sell : date=2020-08-11 00:00:00 code=603606  price=25.98
+buy  : date=2020-02-24 00:00:00 code=603611 price=22.29
+pct= 10 , sell : date=2020-02-24 00:00:00 code=603611  price=22.29
+buy  : date=2020-06-24 00:00:00 code=603633 price=15.27
+pct= 10 , sell : date=2020-06-24 00:00:00 code=603633  price=15.27
+buy  : date=2020-02-19 00:00:00 code=603636 price=14.62
+pct= 10 , sell : date=2020-02-19 00:00:00 code=603636  price=14.62
+buy  : date=2020-06-22 00:00:00 code=603655 price=30.40
+pct= 60 , sell : date=2020-07-01 00:00:00 code=603655  price=29.51
+buy  : date=2020-03-06 00:00:00 code=603679 price=50.69
+pct= 10 , sell : date=2020-03-06 00:00:00 code=603679  price=50.69
+buy  : date=2020-01-21 00:00:00 code=603688 price=24.70
+pct= 10 , sell : date=2020-01-21 00:00:00 code=603688  price=24.70
+buy  : date=2020-03-18 00:00:00 code=603696 price=9.66
+pct= 10 , sell : date=2020-03-18 00:00:00 code=603696  price=9.66
+buy  : date=2020-05-26 00:00:00 code=603697 price=18.03
+pct= 20 , sell : date=2020-05-27 00:00:00 code=603697  price=17.86
+buy  : date=2020-08-20 00:00:00 code=603697 price=26.57
+pct= 90 , sell : date=2020-09-04 00:00:00 code=603697  price=29.29
+buy  : date=2020-07-21 00:00:00 code=603701 price=11.11
+pct= 10 , sell : date=2020-07-21 00:00:00 code=603701  price=11.11
+buy  : date=2020-07-06 00:00:00 code=603718 price=23.34
+pct= 90 , sell : date=2020-08-26 00:00:00 code=603718  price=31.02
+buy  : date=2020-07-07 00:00:00 code=603726 price=16.52
+pct= 20 , sell : date=2020-07-08 00:00:00 code=603726  price=17.06
+buy  : date=2020-08-03 00:00:00 code=603733 price=25.42
+pct= 30 , sell : date=2020-08-05 00:00:00 code=603733  price=27.90
+buy  : date=2020-08-04 00:00:00 code=603737 price=160.18
+pct= 10 , sell : date=2020-08-04 00:00:00 code=603737  price=160.18
+buy  : date=2020-08-11 00:00:00 code=603758 price=8.20
+pct= 10 , sell : date=2020-08-11 00:00:00 code=603758  price=8.20
+buy  : date=2020-06-12 00:00:00 code=603787 price=15.75
+pct= 20 , sell : date=2020-06-15 00:00:00 code=603787  price=15.72
+buy  : date=2020-05-07 00:00:00 code=603790 price=13.19
+buy  : date=2020-07-14 00:00:00 code=603799 price=45.29
+pct= 10 , sell : date=2020-07-14 00:00:00 code=603799  price=45.29
+buy  : date=2020-08-11 00:00:00 code=603801 price=36.79
+pct= 10 , sell : date=2020-08-11 00:00:00 code=603801  price=36.79
+buy  : date=2020-08-06 00:00:00 code=603822 price=28.76
+buy  : date=2020-06-16 00:00:00 code=603825 price=32.14
+pct= 30 , sell : date=2020-06-18 00:00:00 code=603825  price=34.51
+buy  : date=2020-03-30 00:00:00 code=603843 price=5.14
+pct= 90 , sell : date=2020-04-27 00:00:00 code=603843  price=4.16
+buy  : date=2020-05-14 00:00:00 code=603855 price=12.46
+buy  : date=2020-03-18 00:00:00 code=603861 price=9.64
+pct= 10 , sell : date=2020-03-18 00:00:00 code=603861  price=9.64
+buy  : date=2020-06-15 00:00:00 code=603867 price=27.70
+buy  : date=2020-02-26 00:00:00 code=603881 price=56.41
+pct= 10 , sell : date=2020-02-26 00:00:00 code=603881  price=56.41
+buy  : date=2020-06-17 00:00:00 code=603881 price=89.78
+pct= 90 , sell : date=2020-07-17 00:00:00 code=603881  price=95.40
+buy  : date=2020-06-08 00:00:00 code=603906 price=13.11
+pct= 60 , sell : date=2020-06-15 00:00:00 code=603906  price=14.88
+buy  : date=2020-04-22 00:00:00 code=603912 price=22.01
+pct= 30 , sell : date=2020-04-24 00:00:00 code=603912  price=20.00
+buy  : date=2020-04-30 00:00:00 code=603920 price=24.71
+2020-09-19 19:30:58.706702 tdx_func spent:0:00:27.060496
+tdx-fun-result-len 88631
+
+buy  : date=2020-08-05 00:00:00 code=601838 price=8.87
+buy  : date=2020-04-09 00:00:00 code=601882 price=7.77
+pct= 10 , sell : date=2020-04-09 00:00:00 code=601882  price=7.77
+buy  : date=2020-06-30 00:00:00 code=601888 price=154.03
+pct= 60 , sell : date=2020-07-07 00:00:00 code=601888  price=192.40
+buy  : date=2020-02-25 00:00:00 code=601952 price=8.74
+pct= 20 , sell : date=2020-02-26 00:00:00 code=601952  price=8.53
+buy  : date=2020-07-31 00:00:00 code=601952 price=13.53
+pct= 30 , sell : date=2020-08-04 00:00:00 code=601952  price=13.69
+buy  : date=2020-07-21 00:00:00 code=601989 price=4.88
+pct= 10 , sell : date=2020-07-21 00:00:00 code=601989  price=4.88
+buy  : date=2020-07-15 00:00:00 code=601990 price=17.86
+pct= 10 , sell : date=2020-07-15 00:00:00 code=601990  price=17.86
+2020-09-19 19:30:58.317084 tdx_func spent:0:00:26.681967
+tdx-fun-result-len 88712
+
+pct= 10 , sell : date=2020-05-21 00:00:00 code=688005  price=33.10
+buy  : date=2020-03-03 00:00:00 code=688009 price=6.96
+pct= 90 , sell : date=2020-04-28 00:00:00 code=688009  price=5.98
+buy  : date=2020-02-18 00:00:00 code=688011 price=51.95
+pct= 90 , sell : date=2020-03-23 00:00:00 code=688011  price=37.24
+buy  : date=2020-06-24 00:00:00 code=688016 price=331.30
+pct= 50 , sell : date=2020-07-02 00:00:00 code=688016  price=322.00
+buy  : date=2020-01-17 00:00:00 code=688019 price=175.00
+pct= 20 , sell : date=2020-01-20 00:00:00 code=688019  price=173.76
+buy  : date=2020-04-23 00:00:00 code=688019 price=187.06
+pct= 10 , sell : date=2020-04-23 00:00:00 code=688019  price=187.06
+buy  : date=2020-06-01 00:00:00 code=688021 price=64.75
+pct= 20 , sell : date=2020-06-02 00:00:00 code=688021  price=66.17
+buy  : date=2020-07-14 00:00:00 code=688026 price=112.50
+pct= 10 , sell : date=2020-07-14 00:00:00 code=688026  price=112.50
+buy  : date=2020-01-20 00:00:00 code=688028 price=75.81
+pct= 10 , sell : date=2020-01-20 00:00:00 code=688028  price=75.81
+buy  : date=2020-05-18 00:00:00 code=688039 price=95.10
+pct= 10 , sell : date=2020-05-18 00:00:00 code=688039  price=95.10
+buy  : date=2020-06-12 00:00:00 code=688058 price=141.25
+pct= 90 , sell : date=2020-08-20 00:00:00 code=688058  price=127.81
+buy  : date=2020-05-07 00:00:00 code=688066 price=48.01
+pct= 90 , sell : date=2020-07-27 00:00:00 code=688066  price=44.12
+buy  : date=2020-07-14 00:00:00 code=688085 price=81.34
+pct= 10 , sell : date=2020-07-14 00:00:00 code=688085  price=81.34
+buy  : date=2020-01-17 00:00:00 code=688088 price=81.00
+pct= 20 , sell : date=2020-01-20 00:00:00 code=688088  price=83.00
+buy  : date=2020-05-06 00:00:00 code=688088 price=73.00
+pct= 20 , sell : date=2020-05-07 00:00:00 code=688088  price=72.00
+buy  : date=2020-06-29 00:00:00 code=688088 price=89.00
+pct= 90 , sell : date=2020-07-14 00:00:00 code=688088  price=92.11
+buy  : date=2020-07-02 00:00:00 code=688108 price=26.38
+pct= 10 , sell : date=2020-07-02 00:00:00 code=688108  price=26.38
+buy  : date=2020-08-31 00:00:00 code=688122 price=48.43
+pct= 10 , sell : date=2020-08-31 00:00:00 code=688122  price=48.43
+buy  : date=2020-07-07 00:00:00 code=688123 price=91.03
+pct= 10 , sell : date=2020-07-07 00:00:00 code=688123  price=91.03
+buy  : date=2020-05-20 00:00:00 code=688138 price=24.74
+pct= 10 , sell : date=2020-05-20 00:00:00 code=688138  price=24.74
+buy  : date=2020-02-18 00:00:00 code=688139 price=38.90
+pct= 10 , sell : date=2020-02-18 00:00:00 code=688139  price=38.90
+buy  : date=2020-06-02 00:00:00 code=688158 price=73.12
+pct= 20 , sell : date=2020-06-03 00:00:00 code=688158  price=72.85
+buy  : date=2020-07-07 00:00:00 code=688158 price=81.70
+pct= 10 , sell : date=2020-07-07 00:00:00 code=688158  price=81.70
+buy  : date=2020-02-13 00:00:00 code=688166 price=62.54
+pct= 20 , sell : date=2020-02-14 00:00:00 code=688166  price=68.90
+buy  : date=2020-02-18 00:00:00 code=688168 price=141.71
+pct= 20 , sell : date=2020-02-19 00:00:00 code=688168  price=143.37
+buy  : date=2020-07-14 00:00:00 code=688181 price=90.60
+pct= 10 , sell : date=2020-07-14 00:00:00 code=688181  price=90.60
+buy  : date=2020-08-04 00:00:00 code=688196 price=54.96
+pct= 90 , sell : date=2020-09-04 00:00:00 code=688196  price=60.60
+buy  : date=2020-06-01 00:00:00 code=688202 price=116.51
+pct= 10 , sell : date=2020-06-01 00:00:00 code=688202  price=116.51
+buy  : date=2020-09-16 00:00:00 code=688208 price=74.36
+buy  : date=2020-07-10 00:00:00 code=688258 price=120.10
+pct= 10 , sell : date=2020-07-10 00:00:00 code=688258  price=120.10
+buy  : date=2020-07-07 00:00:00 code=688268 price=101.16
+pct= 10 , sell : date=2020-07-07 00:00:00 code=688268  price=101.16
+buy  : date=2020-08-14 00:00:00 code=688278 price=61.20
+pct= 90 , sell : date=2020-09-10 00:00:00 code=688278  price=47.35
+buy  : date=2020-02-26 00:00:00 code=688288 price=41.65
+pct= 10 , sell : date=2020-02-26 00:00:00 code=688288  price=41.65
+buy  : date=2020-04-28 00:00:00 code=688298 price=88.05
+pct= 10 , sell : date=2020-04-28 00:00:00 code=688298  price=88.05
+buy  : date=2020-03-03 00:00:00 code=688358 price=77.20
+pct= 10 , sell : date=2020-03-03 00:00:00 code=688358  price=77.20
+buy  : date=2020-06-05 00:00:00 code=688398 price=59.74
+pct= 90 , sell : date=2020-09-09 00:00:00 code=688398  price=52.48
+buy  : date=2020-01-21 00:00:00 code=688399 price=94.00
+pct= 50 , sell : date=2020-02-04 00:00:00 code=688399  price=115.11
+buy  : date=2020-08-11 00:00:00 code=688516 price=73.48
+pct= 10 , sell : date=2020-08-11 00:00:00 code=688516  price=73.48
+buy  : date=2020-09-14 00:00:00 code=688516 price=81.93
+2020-09-19 19:30:58.028491 tdx_func spent:0:00:26.371719
+tdx-fun-result-len 82833
+
+pct= 20 , sell : date=2020-07-21 00:00:00 code=300758  price=23.39
+buy  : date=2020-06-17 00:00:00 code=300763 price=58.87
+buy  : date=2020-02-24 00:00:00 code=300767 price=80.06
+pct= 30 , sell : date=2020-02-26 00:00:00 code=300767  price=89.95
+buy  : date=2020-05-18 00:00:00 code=300769 price=165.26
+pct= 10 , sell : date=2020-05-18 00:00:00 code=300769  price=165.26
+buy  : date=2020-09-09 00:00:00 code=300775 price=34.34
+pct= 10 , sell : date=2020-09-09 00:00:00 code=300775  price=34.34
+buy  : date=2020-06-17 00:00:00 code=300781 price=32.40
+pct= 10 , sell : date=2020-06-17 00:00:00 code=300781  price=32.40
+buy  : date=2020-04-29 00:00:00 code=300782 price=581.05
+pct= 90 , sell : date=2020-05-22 00:00:00 code=300782  price=561.37
+buy  : date=2020-04-01 00:00:00 code=300783 price=79.00
+pct= 90 , sell : date=2020-07-17 00:00:00 code=300783  price=68.41
+buy  : date=2020-08-18 00:00:00 code=300787 price=49.15
+pct= 30 , sell : date=2020-08-20 00:00:00 code=300787  price=53.97
+buy  : date=2020-06-11 00:00:00 code=300791 price=55.17
+pct= 10 , sell : date=2020-06-11 00:00:00 code=300791  price=55.17
+buy  : date=2020-08-26 00:00:00 code=300791 price=96.60
+pct= 10 , sell : date=2020-08-26 00:00:00 code=300791  price=96.60
+buy  : date=2020-07-29 00:00:00 code=300793 price=28.28
+buy  : date=2020-03-27 00:00:00 code=300796 price=21.30
+pct= 90 , sell : date=2020-04-16 00:00:00 code=300796  price=21.33
+buy  : date=2020-08-18 00:00:00 code=300798 price=16.30
+pct= 30 , sell : date=2020-08-20 00:00:00 code=300798  price=15.52
+buy  : date=2020-06-02 00:00:00 code=300805 price=24.73
+pct= 10 , sell : date=2020-06-02 00:00:00 code=300805  price=24.73
+buy  : date=2020-02-27 00:00:00 code=300806 price=42.25
+pct= 10 , sell : date=2020-02-27 00:00:00 code=300806  price=42.25
+buy  : date=2020-05-27 00:00:00 code=300806 price=36.70
+pct= 10 , sell : date=2020-05-27 00:00:00 code=300806  price=36.70
+buy  : date=2020-02-24 00:00:00 code=300808 price=26.30
+pct= 90 , sell : date=2020-03-13 00:00:00 code=300808  price=20.40
+buy  : date=2020-07-24 00:00:00 code=300810 price=61.48
+pct= 10 , sell : date=2020-07-24 00:00:00 code=300810  price=61.48
+buy  : date=2020-04-21 00:00:00 code=300813 price=59.27
+pct= 10 , sell : date=2020-04-21 00:00:00 code=300813  price=59.27
+buy  : date=2020-05-22 00:00:00 code=300813 price=71.39
+pct= 20 , sell : date=2020-05-25 00:00:00 code=300813  price=72.06
+buy  : date=2020-07-24 00:00:00 code=300813 price=71.00
+pct= 10 , sell : date=2020-07-24 00:00:00 code=300813  price=71.00
+2020-09-19 19:30:58.857433 tdx_func spent:0:00:27.174427
+tdx-fun-result-len 89368
+
+buy  : date=2020-04-08 00:00:00 code=600598 price=16.10
+pct= 10 , sell : date=2020-04-08 00:00:00 code=600598  price=16.10
+buy  : date=2020-06-11 00:00:00 code=600609 price=6.34
+buy  : date=2020-08-03 00:00:00 code=600613 price=8.41
+pct= 10 , sell : date=2020-08-03 00:00:00 code=600613  price=8.41
+buy  : date=2020-08-06 00:00:00 code=600617 price=5.52
+pct= 30 , sell : date=2020-08-10 00:00:00 code=600617  price=5.31
+buy  : date=2020-03-30 00:00:00 code=600628 price=12.91
+pct= 20 , sell : date=2020-03-31 00:00:00 code=600628  price=11.90
+2020-09-19 19:31:00.140398 tdx_func spent:0:00:28.516240
+tdx-fun-result-len 89472
+
+buy  : date=2020-06-24 00:00:00 code=002735 price=22.25
+buy  : date=2020-06-29 00:00:00 code=002740 price=5.90
+pct= 70 , sell : date=2020-07-07 00:00:00 code=002740  price=9.41
+buy  : date=2020-03-03 00:00:00 code=002743 price=7.69
+pct= 90 , sell : date=2020-05-22 00:00:00 code=002743  price=5.92
+buy  : date=2020-07-10 00:00:00 code=002747 price=15.12
+pct= 30 , sell : date=2020-07-14 00:00:00 code=002747  price=15.20
+buy  : date=2020-08-31 00:00:00 code=002747 price=18.83
+buy  : date=2020-05-12 00:00:00 code=002755 price=19.85
+buy  : date=2020-09-03 00:00:00 code=002759 price=8.09
+pct= 60 , sell : date=2020-09-10 00:00:00 code=002759  price=7.56
+buy  : date=2020-06-16 00:00:00 code=002768 price=34.56
+pct= 10 , sell : date=2020-06-16 00:00:00 code=002768  price=34.56
+buy  : date=2020-05-26 00:00:00 code=002774 price=7.13
+pct= 10 , sell : date=2020-05-26 00:00:00 code=002774  price=7.13
+buy  : date=2020-07-01 00:00:00 code=002782 price=13.59
+pct= 90 , sell : date=2020-09-09 00:00:00 code=002782  price=13.01
+buy  : date=2020-07-10 00:00:00 code=002785 price=18.54
+pct= 90 , sell : date=2020-07-24 00:00:00 code=002785  price=17.94
+buy  : date=2020-02-25 00:00:00 code=002786 price=9.42
+pct= 20 , sell : date=2020-02-26 00:00:00 code=002786  price=8.88
+buy  : date=2020-04-28 00:00:00 code=002786 price=8.07
+pct= 90 , sell : date=2020-06-29 00:00:00 code=002786  price=7.29
+buy  : date=2020-02-12 00:00:00 code=002791 price=47.28
+pct= 90 , sell : date=2020-03-19 00:00:00 code=002791  price=48.10
+buy  : date=2020-07-14 00:00:00 code=002815 price=23.99
+pct= 20 , sell : date=2020-07-15 00:00:00 code=002815  price=21.59
+buy  : date=2020-03-27 00:00:00 code=002825 price=15.07
+pct= 90 , sell : date=2020-04-29 00:00:00 code=002825  price=14.24
+buy  : date=2020-07-03 00:00:00 code=002827 price=14.50
+pct= 90 , sell : date=2020-07-16 00:00:00 code=002827  price=11.83
+buy  : date=2020-07-27 00:00:00 code=002829 price=38.62
+pct= 10 , sell : date=2020-07-27 00:00:00 code=002829  price=38.62
+buy  : date=2020-07-09 00:00:00 code=002838 price=35.48
+pct= 30 , sell : date=2020-07-13 00:00:00 code=002838  price=39.11
+buy  : date=2020-04-17 00:00:00 code=002843 price=9.80
+pct= 10 , sell : date=2020-04-17 00:00:00 code=002843  price=9.80
+buy  : date=2020-07-15 00:00:00 code=002845 price=26.14
+pct= 10 , sell : date=2020-07-15 00:00:00 code=002845  price=26.14
+buy  : date=2020-01-15 00:00:00 code=002848 price=14.58
+pct= 10 , sell : date=2020-01-15 00:00:00 code=002848  price=14.58
+buy  : date=2020-07-08 00:00:00 code=002850 price=83.70
+pct= 90 , sell : date=2020-08-12 00:00:00 code=002850  price=64.96
+buy  : date=2020-05-13 00:00:00 code=002852 price=15.26
+pct= 10 , sell : date=2020-05-13 00:00:00 code=002852  price=15.26
+buy  : date=2020-05-25 00:00:00 code=002864 price=28.57
+pct= 10 , sell : date=2020-05-25 00:00:00 code=002864  price=28.57
+buy  : date=2020-03-19 00:00:00 code=002865 price=15.32
+pct= 20 , sell : date=2020-03-20 00:00:00 code=002865  price=15.95
+buy  : date=2020-04-30 00:00:00 code=002866 price=14.47
+buy  : date=2020-06-04 00:00:00 code=002873 price=18.60
+pct= 10 , sell : date=2020-06-04 00:00:00 code=002873  price=18.60
+buy  : date=2020-07-14 00:00:00 code=002873 price=21.80
+pct= 10 , sell : date=2020-07-14 00:00:00 code=002873  price=21.80
+buy  : date=2020-06-29 00:00:00 code=002881 price=27.00
+pct= 90 , sell : date=2020-07-16 00:00:00 code=002881  price=25.84
+buy  : date=2020-05-14 00:00:00 code=002886 price=29.56
+pct= 10 , sell : date=2020-05-14 00:00:00 code=002886  price=29.56
+buy  : date=2020-07-01 00:00:00 code=002888 price=22.62
+pct= 10 , sell : date=2020-07-01 00:00:00 code=002888  price=22.62
+buy  : date=2020-05-27 00:00:00 code=002891 price=34.78
+buy  : date=2020-06-18 00:00:00 code=002893 price=13.29
+buy  : date=2020-05-06 00:00:00 code=002897 price=32.66
+pct= 20 , sell : date=2020-05-07 00:00:00 code=002897  price=32.80
+buy  : date=2020-06-17 00:00:00 code=002897 price=34.45
+buy  : date=2020-02-21 00:00:00 code=002905 price=14.70
+pct= 10 , sell : date=2020-02-21 00:00:00 code=002905  price=14.70
+buy  : date=2020-07-13 00:00:00 code=002906 price=22.09
+pct= 20 , sell : date=2020-07-14 00:00:00 code=002906  price=20.26
+buy  : date=2020-04-23 00:00:00 code=002908 price=13.19
+pct= 10 , sell : date=2020-04-23 00:00:00 code=002908  price=13.19
+buy  : date=2020-05-29 00:00:00 code=002911 price=20.93
+pct= 20 , sell : date=2020-06-01 00:00:00 code=002911  price=19.95
+buy  : date=2020-06-02 00:00:00 code=002920 price=51.70
+pct= 10 , sell : date=2020-06-02 00:00:00 code=002920  price=51.70
+buy  : date=2020-07-08 00:00:00 code=002925 price=72.34
+pct= 30 , sell : date=2020-07-10 00:00:00 code=002925  price=75.27
+buy  : date=2020-04-16 00:00:00 code=002928 price=13.45
+pct= 90 , sell : date=2020-07-24 00:00:00 code=002928  price=11.22
+buy  : date=2020-07-06 00:00:00 code=002930 price=17.13
+pct= 20 , sell : date=2020-07-07 00:00:00 code=002930  price=17.35
+buy  : date=2020-03-13 00:00:00 code=002932 price=44.13
+pct= 10 , sell : date=2020-03-13 00:00:00 code=002932  price=44.13
+buy  : date=2020-03-27 00:00:00 code=002932 price=40.73
+buy  : date=2020-02-24 00:00:00 code=002940 price=45.67
+pct= 30 , sell : date=2020-02-26 00:00:00 code=002940  price=41.80
+buy  : date=2020-07-10 00:00:00 code=002943 price=28.53
+pct= 10 , sell : date=2020-07-10 00:00:00 code=002943  price=28.53
+buy  : date=2020-07-29 00:00:00 code=002943 price=29.99
+pct= 10 , sell : date=2020-07-29 00:00:00 code=002943  price=29.99
+buy  : date=2020-05-07 00:00:00 code=002946 price=13.13
+buy  : date=2020-07-06 00:00:00 code=002949 price=19.55
+pct= 90 , sell : date=2020-07-17 00:00:00 code=002949  price=20.98
+buy  : date=2020-07-21 00:00:00 code=002949 price=23.30
+pct= 10 , sell : date=2020-07-21 00:00:00 code=002949  price=23.30
+buy  : date=2020-04-21 00:00:00 code=002956 price=64.72
+pct= 30 , sell : date=2020-04-23 00:00:00 code=002956  price=63.10
+buy  : date=2020-05-28 00:00:00 code=002956 price=74.20
+pct= 10 , sell : date=2020-05-28 00:00:00 code=002956  price=74.20
+buy  : date=2020-07-15 00:00:00 code=002959 price=149.24
+pct= 20 , sell : date=2020-07-16 00:00:00 code=002959  price=139.45
+buy  : date=2020-01-15 00:00:00 code=002967 price=35.70
+pct= 90 , sell : date=2020-04-27 00:00:00 code=002967  price=23.80
+buy  : date=2020-07-13 00:00:00 code=002968 price=71.80
+pct= 40 , sell : date=2020-07-16 00:00:00 code=002968  price=66.59
+buy  : date=2020-03-26 00:00:00 code=002969 price=8.68
+pct= 10 , sell : date=2020-03-26 00:00:00 code=002969  price=8.68
+buy  : date=2020-05-08 00:00:00 code=002973 price=26.75
+pct= 10 , sell : date=2020-05-08 00:00:00 code=002973  price=26.75
+buy  : date=2020-06-11 00:00:00 code=002975 price=157.00
+pct= 60 , sell : date=2020-06-18 00:00:00 code=002975  price=158.80
+buy  : date=2020-06-22 00:00:00 code=002975 price=175.00
+pct= 90 , sell : date=2020-07-07 00:00:00 code=002975  price=95.96
+buy  : date=2020-07-09 00:00:00 code=002977 price=121.86
+pct= 20 , sell : date=2020-07-10 00:00:00 code=002977  price=121.98
+buy  : date=2020-07-09 00:00:00 code=002980 price=82.28
+pct= 20 , sell : date=2020-07-10 00:00:00 code=002980  price=84.59
+buy  : date=2020-07-10 00:00:00 code=002983 price=60.87
+pct= 10 , sell : date=2020-07-10 00:00:00 code=002983  price=60.87
+buy  : date=2020-08-04 00:00:00 code=002985 price=178.89
+pct= 50 , sell : date=2020-08-10 00:00:00 code=002985  price=214.30
+2020-09-19 19:30:59.745337 tdx_func spent:0:00:28.017947
+tdx-fun-result-len 88809
+
+pct= 10 , sell : date=2020-02-28 00:00:00 code=300145  price=3.91
+buy  : date=2020-08-03 00:00:00 code=300151 price=24.35
+pct= 20 , sell : date=2020-08-04 00:00:00 code=300151  price=23.69
+buy  : date=2020-03-18 00:00:00 code=300154 price=5.65
+pct= 10 , sell : date=2020-03-18 00:00:00 code=300154  price=5.65
+buy  : date=2020-08-17 00:00:00 code=300157 price=4.95
+pct= 20 , sell : date=2020-08-18 00:00:00 code=300157  price=4.66
+buy  : date=2020-05-26 00:00:00 code=300160 price=6.63
+pct= 10 , sell : date=2020-05-26 00:00:00 code=300160  price=6.63
+buy  : date=2020-06-10 00:00:00 code=300160 price=7.32
+pct= 10 , sell : date=2020-06-10 00:00:00 code=300160  price=7.32
+buy  : date=2020-02-28 00:00:00 code=300166 price=18.88
+pct= 10 , sell : date=2020-02-28 00:00:00 code=300166  price=18.88
+buy  : date=2020-04-03 00:00:00 code=300168 price=21.99
+buy  : date=2020-05-21 00:00:00 code=300173 price=6.08
+pct= 10 , sell : date=2020-05-21 00:00:00 code=300173  price=6.08
+buy  : date=2020-03-10 00:00:00 code=300174 price=17.15
+pct= 50 , sell : date=2020-03-16 00:00:00 code=300174  price=16.00
+buy  : date=2020-09-04 00:00:00 code=300181 price=8.01
+pct= 40 , sell : date=2020-09-09 00:00:00 code=300181  price=7.57
+buy  : date=2020-08-21 00:00:00 code=300182 price=5.64
+pct= 20 , sell : date=2020-08-24 00:00:00 code=300182  price=5.62
+buy  : date=2020-09-15 00:00:00 code=300182 price=6.36
+pct= 10 , sell : date=2020-09-15 00:00:00 code=300182  price=6.36
+buy  : date=2020-02-27 00:00:00 code=300192 price=17.05
+pct= 20 , sell : date=2020-02-28 00:00:00 code=300192  price=16.40
+buy  : date=2020-04-24 00:00:00 code=300192 price=18.33
+pct= 10 , sell : date=2020-04-24 00:00:00 code=300192  price=18.33
+buy  : date=2020-04-08 00:00:00 code=300201 price=3.57
+pct= 60 , sell : date=2020-04-15 00:00:00 code=300201  price=4.26
+buy  : date=2020-02-04 00:00:00 code=300204 price=14.27
+pct= 40 , sell : date=2020-02-07 00:00:00 code=300204  price=16.12
+buy  : date=2020-06-19 00:00:00 code=300207 price=18.38
+buy  : date=2020-03-02 00:00:00 code=300210 price=3.53
+buy  : date=2020-08-17 00:00:00 code=300217 price=2.93
+pct= 10 , sell : date=2020-08-17 00:00:00 code=300217  price=2.93
+buy  : date=2020-03-09 00:00:00 code=300222 price=10.25
+pct= 10 , sell : date=2020-03-09 00:00:00 code=300222  price=10.25
+buy  : date=2020-04-21 00:00:00 code=300222 price=8.55
+buy  : date=2020-05-20 00:00:00 code=300223 price=108.20
+pct= 30 , sell : date=2020-05-22 00:00:00 code=300223  price=98.90
+buy  : date=2020-08-19 00:00:00 code=300226 price=83.03
+pct= 20 , sell : date=2020-08-20 00:00:00 code=300226  price=77.80
+buy  : date=2020-08-28 00:00:00 code=300228 price=6.12
+pct= 10 , sell : date=2020-08-28 00:00:00 code=300228  price=6.12
+buy  : date=2020-09-09 00:00:00 code=300230 price=6.44
+pct= 10 , sell : date=2020-09-09 00:00:00 code=300230  price=6.44
+buy  : date=2020-02-04 00:00:00 code=300235 price=15.80
+pct= 90 , sell : date=2020-02-21 00:00:00 code=300235  price=21.91
+buy  : date=2020-08-03 00:00:00 code=300242 price=7.25
+buy  : date=2020-08-05 00:00:00 code=300243 price=15.40
+pct= 10 , sell : date=2020-08-05 00:00:00 code=300243  price=15.40
+buy  : date=2020-09-09 00:00:00 code=300245 price=13.10
+pct= 10 , sell : date=2020-09-09 00:00:00 code=300245  price=13.10
+buy  : date=2020-02-25 00:00:00 code=300247 price=3.33
+pct= 20 , sell : date=2020-02-26 00:00:00 code=300247  price=3.04
+buy  : date=2020-08-06 00:00:00 code=300248 price=14.43
+pct= 90 , sell : date=2020-08-20 00:00:00 code=300248  price=12.93
+buy  : date=2020-08-04 00:00:00 code=300251 price=14.01
+pct= 10 , sell : date=2020-08-04 00:00:00 code=300251  price=14.01
+buy  : date=2020-02-28 00:00:00 code=300253 price=25.72
+pct= 10 , sell : date=2020-02-28 00:00:00 code=300253  price=25.72
+buy  : date=2020-01-22 00:00:00 code=300256 price=7.44
+pct= 20 , sell : date=2020-01-23 00:00:00 code=300256  price=7.11
+buy  : date=2020-08-28 00:00:00 code=300256 price=8.51
+pct= 20 , sell : date=2020-08-31 00:00:00 code=300256  price=8.23
+buy  : date=2020-09-04 00:00:00 code=300260 price=22.50
+pct= 10 , sell : date=2020-09-04 00:00:00 code=300260  price=22.50
+buy  : date=2020-05-28 00:00:00 code=300261 price=4.64
+pct= 10 , sell : date=2020-05-28 00:00:00 code=300261  price=4.64
+buy  : date=2020-03-03 00:00:00 code=300263 price=7.78
+pct= 10 , sell : date=2020-03-03 00:00:00 code=300263  price=7.78
+buy  : date=2020-05-25 00:00:00 code=300270 price=7.04
+pct= 10 , sell : date=2020-05-25 00:00:00 code=300270  price=7.04
+buy  : date=2020-08-07 00:00:00 code=300278 price=4.56
+pct= 10 , sell : date=2020-08-07 00:00:00 code=300278  price=4.56
+buy  : date=2020-02-28 00:00:00 code=300290 price=7.10
+pct= 10 , sell : date=2020-02-28 00:00:00 code=300290  price=7.10
+buy  : date=2020-07-21 00:00:00 code=300291 price=6.22
+pct= 10 , sell : date=2020-07-21 00:00:00 code=300291  price=6.22
+buy  : date=2020-05-18 00:00:00 code=300293 price=10.17
+pct= 10 , sell : date=2020-05-18 00:00:00 code=300293  price=10.17
+buy  : date=2020-08-28 00:00:00 code=300293 price=25.49
+pct= 10 , sell : date=2020-08-28 00:00:00 code=300293  price=25.49
+buy  : date=2020-09-14 00:00:00 code=300296 price=9.08
+buy  : date=2020-09-03 00:00:00 code=300297 price=5.57
+pct= 10 , sell : date=2020-09-03 00:00:00 code=300297  price=5.57
+buy  : date=2020-07-22 00:00:00 code=300298 price=44.47
+pct= 30 , sell : date=2020-07-24 00:00:00 code=300298  price=45.00
+buy  : date=2020-05-12 00:00:00 code=300303 price=6.11
+buy  : date=2020-02-24 00:00:00 code=300305 price=10.12
+buy  : date=2020-03-11 00:00:00 code=300312 price=7.25
+pct= 10 , sell : date=2020-03-11 00:00:00 code=300312  price=7.25
+buy  : date=2020-02-05 00:00:00 code=300315 price=6.29
+pct= 10 , sell : date=2020-02-05 00:00:00 code=300315  price=6.29
+buy  : date=2020-07-30 00:00:00 code=300315 price=9.28
+pct= 90 , sell : date=2020-09-10 00:00:00 code=300315  price=7.77
+buy  : date=2020-08-14 00:00:00 code=300317 price=3.57
+pct= 10 , sell : date=2020-08-14 00:00:00 code=300317  price=3.57
+buy  : date=2020-04-08 00:00:00 code=300318 price=5.47
+pct= 10 , sell : date=2020-04-08 00:00:00 code=300318  price=5.47
+buy  : date=2020-03-06 00:00:00 code=300325 price=3.73
+pct= 40 , sell : date=2020-03-11 00:00:00 code=300325  price=4.06
+buy  : date=2020-08-28 00:00:00 code=300325 price=3.25
+pct= 10 , sell : date=2020-08-28 00:00:00 code=300325  price=3.25
+buy  : date=2020-08-27 00:00:00 code=300332 price=5.82
+pct= 10 , sell : date=2020-08-27 00:00:00 code=300332  price=5.82
+buy  : date=2020-04-15 00:00:00 code=300334 price=9.16
+pct= 20 , sell : date=2020-04-16 00:00:00 code=300334  price=8.95
+2020-09-19 19:30:59.083559 tdx_func spent:0:00:27.414217
+tdx-fun-result-len 89206
