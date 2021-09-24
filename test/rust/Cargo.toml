@@ -1,0 +1,44 @@
+[package]
+name = "qasample"
+version = "0.1.0"
+authors = ["zhangjianxun <dizzy21c@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+reqwest = { version = "0.10", features = ["blocking", "json"] }
+tokio = { version = "0.2", features = ["full"] }
+snafu = "0.4.4"
+input_buffer = "0.2"
+bytes = "0.4"
+amq-protocol = "1.4"
+log = "0.4"
+mio = "0.6"
+mio-extras = "2.0"
+cookie-factory = "0.2"
+# crossbeam-channel = "0.3"
+indexmap = "1.0"
+url = "1.7"
+native-tls = { version = "0.2", optional = true }
+mongodb = "0.3.11" # mongodb
+amiquip = "0.3.3"
+chrono = { version = "0.4", features = ["serde"] } # datetime
+serde_json = "1.0"
+serde_derive = "1.0"
+serde = { version = "1.0", features = ["derive"] } # 序列化
+rayon = "1.1" # 多线程
+ndarray = "0.13.0" # ndarray
+crossbeam = "0.7"
+crossbeam-channel = "0.4"
+crossbeam-utils = "0.7"
+uuid = { version = "0.8", features = ["serde", "v4"] }
+env_logger = "0.7.1"
+
+
+[dev-dependencies]
+# uuid = { version = "0.7", features = [ "v4" ] }
+# env_logger = "0.6"
+mockstream = "0.0.3"
+
+
