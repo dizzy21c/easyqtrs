@@ -1983,6 +1983,11 @@ def tdx_dqe_test_A02(data):
     VRC=A1&A2&A3&A4&A5&A6&A7&A8&A9&A10
     return IF(VRC,1,0), -1, False
 
+def tdx_dqe_test_A03(data):
+    (VAR0, VAR00) = BIDASK5VOL(data)
+    VAR = (VAR0-VAR00)/5
+    XG = VAR/CAPITAL(data)*100
+    return [XG,XG,XG], -1, False
 
 def tdx_sl5560(data):
     CLOSE = data.close

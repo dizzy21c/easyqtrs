@@ -380,6 +380,7 @@ def main_func(code_type, last_day):
         end_time = time.time()
         print("总耗费时间%.2f秒" % (end_time - start_time))
     else:
+        print("get stock codes")
         get_stock_codes()
 
     print("end.")
