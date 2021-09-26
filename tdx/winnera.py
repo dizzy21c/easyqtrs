@@ -160,7 +160,6 @@ class ChipDistribution():
             # import matplotlib.pyplot as plt
             # plt.plot(date[len(date) - 200:-1], Profit[len(date) - 200:-1])
             # plt.show()
-
             return Profit
 
     def lwinner(self,N = 5, p=None):
@@ -182,7 +181,7 @@ class ChipDistribution():
         # plt.plot(date[len(date) - 60:-1], ans[len(date) - 60:-1])
         # plt.show()
         # print("lw-data", data)
-        print("lw", ans)
+        # print("lw", ans)
         self.data = data
         return ans
 
@@ -211,7 +210,6 @@ class ChipDistribution():
         # import matplotlib.pyplot as plt
         # plt.plot(date[len(date) - 1000:-1], ans[len(date) - 1000:-1])
         # plt.show()
-
         return ans
 
 
@@ -224,6 +222,7 @@ if __name__ == "__main__":
     a.get_data(data) #获取数据
     a.calcuChip(flag=1, AC=1) #计算
 
-    a.winner() #获利盘
-    a.cost(90) #成本分布
-    a.lwinner()
+    data['win'] = a.winner() #获利盘
+    data['cos'] = a.cost(90) #成本分布
+    data['lwin'] = a.lwinner()
+    print(data.tail(5))
