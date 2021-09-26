@@ -259,6 +259,89 @@ int Parse2(int nCount, float *pOut, float *pHigh, float *pLow)
   }
 }
 
+void calcuJUN(int *npChip, Dict *dpOutChip, int *npChipList, Dict *dpOutChipList, int nCount, float highT, float lowT, float volT, float TurnoverRateT, float minD, int AC) {
+
+}
+
+void calcuSin(int *npChip, Dict *dpOutChip, int *npChipList, Dict *dpOutChipList, int nCount, float highT, float lowT,float avgT, float volT, float TurnoverRateT, float minD, int AC) {
+    float *x;
+    float l = (highT - lowT) / minD;
+    if (highT == lowT) {
+        lowT = lowT - minD;
+        l = 1.0;
+    }
+    int length = 0;
+    for(int i = 0; i < l; i++) {
+        length ++;
+        x[i] = round((lowT + i * minD) * 1000) / 1000;
+    }
+//        #计算仅仅今日的筹码分布
+    Dict *tmpChip;
+    int nTmpChip = 0;
+    float eachV = volT / length;
+//        #极限法分割去逼近
+    for(int i = 0; i < l; i++) {
+        float x1 = x[i];
+        float x2 = x[i] + minD;
+        float h = 2 / (highT - lowT)
+        float s = 0;
+        if (x[i]  < avgT) {
+            float y1 = h /(avgT - lowT) * (x1 - lowT);
+            float y2 = h /(avgT - lowT) * (x2 - lowT);
+            s = minD *(y1 + y2) / 2;
+            s = s * volT;
+        } else {
+            float y1 = h /(highT - avgT) *(highT - x1);
+            float y2 = h /(highT - avgT) *(highT - x2);
+
+            s = minD *(y1 + y2) /2;
+            s = s * volT;
+        }
+        Dict dict;
+        dict.key = x1;
+        dict.value = s;
+        tmpChip[i] = dict;
+        nTmpChip++;
+    }
+
+    if (*npChip > 0) {
+        for (int i = 0; i < *npChip; i++)
+            fpOutChip[i] = fpOutChip[i] *(1 -TurnoverRateT * A);
+    }
+    for(int i = 0; i < nTmpChip; i++) {
+//    for i in tmpChip:
+        if i in self.Chip:
+            fpOutChip[i] += tmpChip[i] *(TurnoverRateT * A);
+        } else {
+            fpOutChip[i] = tmpChip[i] *(TurnoverRateT * A);
+            *npChip++;
+        }
+    }
+//    import copy
+//    self.ChipList[dateT] = copy.deepcopy(self.Chip);
+}
+
+float * calcuChip(int *npChip, Dict *dpOutChip, int *npChipList, Dict *dpOutChipList, int nCount, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float capital, float minD) {
+    if (minD < 0) {
+        minD = 0.01;
+    }
+    int flag = 1;
+    int AC = 1;
+    int iChip = 0, iChipList = 0;
+    for (int i = 0; i < nCount; i++) {
+        float avgT = pfAmount[i] / pfVol[i];
+        float TurnoverRateT = pfVol[i] / capital * 100;
+        calcuSin(npChip, dpOutChip, npChipList, dpOutChipList, i, pfHigh[i], pfLow[i], avgT, pfVol[i], TurnoverRateT, minD, AC);
+//        calcuJUN(fpOutChip, fpOutChipList, i, pfHigh[i], pfLow[i], pfVol[i], TurnoverRateT, minD, AC);
+    }
+}
+
+void cost_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float price, float minD, float capital) {
+    Dict *dpOutChip;
+    Dict *dpOutChipList;
+    int iChip = 0, iChipList = 0;
+
+}
 //=============================================================================
 // 输出函数1号：线段高低点标记信号
 //=============================================================================
@@ -287,3 +370,8 @@ void dma(int nCount, float *pfOut, float *pfIn, float *pfWeight)
 {
   dma_list(nCount, pfOut, pfIn, pfWeight);
 }
+
+void cost(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float price, float minD, float capital) {
+    cost_list(nCount, pfOut, pfHigh, pfLow, pfVol, pfAmount, pfClose, price, minD, capital);
+}
+

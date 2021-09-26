@@ -20,8 +20,16 @@
 #define __TALIB_EXT_H__
 
 #include <float.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define DLL_PUBLIC __attribute__ ((visibility("default")))
+
+typedef struct DictSt {
+    float key;
+    float value;
+} Dict;
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,6 +44,9 @@ extern "C" {
   DLL_PUBLIC void llv(int nCount, float *pfOut, float *pfIn, int *piIn2);
 
   DLL_PUBLIC void dma(int nCount, float *pfOut, float *pfIn, float *pfWeight);
+
+  DLL_PUBLIC void cost(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float price, float minD, float capital);
+
     // subBuf* subBuf_new(){ return new subBuf(); }
     // int subBuf_sub(subBuf* subfuf, char* data, int num, char* outData){ subfuf->cursubBuf(data, num, outData); }
 #ifdef __cplusplus

@@ -7,18 +7,19 @@ from easyquant.indicator.base import *
 
 class ChipDistribution():
 
-    def __init__(self, capital):
+    def __init__(self, data):
         self.Chip = {} # 当前获利盘
         self.ChipList = {}  # 所有的获利盘的
-        self.capital = capital
-
-    def get_data(self, data):
         self.data = data
+        self.capital = CAPITAL(self.data)
 
     def calcuJUN(self,dateT,highT, lowT, volT, TurnoverRateT, A, minD):
 
         x =[]
         l = (highT - lowT) / minD
+        if l == 0:
+            lowT = lowT - minD
+            l = 1
         for i in range(int(l)):
             x.append(round(lowT + i * minD, 2))
         length = len(x)
@@ -54,6 +55,7 @@ class ChipDistribution():
 
         #极限法分割去逼近
         for i in x:
+            # print("x i", i)
             x1 = i
             x2 = i + minD
             h = 2 / (highT - lowT)
@@ -73,9 +75,11 @@ class ChipDistribution():
 
 
         for i in self.Chip:
+            print("Chip i", i, self.Chip[i])
             self.Chip[i] = self.Chip[i] *(1 -TurnoverRateT * A)
 
         for i in tmpChip:
+            # print("tempChip i", i)
             if i in self.Chip:
                 self.Chip[i] += tmpChip[i] *(TurnoverRateT * A)
             else:
@@ -118,6 +122,7 @@ class ChipDistribution():
 
         # 计算winner
     def winner(self,p=None):
+            self.calcuChip(flag=1, AC=1)
             Profit = []
             # date = self.data['date']
 
@@ -163,6 +168,8 @@ class ChipDistribution():
             return Profit
 
     def lwinner(self,N = 5, p=None):
+        self.calcuChip(flag=1, AC=1)
+
         data = copy.deepcopy(self.data)
         date = data.index.levels[0]
         ans = []
@@ -171,10 +178,10 @@ class ChipDistribution():
             if i < N:
                 ans.append(None)
                 continue
-            self.data = data.iloc[i-N:i,]
+            tempData = data.iloc[i-N:i,]
             # self.data.index= range(0,N)
-            self.__init__(self.capital)
-            self.calcuChip()    #使用默认计算方式
+            self.__init__(tempData)
+            # self.calcuChip()    #使用默认计算方式
             a = self.winner(p)
             ans.append(a[-1])
         # import matplotlib.pyplot as plt
@@ -189,7 +196,7 @@ class ChipDistribution():
 
     def cost(self,N):
         # date = self.data['date']
-
+        self.calcuChip(flag=1, AC=1)
         N = N / 100  # 转换成百分比
         ans = []
         for i in self.ChipList:  # 我的ChipList本身就是有顺序的
@@ -217,12 +224,11 @@ class ChipDistribution():
 if __name__ == "__main__":
     m=MongoIo()
     data=m.get_stock_day("000859")
-    capital = CAPITAL(data)
-    a=ChipDistribution(capital)
-    a.get_data(data) #获取数据
-    a.calcuChip(flag=1, AC=1) #计算
+    a=ChipDistribution(data)
+    # a.get_data(data) #获取数据
+    # a.calcuChip(flag=1, AC=1) #计算
 
     data['win'] = a.winner() #获利盘
-    data['cos'] = a.cost(90) #成本分布
+    data['cos'] = a.cost(70) #成本分布
     data['lwin'] = a.lwinner()
     print(data.tail(5))
