@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 void test(int *p, float *f) {
   *p = 2;
@@ -14,14 +15,14 @@ typedef struct DictSt {
 } Dict;
 
 int test2(void) {
-    int *pa = malloc(10 * sizeof *pa); // allocate an array of 10 int
+    int *pa = malloc(10 * sizeof(int)); // allocate an array of 10 int
     if(pa) {
         printf("%zu bytes allocated. Storing ints: ", 10*sizeof(int));
         for(int n = 0; n < 10; ++n)
             printf("%d ", pa[n] = n);
     }
 
-    int *pb = realloc(pa, 1000000 * sizeof *pb); // reallocate array to a larger size
+    int *pb = realloc(pa, 1000000 * sizeof(int)); // reallocate array to a larger size
     if(pb) {
         printf("\n%zu bytes allocated, first 10 ints are: ", 1000000*sizeof(int));
         for(int n = 0; n < 10; ++n)
@@ -33,9 +34,9 @@ int test2(void) {
 }
 
 void test3(Dict *dpTest) {
-    Dict t;
-    t.key = 12.9;
-    t.value = 13.0;
+    Dict t = {12.9, 13.0};
+//    t.key = 12.9;
+//    t.value = 13.0;
     dpTest[0] = t;
     dpTest[1] = t;
     dpTest[2] = t;
@@ -44,6 +45,9 @@ int main()
 {
    /* 我的第一个 C 程序 */
    printf("Hello, World! \n");
+   float fv = 123.34;
+   int f2i = floor(fv);
+   printf("Hello, World! %d, %f \n", f2i, fv);
 
    int p = 0;
 //   float *f = (float*)malloc(sizeof(float) * 10);

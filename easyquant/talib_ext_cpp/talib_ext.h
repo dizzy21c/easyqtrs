@@ -23,13 +23,20 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define DLL_PUBLIC __attribute__ ((visibility("default")))
 
-typedef struct DictSt {
+typedef struct DictST {
     float key;
     float value;
 } Dict;
+
+typedef struct DictNodeST {
+    int num;
+    Dict* pDictList;
+} DictNode;
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,6 +53,8 @@ extern "C" {
   DLL_PUBLIC void dma(int nCount, float *pfOut, float *pfIn, float *pfWeight);
 
   DLL_PUBLIC void cost(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float price, float minD, float capital);
+
+  DLL_PUBLIC void winner(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float capital);
 
     // subBuf* subBuf_new(){ return new subBuf(); }
     // int subBuf_sub(subBuf* subfuf, char* data, int num, char* outData){ subfuf->cursubBuf(data, num, outData); }
