@@ -87,11 +87,11 @@ print("exam:python test_func.py <code:123456> <func-name:dqe_test_A01>")
 
 m=MongoIo()
 data=m.get_stock_day(sys.argv[1])
-
+print(data.tail())
 start_t = datetime.datetime.now()
 out=eval("%s" % sys.argv[2])(data, None, 123456789012345.0)
 end_t = datetime.datetime.now()
 print(end_t, 'tdx_func_mp spent:{}'.format((end_t - start_t)))
 
 print(out[0:3])
-print(out[-10:-1])
+print(out[-10:])

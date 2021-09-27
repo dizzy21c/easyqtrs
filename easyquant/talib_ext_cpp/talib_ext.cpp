@@ -279,7 +279,7 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
 
 //        #计算仅仅今日的筹码分布
     Dict *tmpChip = (Dict *) malloc(length * sizeof(Dict));
-    int nTmpChip = 0;
+//    int nTmpChip = 0;
     float eachV = volT / length;
 //        #极限法分割去逼近
     for(int i = 0; i < length; i++) {
@@ -299,9 +299,9 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
             s = minD *(y1 + y2) /2;
             s = s * volT;
         }
-        Dict dict = {x1, s};
+        Dict dict = {int(round(x1 * 100)), s};
         tmpChip[i] = dict;
-        nTmpChip++;
+//        nTmpChip++;
     }
 
     free(x);
@@ -313,7 +313,7 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
         }
     }
 
-    for(int i = 0; i < nTmpChip; i++) {
+    for(int i = 0; i < length; i++) {
         Dict item = tmpChip[i];
         int iFind = 0;
         if (*npChip > 0) {
@@ -328,8 +328,8 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
             }
         }
         if (iFind == 0) {
-            Dict newItem = {item.key, item.value *(TurnoverRateT * AC)};
-            dpOutChip[i] = newItem;
+//            Dict newItem = {item.key, item.value *(TurnoverRateT * AC)};
+            dpOutChip[*npChip] = item;
             (*npChip)++;
         }
     }
@@ -351,7 +351,7 @@ void calcuChip(Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float *pfHi
     int npChip = 0;
     int flag = 1;
     int AC = 1;
-    int iChip = 0, iChipList = 0;
+//    int iChip = 0, iChipList = 0;
     for (int i = 0; i < nCount; i++) {
         float avgT = pfAmount[i] / pfVol[i];
         float TurnoverRateT = pfVol[i] / capital; // * 100;
@@ -379,7 +379,7 @@ void winner(int nCount, float *pfOut, float *pfClose, DictNode *dpOutChipList) {
 //            for i in Chip:
                 Dict dict = item.pDictList[j];
                 total += dict.value;
-                if (dict.key < close) {
+                if (dict.key / 100.0 < close) {
                     be += dict.value;
                 }
             }
@@ -407,11 +407,10 @@ void cost_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfV
 void winner_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float minD, float capital) {
     Dict *dpOutChip = (Dict *) malloc(100000 * sizeof(Dict));
     DictNode *dpOutChipList = (DictNode *) malloc(nCount * sizeof(DictNode));
-//    int iChip = 0;
-//    calcuChip()
     calcuChip(dpOutChip, dpOutChipList, nCount, pfHigh, pfLow, pfVol, pfAmount, capital, minD);
-//    pfOut[0] = 123;//dpOutChipList[100].num;
     winner(nCount, pfOut, pfClose, dpOutChipList);
+    free(dpOutChip);
+    free(dpOutChipList);
 }
 //=============================================================================
 // 输出函数1号：线段高低点标记信号

@@ -28,7 +28,7 @@
 #define DLL_PUBLIC __attribute__ ((visibility("default")))
 
 typedef struct DictST {
-    float key;
+    int key;
     float value;
 } Dict;
 

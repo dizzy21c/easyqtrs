@@ -46,8 +46,8 @@ int main()
    /* 我的第一个 C 程序 */
    printf("Hello, World! \n");
    float fv = 123.34;
-   int f2i = floor(fv);
-   printf("Hello, World! %d, %f \n", f2i, fv);
+   float f2i = floor(fv);
+   printf("Hello, World! %d, %f \n", int(f2i), f2i);
 
    int p = 0;
 //   float *f = (float*)malloc(sizeof(float) * 10);
