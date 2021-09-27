@@ -278,7 +278,7 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
     }
 
 //        #计算仅仅今日的筹码分布
-    Dict *tmpChip = (Dict *) malloc(length * sizeof(Dict));
+    Dict *tmpChip = (Dict *) malloc((length+1) * sizeof(Dict));
 //    int nTmpChip = 0;
     float eachV = volT / length;
 //        #极限法分割去逼近
@@ -299,37 +299,37 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
             s = minD *(y1 + y2) /2;
             s = s * volT;
         }
-        Dict dict = {int(round(x1 * 100)), s};
+        Dict dict = {int(round(x1 * 1000)), s};
         tmpChip[i] = dict;
 //        nTmpChip++;
     }
 
     free(x);
 
-    if (*npChip > 0) {
+//    if (*npChip > 0) {
         for (int i = 0; i < *npChip; i++) {
             Dict item = dpOutChip[i];
             item.value = item.value *(1 -TurnoverRateT * AC);
         }
-    }
+//    }
 
     for(int i = 0; i < length; i++) {
-        Dict item = tmpChip[i];
+        Dict tmp = tmpChip[i];
         int iFind = 0;
-        if (*npChip > 0) {
+//        if (*npChip > 0) {
             for (int j = 0; j < *npChip; j++) {
-                Dict item2 = dpOutChip[j];
-                if (item.key == item2.key) {
-                    item2.value += item.value *(TurnoverRateT * AC);
-                    dpOutChip[j] = item2;
+                Dict chip = dpOutChip[j];
+                if (chip.key == tmp.key) {
+                    chip.value += tmp.value *(TurnoverRateT * AC);
+                    dpOutChip[j] = chip;
                     iFind = 1;
                     break;
                 }
             }
-        }
+//        }
         if (iFind == 0) {
 //            Dict newItem = {item.key, item.value *(TurnoverRateT * AC)};
-            dpOutChip[*npChip] = item;
+            dpOutChip[*npChip] = tmp;
             (*npChip)++;
         }
     }
@@ -337,7 +337,8 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
 
     Dict *dpOutChip2 = (Dict *) malloc(*npChip * sizeof(Dict));
     for(int i = 0; i < *npChip; i++) {
-        dpOutChip2[i] = dpOutChip[i];
+        Dict tmp = dpOutChip[i];
+        dpOutChip2[i] = (Dict){tmp.key, tmp.value};
     }
 //    memcpy(dpOutChip, dpOutChip2, sizeof(Dict) * *npChip);
     DictNode dictNode = {*npChip, dpOutChip2};
@@ -363,8 +364,9 @@ void calcuChip(Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float *pfHi
 void winner(int nCount, float *pfOut, float *pfClose, DictNode *dpOutChipList) {
 //    float *Profit;
 //    int count = 0;
-    float bili = 0;
+
     for(int i = 0; i < nCount; i++) {
+        float bili = 0;
         float close = pfClose[i];
         DictNode item = dpOutChipList[i];
 
@@ -379,7 +381,7 @@ void winner(int nCount, float *pfOut, float *pfClose, DictNode *dpOutChipList) {
 //            for i in Chip:
                 Dict dict = item.pDictList[j];
                 total += dict.value;
-                if (dict.key / 100.0 < close) {
+                if (dict.key / 1000.0 < close) {
                     be += dict.value;
                 }
             }
@@ -389,7 +391,7 @@ void winner(int nCount, float *pfOut, float *pfClose, DictNode *dpOutChipList) {
                 bili = 0;
             }
 //            count += 1;
-            pfOut[i] = bili;
+            pfOut[i] = total;
         }
     }
 

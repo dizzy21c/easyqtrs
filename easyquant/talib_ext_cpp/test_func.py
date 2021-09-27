@@ -87,7 +87,7 @@ print("exam:python test_func.py <code:123456> <func-name:dqe_test_A01>")
 
 m=MongoIo()
 data=m.get_stock_day(sys.argv[1])
-print(data.tail())
+print("data-len", len(data))
 start_t = datetime.datetime.now()
 out=eval("%s" % sys.argv[2])(data, None, 123456789012345.0)
 end_t = datetime.datetime.now()
