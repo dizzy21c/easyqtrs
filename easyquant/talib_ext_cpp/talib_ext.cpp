@@ -315,7 +315,6 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
 
     for(int i = 0; i < nTmpChip; i++) {
         Dict item = tmpChip[i];
-//    for i in tmpChip:
         int iFind = 0;
         if (*npChip > 0) {
             for (int j = 0; j < *npChip; j++) {
@@ -331,7 +330,7 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
         if (iFind == 0) {
             Dict newItem = {item.key, item.value *(TurnoverRateT * AC)};
             dpOutChip[i] = newItem;
-            *npChip++;
+            (*npChip)++;
         }
     }
     free(tmpChip);
@@ -411,8 +410,8 @@ void winner_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *p
 //    int iChip = 0;
 //    calcuChip()
     calcuChip(dpOutChip, dpOutChipList, nCount, pfHigh, pfLow, pfVol, pfAmount, capital, minD);
-//    pfOut[0] = dpOutChipList[100].num;
-//    winner(nCount, pfOut, pfClose, dpOutChipList);
+//    pfOut[0] = 123;//dpOutChipList[100].num;
+    winner(nCount, pfOut, pfClose, dpOutChipList);
 }
 //=============================================================================
 // 输出函数1号：线段高低点标记信号

@@ -4,7 +4,7 @@ import pandas as pd
 import copy
 from easyquant import MongoIo
 from easyquant.indicator.base import *
-
+import datetime
 class ChipDistribution():
 
     def __init__(self, data):
@@ -75,7 +75,7 @@ class ChipDistribution():
 
 
         for i in self.Chip:
-            print("Chip i", i, self.Chip[i])
+#             print("Chip i", i, self.Chip[i])
             self.Chip[i] = self.Chip[i] *(1 -TurnoverRateT * A)
 
         for i in tmpChip:
@@ -124,7 +124,7 @@ class ChipDistribution():
     def winner(self,p=None):
             self.calcuChip(flag=1, AC=1)
             Profit = []
-            # date = self.data['date']
+            date = self.data.index.levels[0]
 
             if p == None:  # 不输入默认close
                 p = self.data['close']
@@ -162,9 +162,9 @@ class ChipDistribution():
                         bili = 0
                     Profit.append(bili)
 
-            # import matplotlib.pyplot as plt
-            # plt.plot(date[len(date) - 200:-1], Profit[len(date) - 200:-1])
-            # plt.show()
+#             import matplotlib.pyplot as plt
+#             plt.plot(date[len(date) - 200:-1], Profit[len(date) - 200:-1])
+#             plt.show()
             return Profit
 
     def lwinner(self,N = 5, p=None):
@@ -227,8 +227,11 @@ if __name__ == "__main__":
     a=ChipDistribution(data)
     # a.get_data(data) #获取数据
     # a.calcuChip(flag=1, AC=1) #计算
-
+    start_t = datetime.datetime.now()
     data['win'] = a.winner() #获利盘
-    data['cos'] = a.cost(70) #成本分布
-    data['lwin'] = a.lwinner()
-    print(data.tail(5))
+    end_t = datetime.datetime.now()
+    print(end_t, 'tdx_func_mp spent:{}'.format((end_t - start_t)))
+
+#     data['cos'] = a.cost(70) #成本分布
+#     data['lwin'] = a.lwinner()
+    print(data.tail(20))
