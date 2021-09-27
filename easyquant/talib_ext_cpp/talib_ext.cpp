@@ -259,11 +259,11 @@ int Parse2(int nCount, float *pOut, float *pHigh, float *pLow)
   }
 }
 
-void calcuJUN(int *npChip, Dict *dpOutChip, int *npChipList, DictNode *dpOutChipList, int nCount, float highT, float lowT, float volT, float TurnoverRateT, float minD, int AC) {
+void calcuJUN(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float highT, float lowT, float volT, float TurnoverRateT, float minD, int AC) {
 
 }
 
-void calcuSin(int *npChip, Dict *dpOutChip, int *npChipList, DictNode *dpOutChipList, int nCount, float highT, float lowT,float avgT, float volT, float TurnoverRateT, float minD, int AC) {
+void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float highT, float lowT,float avgT, float volT, float TurnoverRateT, float minD, int AC) {
     float l = (highT - lowT) / minD;
     if (highT == lowT) {
         lowT = lowT - minD;
@@ -316,27 +316,26 @@ void calcuSin(int *npChip, Dict *dpOutChip, int *npChipList, DictNode *dpOutChip
     for(int i = 0; i < nTmpChip; i++) {
         Dict item = tmpChip[i];
 //    for i in tmpChip:
+        int iFind = 0;
         if (*npChip > 0) {
             for (int j = 0; j < *npChip; j++) {
                 Dict item2 = dpOutChip[j];
                 if (item.key == item2.key) {
                     item2.value += item.value *(TurnoverRateT * AC);
+                    dpOutChip[j] = item2;
+                    iFind = 1;
+                    break;
                 }
             }
-        } else {
+        }
+        if (iFind == 0) {
             Dict newItem = {item.key, item.value *(TurnoverRateT * AC)};
             dpOutChip[i] = newItem;
             *npChip++;
         }
-//        if i in self.Chip:
-//            fpOutChip[i] += tmpChip[i] *(TurnoverRateT * A);
-//        } else {
-//            fpOutChip[i] = tmpChip[i] *(TurnoverRateT * A);
-//            *npChip++;
-//        }
     }
     free(tmpChip);
-//    import copy
+
     Dict *dpOutChip2 = (Dict *) malloc(*npChip * sizeof(Dict));
     for(int i = 0; i < *npChip; i++) {
         dpOutChip2[i] = dpOutChip[i];
@@ -346,24 +345,25 @@ void calcuSin(int *npChip, Dict *dpOutChip, int *npChipList, DictNode *dpOutChip
     dpOutChipList[nCount] = dictNode;
 }
 
-void calcuChip(int *npChip, Dict *dpOutChip, int *npChipList, DictNode *dpOutChipList, int nCount, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float capital, float minD) {
+void calcuChip(Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float capital, float minD) {
     if (minD < 0) {
         minD = 0.01;
     }
+    int npChip = 0;
     int flag = 1;
     int AC = 1;
     int iChip = 0, iChipList = 0;
     for (int i = 0; i < nCount; i++) {
         float avgT = pfAmount[i] / pfVol[i];
         float TurnoverRateT = pfVol[i] / capital; // * 100;
-        calcuSin(npChip, dpOutChip, npChipList, dpOutChipList, i, pfHigh[i], pfLow[i], avgT, pfVol[i], TurnoverRateT, minD, AC);
+        calcuSin(&npChip, dpOutChip, dpOutChipList, i, pfHigh[i], pfLow[i], avgT, pfVol[i], TurnoverRateT, minD, AC);
 //        calcuJUN(fpOutChip, fpOutChipList, i, pfHigh[i], pfLow[i], pfVol[i], TurnoverRateT, minD, AC);
     }
 }
 
 void winner(int nCount, float *pfOut, float *pfClose, DictNode *dpOutChipList) {
 //    float *Profit;
-    int count = 0;
+//    int count = 0;
     float bili = 0;
     for(int i = 0; i < nCount; i++) {
         float close = pfClose[i];
@@ -389,7 +389,7 @@ void winner(int nCount, float *pfOut, float *pfClose, DictNode *dpOutChipList) {
             } else {
                 bili = 0;
             }
-            count += 1;
+//            count += 1;
             pfOut[i] = bili;
         }
     }
@@ -408,11 +408,11 @@ void cost_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfV
 void winner_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float minD, float capital) {
     Dict *dpOutChip = (Dict *) malloc(100000 * sizeof(Dict));
     DictNode *dpOutChipList = (DictNode *) malloc(nCount * sizeof(DictNode));
-    int iChip = 0, iChipList = 0;
+//    int iChip = 0;
 //    calcuChip()
-    calcuChip(&iChip, dpOutChip, &iChipList, dpOutChipList, nCount, pfHigh, pfLow, pfVol, pfAmount, capital, minD);
-//    pfOut[0] = capital;
-    winner(nCount, pfOut, pfClose, dpOutChipList);
+    calcuChip(dpOutChip, dpOutChipList, nCount, pfHigh, pfLow, pfVol, pfAmount, capital, minD);
+//    pfOut[0] = dpOutChipList[100].num;
+//    winner(nCount, pfOut, pfClose, dpOutChipList);
 }
 //=============================================================================
 // 输出函数1号：线段高低点标记信号
