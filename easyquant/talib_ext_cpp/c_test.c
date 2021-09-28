@@ -3,7 +3,7 @@
 #include <math.h>
 
 void test(int *p, float *f) {
-  *p = 2;
+  *p += 2;
   f[0] = 12.0;
   f[1] = 22.0;
   f[3] = 32.0;
@@ -49,11 +49,21 @@ int main()
    float f2i = floor(fv);
    printf("Hello, World! %d, %f \n", int(f2i), f2i);
 
+    float tf1 = 7.44f;
+    float tf2 = 7.09f;
+    float minD = 0.01f;
+    int ch1 = floor((tf1 - tf2) / minD);
+    int ch2 = floor((tf1*100 - tf2*100) / 100 / minD);
+   printf("Hello, World! %d, %f \n", ch2, (tf1 - tf2) / minD);
+
    int p = 0;
 //   float *f = (float*)malloc(sizeof(float) * 10);
    float *f = (float*)malloc(sizeof(float) * 1);
    test(&p, f);
-
+   printf("Hello, World! %d, %f \n", p, f[2]);
+   test(&p, f);
+   printf("Hello, World! %d, %f \n", p, f[2]);
+   test(&p, f);
    printf("Hello, World! %d, %f \n", p, f[2]);
 
    free(f);

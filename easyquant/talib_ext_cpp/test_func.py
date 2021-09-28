@@ -75,7 +75,6 @@ def WINNER(Data, Price, Capital):
     np_C = cast(na_Close.ctypes.data, POINTER(c_float))
     # np_H = cast(na_High.ctypes.data, POINTER(c_float))
     # np_W = cast(na_Weight.ctypes.data, POINTER(c_float))
-
     lib.winner(ncount, np_OUT, np_H, np_L, np_V, np_A, np_C, c_float(Capital))
 
     # lib.winner(ncount, np_OUT, np_S, np_W)
@@ -86,12 +85,12 @@ def WINNER(Data, Price, Capital):
 print("exam:python test_func.py <code:123456> <func-name:dqe_test_A01>")
 
 m=MongoIo()
-data=m.get_stock_day(sys.argv[1])
+data=m.get_stock_day(sys.argv[1], st_start="2021-09-13")
 print("data-len", len(data))
 start_t = datetime.datetime.now()
 out=eval("%s" % sys.argv[2])(data, None, 123456789012345.0)
 end_t = datetime.datetime.now()
 print(end_t, 'tdx_func_mp spent:{}'.format((end_t - start_t)))
 
-print(out[0:3])
+# print(out[0:3])
 print(out[-10:])
