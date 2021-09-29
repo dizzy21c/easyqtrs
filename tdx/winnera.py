@@ -39,10 +39,11 @@ class ChipDistribution():
     def calcuSin(self,dateT,highT, lowT,avgT, volT,TurnoverRateT,minD,A):
         x =[]
 
-        l = (highT - lowT) / minD
+        l = (highT * 100 - lowT * 100) / 100 / minD
         if l == 0:
             lowT = lowT - minD
             l = 1
+        # print("len:", int(l))
         for i in range(int(l)):
             x.append(round(lowT + i * minD, 2))
 
@@ -75,16 +76,19 @@ class ChipDistribution():
 
 
         for i in self.Chip:
-#             print("Chip i", i, self.Chip[i])
+            # print("Chip i", i, self.Chip[i])
+            # pass
             self.Chip[i] = self.Chip[i] *(1 -TurnoverRateT * A)
+            # self.Chip[i] = (1 -TurnoverRateT * A)
 
         for i in tmpChip:
             # print("tempChip i", i)
             if i in self.Chip:
                 self.Chip[i] += tmpChip[i] *(TurnoverRateT * A)
             else:
-                self.Chip[i] = tmpChip[i] *(TurnoverRateT * A)
+                self.Chip[i] = tmpChip[i]  *(TurnoverRateT * A)
         import copy
+        print("chip", self.Chip)
         self.ChipList[dateT] = copy.deepcopy(self.Chip)
 
 
@@ -128,6 +132,8 @@ class ChipDistribution():
 
             if p == None:  # 不输入默认close
                 p = self.data['close']
+                # v = self.data['volume']
+                # am = self.data['amount']
                 count = 0
                 for i in self.ChipList:
                     # 计算目前的比例
@@ -135,6 +141,7 @@ class ChipDistribution():
                     Chip = self.ChipList[i]
                     total = 0
                     be = 0
+
                     for i in Chip:
                         total += Chip[i]
                         if i < p[count]:
@@ -223,7 +230,7 @@ class ChipDistribution():
 
 if __name__ == "__main__":
     m=MongoIo()
-    data=m.get_stock_day("000859")
+    data=m.get_stock_day("000859", st_start="2021-09-08")
     a=ChipDistribution(data)
     # a.get_data(data) #获取数据
     # a.calcuChip(flag=1, AC=1) #计算
@@ -234,4 +241,5 @@ if __name__ == "__main__":
 
 #     data['cos'] = a.cost(70) #成本分布
 #     data['lwin'] = a.lwinner()
-    print(data.tail(20))
+    print(data.tail(10))
+    print(a.capital)

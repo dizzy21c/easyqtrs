@@ -264,6 +264,7 @@ void calcuJUN(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
 }
 
 void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float highT, float lowT,float avgT, float volT, float TurnoverRateT, float minD, int AC) {
+//    TurnoverRateT = TurnoverRateT / 1;
     float l = (highT * 100 - lowT * 100 ) / 100 / minD;
     if (highT == lowT) {
         lowT = lowT - minD;
@@ -307,8 +308,8 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
 
     for (int i = 0; i < *npChip; i++) {
         Dict item = dpOutChip[i];
-//        item.value = item.value *(1 -TurnoverRateT * AC);
-//        dpOutChip[i] = item;
+        item.value = item.value *(1 -TurnoverRateT * AC);
+        dpOutChip[i] = item;
     }
 
     for(int i = 0; i < length; i++) {
@@ -318,7 +319,7 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
         for (int j = 0; j < *npChip; j++) {
             Dict chip = dpOutChip[j];
             if (chip.key == tmp.key) {
-                chip.value += tmp.value;// *(TurnoverRateT * AC);
+                chip.value += tmp.value  * (TurnoverRateT * AC);
                 dpOutChip[j] = chip;
                 iFind = 1;
                 break;
@@ -326,7 +327,7 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
         }
 //        }
         if (iFind == 0) {
-            Dict newItem = (Dict){ tmp.key, tmp.value};// * (TurnoverRateT * AC) };
+            Dict newItem = (Dict){ tmp.key, tmp.value  * (TurnoverRateT * AC) };
 //            dpOutChip[*npChip] = (Dict){tmp.key, tmp.value *(TurnoverRateT * AC)};
 //            dpOutChip[*npChip] = tmp;
             dpOutChip[*npChip] = newItem;
@@ -355,7 +356,7 @@ void calcuChip(Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float *pfHi
 //    int iChip = 0, iChipList = 0;
     for (int i = 0; i < nCount; i++) {
         float avgT = pfAmount[i] / pfVol[i];
-        float TurnoverRateT = pfVol[i] / capital; // * 100;
+        float TurnoverRateT = pfVol[i] / capital;
         calcuSin(&npChip, dpOutChip, dpOutChipList, i, pfHigh[i], pfLow[i], avgT, pfVol[i], TurnoverRateT, minD, AC);
 //        calcuJUN(fpOutChip, fpOutChipList, i, pfHigh[i], pfLow[i], pfVol[i], TurnoverRateT, minD, AC);
     }
@@ -367,7 +368,7 @@ void winner(int nCount, float *pfOut, float *pfClose, float *pfVol, float *pfAmo
 
     for(int i = 0; i < nCount; i++) {
         float bili = 0;
-        float close = pfClose[i];
+        float close = pfClose[i] * 100;
         DictNode item = dpOutChipList[i];
 
 //        for (int j = 0; j < nChipList) {
@@ -377,15 +378,11 @@ void winner(int nCount, float *pfOut, float *pfClose, float *pfVol, float *pfAmo
 //            Chip = self.ChipList[i]
             float total = 0;
             float be = 0.0;
-            float bf = 0.0;
             for(int j = 0; j < item.num; j++) {
 //            for i in Chip:
                 Dict dict = item.pDictList[j];
-                if (bf <= 0) {
-                    bf = dict.key;
-                }
                 total += dict.value;
-                if (dict.key / 100.0 < close) {
+                if (dict.key < close) {
                     be += dict.value;
                 }
             }
