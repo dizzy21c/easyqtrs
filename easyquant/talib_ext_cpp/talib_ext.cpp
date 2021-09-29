@@ -260,6 +260,24 @@ int Parse2(int nCount, float *pOut, float *pHigh, float *pLow)
 }
 
 void calcuJUN(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float highT, float lowT, float volT, float TurnoverRateT, float minD, int AC) {
+//        x =[]
+//        l = (highT - lowT) / minD
+//        if l == 0:
+//            lowT = lowT - minD
+//            l = 1
+//        for i in range(int(l)):
+//            x.append(round(lowT + i * minD, 2))
+//        length = len(x)
+//        eachV = volT/length
+//        for i in self.Chip:
+//            self.Chip[i] = self.Chip[i] *(1 -TurnoverRateT * A)
+//        for i in x:
+//            if i in self.Chip:
+//                self.Chip[i] += eachV *(TurnoverRateT * A)
+//            else:
+//                self.Chip[i] = eachV *(TurnoverRateT * A)
+//        import copy
+//        self.ChipList[dateT] = copy.deepcopy(self.Chip)
 
 }
 
@@ -362,10 +380,9 @@ void calcuChip(Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float *pfHi
     }
 }
 
-void winner(int nCount, float *pfOut, float *pfClose, float *pfVol, float *pfAmount, DictNode *dpOutChipList) {
+void winner_calc(int nCount, float *pfOut, float *pfClose, float *pfVol, float *pfAmount, DictNode *dpOutChipList) {
 //    float *Profit;
 //    int count = 0;
-
     for(int i = 0; i < nCount; i++) {
         float bili = 0;
         float close = pfClose[i] * 100;
@@ -373,38 +390,111 @@ void winner(int nCount, float *pfOut, float *pfClose, float *pfVol, float *pfAmo
 
 //        for (int j = 0; j < nChipList) {
 //        for i in self.ChipList:
-//            # 计算目前的比例
+//        # 计算目前的比例
 
-//            Chip = self.ChipList[i]
-            float total = 0;
-            float be = 0.0;
-            for(int j = 0; j < item.num; j++) {
-//            for i in Chip:
-                Dict dict = item.pDictList[j];
-                total += dict.value;
-                if (dict.key < close) {
-                    be += dict.value;
-                }
+//        Chip = self.ChipList[i]
+        float total = 0;
+        float be = 0.0;
+        for(int j = 0; j < item.num; j++) {
+//        for i in Chip:
+            Dict dict = item.pDictList[j];
+            total += dict.value;
+            if (dict.key < close) {
+                be += dict.value;
             }
-            if (total != 0) {
-                bili = be / total;
-            } else {
-                bili = 0;
-            }
-//            count += 1;
-            pfOut[i] = bili;
         }
+        if (total != 0) {
+            bili = be / total;
+        } else {
+            bili = 0;
+        }
+//        count += 1;
+        pfOut[i] = bili;
+    }
+}
+
+
+int compare_function(const void *a,const void *b) {
+    Dict *x = (Dict *) a;
+    Dict *y = (Dict *) b;
+    return x->key - y->key;
+}
+
+void cost_calc(int nCount, float *pfOut, int percent, DictNode *dpOutChipList) {
+//    N = N / 100  # 转换成百分比
+//    ans = []
+//    for i in self.ChipList:  # 我的ChipList本身就是有顺序的
+//        Chip = self.ChipList[i]
+//        ChipKey = sorted(Chip.keys())  # 排序
+//        total = 0  # 当前比例
+//        sumOf = 0  # 所有筹码的总和
+//        for j in Chip:
+//            sumOf += Chip[j]
+//
+//        for j in ChipKey:
+//            tmp = Chip[j]
+//            tmp = tmp / sumOf
+//            total += tmp
+//            if total > N:
+//                ans.append(j)
+//                break
+//    # import matplotlib.pyplot as plt
+//    # plt.plot(date[len(date) - 1000:-1], ans[len(date) - 1000:-1])
+//    # plt.show()
+//    return ans
+    for(int i = 0; i < nCount; i++) {
+//        float bili = 0;
+//        float close = pfClose[i] * 100;
+        DictNode item = dpOutChipList[i];
+        qsort(item.pDictList, item.num, sizeof(Dict), compare_function);
+
+//        Dict *dpChipKey = (Dict *) malloc((item.num+1) * sizeof(Dict));
+//        for(int j = 0; j < item.num - 1; j++) {
+//            Dict dict1 = item.pDictList[j];
+//            Dict dict2 = item.pDictList[j+1];
+//
+//            dpChipKey[j] = dict1;
+//            dpChipKey[j+1] = dict2;
+//        }
+//        for (int j = 0; j < nChipList) {
+//        for i in self.ChipList:
+//        # 计算目前的比例
+
+//        Chip = self.ChipList[i]
+        float total = 0;//  # 当前比例
+        float sumOf = 0;//  # 所有筹码的总和
+        float tmp = 0;
+        float out = -1;
+        for(int j = 0; j < item.num; j++) {
+            Dict dict = item.pDictList[j];
+            sumOf += dict.value;
+        }
+        for(int j = 0; j < item.num; j++) {
+            Dict dict = item.pDictList[j];
+            tmp = dict.value;
+            tmp = tmp / sumOf;
+            total += tmp;
+            if (total * 100 > percent && out < 0) {
+                out = dict.key;
+            }
+        }
+        pfOut[i] = out;
     }
 
+}
 
-void cost_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float price, float minD, float capital) {
-//    Dict *dpOutChip;
-//    DictNode *dpOutChipList;
-//    int iChip = 0, iChipList = 0;
-////    calcuChip()
-//    calcuChip(&iChip, dpOutChip, &iChipList, dpOutChipList, nCount, pfHigh, pfLow, pfVol, pfAmount, capital, minD);
-//
-//    winner(nCount, pfClose, dpOutChipList);
+void cost_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, int percent, float minD, float capital) {
+    Dict *dpOutChip = (Dict *) malloc(100000 * sizeof(Dict));
+    DictNode *dpOutChipList = (DictNode *) malloc(nCount * sizeof(DictNode));
+
+    calcuChip(dpOutChip, dpOutChipList, nCount, pfHigh, pfLow, pfVol, pfAmount, capital, minD);
+    cost_calc(nCount, pfOut, percent, dpOutChipList);
+
+    free(dpOutChip);
+    for(int i = 0; i < nCount; i++) {
+        free(dpOutChipList[i].pDictList);
+    }
+    free(dpOutChipList);
 }
 
 void winner_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float minD, float capital) {
@@ -412,7 +502,7 @@ void winner_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *p
     DictNode *dpOutChipList = (DictNode *) malloc(nCount * sizeof(DictNode));
 
     calcuChip(dpOutChip, dpOutChipList, nCount, pfHigh, pfLow, pfVol, pfAmount, capital, minD);
-    winner(nCount, pfOut, pfClose, pfVol, pfAmount, dpOutChipList);
+    winner_calc(nCount, pfOut, pfClose, pfVol, pfAmount, dpOutChipList);
 
     free(dpOutChip);
     for(int i = 0; i < nCount; i++) {
@@ -449,8 +539,9 @@ void dma(int nCount, float *pfOut, float *pfIn, float *pfWeight)
   dma_list(nCount, pfOut, pfIn, pfWeight);
 }
 
-void cost(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float price, float capital) {
-//    cost_list(nCount, pfOut, pfHigh, pfLow, pfVol, pfAmount, pfClose, price, minD, capital);
+void cost(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, int percent, float capital) {
+    float minD = 0.01;
+    cost_list(nCount, pfOut, pfHigh, pfLow, pfVol, pfAmount, percent, minD, capital);
 }
 
 void winner(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float capital) {

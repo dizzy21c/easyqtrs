@@ -88,7 +88,7 @@ class ChipDistribution():
             else:
                 self.Chip[i] = tmpChip[i]  *(TurnoverRateT * A)
         import copy
-        print("chip", self.Chip)
+        # print("chip", self.Chip)
         self.ChipList[dateT] = copy.deepcopy(self.Chip)
 
 
@@ -221,6 +221,7 @@ class ChipDistribution():
                 if total > N:
                     ans.append(j)
                     break
+            # ans.append(sumOf)
         # import matplotlib.pyplot as plt
         # plt.plot(date[len(date) - 1000:-1], ans[len(date) - 1000:-1])
         # plt.show()
@@ -235,11 +236,11 @@ if __name__ == "__main__":
     # a.get_data(data) #获取数据
     # a.calcuChip(flag=1, AC=1) #计算
     start_t = datetime.datetime.now()
-    data['win'] = a.winner() #获利盘
+    # data['win'] = a.winner() #获利盘
+    data['cos'] = a.cost(70) #成本分布
+    #     data['lwin'] = a.lwinner()
     end_t = datetime.datetime.now()
     print(end_t, 'tdx_func_mp spent:{}'.format((end_t - start_t)))
 
-#     data['cos'] = a.cost(70) #成本分布
-#     data['lwin'] = a.lwinner()
     print(data.tail(10))
     print(a.capital)

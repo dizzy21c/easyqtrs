@@ -10,7 +10,7 @@ void test(int *p, float *f) {
 }
 
 typedef struct DictSt {
-    float key;
+    int key;
     float value;
 } Dict;
 
@@ -34,13 +34,21 @@ int test2(void) {
 }
 
 void test3(Dict *dpTest) {
-    Dict t = {12.9, 13.0};
+    Dict t1 = {10, 13.0};
 //    t.key = 12.9;
 //    t.value = 13.0;
-    dpTest[0] = t;
-    dpTest[1] = t;
-    dpTest[2] = t;
+    dpTest[0] = (Dict) {10, 13.0};
+    dpTest[1] = (Dict) {5, 13.0};
+    dpTest[2] = (Dict) {7, 13.0};
 }
+
+int compare_function(const void *a,const void *b) {
+    Dict *x = (Dict *) a;
+    Dict *y = (Dict *) b;
+    return x->key - y->key;
+}
+
+
 int main()
 {
    /* 我的第一个 C 程序 */
@@ -70,9 +78,16 @@ int main()
 
    test2();
 
-    Dict *dpTest = (Dict*) malloc(sizeof(Dict) * 10);
+    Dict *dpTest = (Dict*) malloc(sizeof(Dict) * 3);
     test3(dpTest);
     printf("Hello, World! %d, %f \n", p, dpTest[0].key);
+    for(int i = 0; i < 3; i++) {
+        printf("key %d", dpTest[i]);
+    }
+    qsort(dpTest, 3, sizeof(Dict), compare_function);
+    for(int i = 0; i < 3; i++) {
+        printf("key %d", dpTest[i]);
+    }
 
    return 0;
 }
