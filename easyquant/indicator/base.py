@@ -537,10 +537,64 @@ def BARLAST(cond, yes=True):
 
 XARROUND =  lambda x,y:np.round(y*(round(x/y-math.floor(x/y)+0.00000000001)+ math.floor(x/y)),2)
 
-###TODO 简单计算
-def WINNER(Series,N=60):
-    x=MA(Series, N)
-    return (Series / x - 1)
+def WINNER(Data,Price):
+#     x=MA(Series, N)
+#     return (Series / x - 1)
+    # print(Capital, type(Capital))
+    ncount = len(Data)
+    tf_p = c_float * ncount
+    np_OUT = tf_p(0)
+
+    na_High = np.asarray(Data.high).astype(np.float32)
+    na_Low = np.asarray(Data.low).astype(np.float32)
+    na_Vol = np.asarray(Data.volume).astype(np.float32)
+    na_Amount = np.asarray(Data.amount).astype(np.float32)
+    capital = CAPITAL(data)
+
+    if Price is None:
+        na_Close = np.asarray(Data.close).astype(np.float32)
+    elif isinstance(13.5, float):
+        Data['price'] = Price
+        na_Close = np.asarray(Data['price']).astype(np.float32)
+    else:
+        na_Close = np.asarray(Price).astype(np.float32)
+    # na_High = np.asarray(Data.high).astype(np.float32)
+
+    # na_Weight = np.asarray(Weight.fillna(1)).astype(np.float32)
+
+    np_H = cast(na_High.ctypes.data, POINTER(c_float))
+    np_L = cast(na_Low.ctypes.data, POINTER(c_float))
+    np_V = cast(na_Vol.ctypes.data, POINTER(c_float))
+    np_A = cast(na_Amount.ctypes.data, POINTER(c_float))
+    np_C = cast(na_Close.ctypes.data, POINTER(c_float))
+    # np_H = cast(na_High.ctypes.data, POINTER(c_float))
+    # np_W = cast(na_Weight.ctypes.data, POINTER(c_float))
+    lib.winner(ncount, np_OUT, np_H, np_L, np_V, np_A, np_C, c_float(Capital))
+    # lib.winner(ncount, np_OUT, np_S, np_W)
+    return pd.Series(np.asarray(np_OUT), index=Data.index)
+
+def COST(Data, Percent):
+    # print(Capital, type(Capital))
+    ncount = len(Data)
+    tf_p = c_float * ncount
+    np_OUT = tf_p(0)
+    capital = CAPITAL(data)
+
+    na_High = np.asarray(Data.high).astype(np.float32)
+    na_Low = np.asarray(Data.low).astype(np.float32)
+    na_Vol = np.asarray(Data.volume).astype(np.float32)
+    na_Amount = np.asarray(Data.amount).astype(np.float32)
+
+    np_H = cast(na_High.ctypes.data, POINTER(c_float))
+    np_L = cast(na_Low.ctypes.data, POINTER(c_float))
+    np_V = cast(na_Vol.ctypes.data, POINTER(c_float))
+    np_A = cast(na_Amount.ctypes.data, POINTER(c_float))
+    # np_C = cast(na_Close.ctypes.data, POINTER(c_float))
+    # np_H = cast(na_High.ctypes.data, POINTER(c_float))
+    # np_W = cast(na_Weight.ctypes.data, POINTER(c_float))
+    lib.cost(ncount, np_OUT, np_H, np_L, np_V, np_A, Percent, c_float(capital))
+    # lib.winner(ncount, np_OUT, np_S, np_W)
+    return pd.Series(np.asarray(np_OUT), index=Data.index)
 
 def SLOPE(Series, timeperiod=14):
     Series = Series.fillna(0)
@@ -578,7 +632,7 @@ def EXIST(Series, N):
 
 def CAPITAL(data):
     # code = data.index.levels[1][0]
-    code = data.index[1][1]
+    code = data.index[0][1]
     dataInfo = __STOCK_INFO(code)
     if len(dataInfo) > 0:
         return dataInfo.liutongguben.values[0] / 100.0
@@ -587,7 +641,7 @@ def CAPITAL(data):
 
 def FINANCE(data, N):
     close = data.close[-1]
-    code = data.index[1][1]
+    code = data.index[0][1]
     dataInfo = __STOCK_INFO(code)
     if len(data) > 0:
         if N == 40:
@@ -608,7 +662,7 @@ def ISLASTBAR(data):
 
 def BIDASKVOL(data, dateStr = None):
     mongo = MongoIo()
-    code = data.index[1][1]
+    code = data.index[0][1]
     if dateStr == None:
         dateStr = data.index[-1][0].strftime("%Y-%m-%d")
     df = __REALTIME_DATA(code, dateStr)
@@ -618,7 +672,7 @@ def BIDASKVOL(data, dateStr = None):
 
 def BIDASK5VOL(data, dateStr = None):
     mongo = MongoIo()
-    code = data.index[1][1]
+    code = data.index[0][1]
     if dateStr == None:
         dateStr = data.index[-1][0].strftime("%Y-%m-%d")
     df = __REALTIME_DATA(code, dateStr)
@@ -633,7 +687,7 @@ def CURBIDASKVOL(data):
     return data['bid1_volume'], data['ask1_volume']
 
 def TURNOVER(data, dateStr = None):
-    code = data.index[1][1]
+    code = data.index[0][1]
     if dateStr == None:
         dateStr = data.index[-1][0].strftime("%Y-%m-%d")
     df = __REALTIME_DATA(code, dateStr)
@@ -642,7 +696,7 @@ def TURNOVER(data, dateStr = None):
     return 0, 0
 
 def BIDVOL(data, dateStr = None):
-    code = data.index[1][1]
+    code = data.index[0][1]
     if dateStr == None:
         dateStr = data.index[-1][0].strftime("%Y-%m-%d")
     df = __REALTIME_DATA(code, dateStr)
@@ -651,7 +705,7 @@ def BIDVOL(data, dateStr = None):
     return 0
 
 def ASKVOL(data, dateStr = None):
-    code = data.index[1][1]
+    code = data.index[0][1]
     if dateStr == None:
         dateStr = data.index[-1][0].strftime("%Y-%m-%d")
     df = __REALTIME_DATA(code, dateStr)
