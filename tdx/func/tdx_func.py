@@ -1991,22 +1991,27 @@ def tdx_dqe_test_A03(data):
 
 def tdx_dqe_test_A04(data):
     CLOSE = data.close
-    C = data.close
-    VOL = data.volume
+    # C = data.close
+    # VOL = data.volume
     LOW = data.low
     HIGH = data.high
-    OPEN = data.open
+    # OPEN = data.open
 
     V1 = (CLOSE*2+HIGH+LOW)/4*10
     V2 = EMA(V1,13)-EMA(V1,34);
     V3 = EMA(V2,5);
     # V4 = (EMA((WINNERB(CLOSE) * 70),3) / (EMA((WINNERB(CLOSE) * 70),3) + EMA(((WINNERB((CLOSE * 1.1)) - WINNERB((CLOSE * 0.9))) * 80),3))) * 100;
-    V4 = (EMA((WINNER(data, CLOSE) * 70),3) / (EMA((WINNERB(CLOSE) * 70),3) + EMA(((WINNERB((CLOSE * 1.1)) - WINNERB((CLOSE * 0.9))) * 80),3))) * 100;
-    XG = ((DYNAINFO(18)-DYNAINFO(19)-(2*(V2-V3)*5.5)-INTPART(V4))/(DYNAINFO(18)+DYNAINFO(19)+(2*(V2-V3)*5.5)+INTPART(V4))+1)*16/10;
+    VW1 = EMA((WINNER(data, CLOSE) * 70),3)
+    VW2 = EMA(((WINNER(data, (CLOSE * 1.1)) - WINNER(data, (CLOSE * 0.9))) * 80),3)
+    V4 = VW1 / (VW1 + VW2) * 100
+    VM3 = 2*(V2 - V3)*5.5
+    # XG = ((DYNAINFO(18)-DYNAINFO(19)-(2*(V2-V3)*5.5)-INTPART(V4))/(DYNAINFO(18)+DYNAINFO(19)+(2*(V2-V3)*5.5)+INTPART(V4))+1)*16/10
+
+    XG = ((DYNAINFO(18)-DYNAINFO(19)-VM3-INTPART(V4))/(DYNAINFO(18)+DYNAINFO(19)+VM3+INTPART(V4))+1)*16/10
     # (VAR0, VAR00) = BIDASK5VOL(data)
     # VAR = (VAR0-VAR00)/5
     # XG = VAR/CAPITAL(data)*100
-    return IF(VRC,1,0), -1, False
+    return IF(XG,1,0), -1, False
 
 
 
