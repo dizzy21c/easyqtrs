@@ -260,7 +260,7 @@ def get_data(codelist, st_start, st_end, type):
 
     # return data_day
 
-def tdx_func_mp(func_name, sort_type, codelist, type='', backTime=''):
+def tdx_func_mp(func_names, sort_types, codelist, type='', backTime=''):
     start_t = datetime.datetime.now()
     # if start_t.time() < datetime.time(9, 30, 00):
     #     print("read web data from tencent begin-time:", start_t)
@@ -284,32 +284,64 @@ def tdx_func_mp(func_name, sort_type, codelist, type='', backTime=''):
     start_t = datetime.datetime.now()
     print("begin-tdx_func_mp :", start_t)
 
-    task_list = []
-    # pool = Pool(cpu_count())
+    func_nameA = func_names.split(',')
+    sort_typeA = sort_types.split(',')
+    is_idx = 0
+    keysObj = {}
     for key in range(pool_size):
-        # tdx_func(databuf_mongo[key])
-        # task_list.append(executor_func.submit(tdx_func, databuf_mongo[key], newdatas, func_name, type=type))
-        task_list.append(executor_func.submit(tdx_func, key, newdatas, func_name, sort_type, type=type))
-    # pool.close()
-    # pool.join()
+        keysObj[key] = None
 
-    # todo begin
-    dataR = pd.DataFrame()
-    # for i in range(pool_size):
-    #     if len(dataR) == 0:
-    #         dataR = databuf_tdxfunc[i]
-    #     else:
-    #         dataR = dataR.append(databuf_tdxfunc[i])
-    #     # print(len(dataR))
-    for task in as_completed(task_list):
-        a = task.result()
-        # pass
-        if len(dataR) == 0:
-            dataR = task.result()
-        else:
-            dataR = dataR.append(task.result())
-    dataR = dataR.fillna(0)
-    dataR = dataR.sort_values(by="dao")
+    for func_name in func_nameA:
+        sort_type = int(sort_typeA[is_idx])
+        is_idx = is_idx + 1
+        task_list = []
+        # pool = Pool(cpu_count())
+        for key in keysObj:
+            # tdx_func(databuf_mongo[key])
+            # task_list.append(executor_func.submit(tdx_func, databuf_mongo[key], newdatas, func_name, type=type))
+            task_list.append(executor_func.submit(tdx_func, key, newdatas, func_name, code_list = keysObj[key], type=type))
+        # pool.close()
+        # pool.join()
+
+        # todo begin
+        dataR = pd.DataFrame()
+        # for i in range(pool_size):
+        #     if len(dataR) == 0:
+        #         dataR = databuf_tdxfunc[i]
+        #     else:
+        #         dataR = dataR.append(databuf_tdxfunc[i])
+        #     # print(len(dataR))
+        keysObj = {}
+        for task in as_completed(task_list):
+            dR, key, codeList = task.result()
+            keysObj[key] = codeList
+            # pass
+            if len(dataR) == 0:
+                dataR = dR
+            else:
+                dataR = dataR.append(dR)
+
+        if len(dataR) > 0:
+            dataR = dataR.fillna(0)
+            dataR = dataR.sort_values(by="dao")
+            if sort_type > 0:
+                dataR = dataR.tail(sort_type)
+                allc = dataR.code.to_list()
+                for key in keysObj:
+                    sc = []
+                    for sk in keysObj[key]:
+                        if sk in allc:
+                            sc.append(sk)
+                    keysObj[key] = sc
+            elif sort_type < 0:
+                dataR = dataR.tail(abs(sort_type))
+                allc = dataR.code.to_list()
+                for key in keysObj:
+                    sc = []
+                    for sk in keysObj[key]:
+                        if sk in allc:
+                            sc.append(sk)
+                    keysObj[key] = sc
     # todo end
     print(dataR)
     dataR.to_csv("step-%s-%s.csv" % (func_name, backTime))
@@ -356,7 +388,7 @@ def tdx_func_upd_hist_order(func_name):
 
 
 # def tdx_func(datam, newdatas, func_name, code_list = None, type=''):
-def tdx_func(key, newdatas, func_names, sort_types, code_list = None, type=''):
+def tdx_func(key, newdatas, func_name, code_list = None, type=''):
     """
     准备数据
     """
@@ -367,82 +399,64 @@ def tdx_func(key, newdatas, func_names, sort_types, code_list = None, type=''):
     mongo_np = MongoIo()
     start_t = datetime.datetime.now()
     print("begin-tdx_func:", start_t)
-    dataER = pd.DataFrame()
+    # dataER = pd.DataFrame()
     if code_list is None:
         code_list = datam.index.levels[1]
-    func_nameA = func_names.split(',')
-    sort_typeA = sort_types.split(',')
+    # func_nameA = func_names.split(',')
+    # sort_typeA = sort_types.split(',')
     is_idx = 0
-    for func_name in func_nameA:
-        dataR = pd.DataFrame()
-        sort_type = int(sort_typeA[is_idx])
-        is_idx = is_idx + 1
-        for code in code_list:
-            data=datam.query("code=='%s'" % code)
-            # pb_value = pba_calc(code)
-            # if not pb_value:
-            #     print("pb < 0 code=%s" % code)
-            #     continue
-            try:
-                if type == 'B':
-                    newdata0 = newdatas.query("code=='%s'" % code)
-                    if len(newdata0) > 0:
-                        newdata = newdata0.iloc[-1]
-                    else:
-                        # print("data-len=0, code=", code)
-                        continue
+    # for func_name in func_nameA:
+    dataR = pd.DataFrame()
+    # sort_type = int(sort_typeA[is_idx])
+    is_idx = is_idx + 1
+    for code in code_list:
+        data=datam.query("code=='%s'" % code)
+        # pb_value = pba_calc(code)
+        # if not pb_value:
+        #     print("pb < 0 code=%s" % code)
+        #     continue
+        try:
+            if type == 'B':
+                newdata0 = newdatas.query("code=='%s'" % code)
+                if len(newdata0) > 0:
+                    newdata = newdata0.iloc[-1]
                 else:
-                    newdata = newdatas[code]
-                now_price = newdata['now']
-                last_price = newdata['now']
-                if type == 'B':
-                    try:
-                        datal=datam_r.query("code=='%s'" % code)
-                        last_price = datal['close'][-1]
-                    except:
-                        print("last-date=0, code=", code)
-                        last_price = 0
-                        continue
-                # if (code == '003001'):
-                #     print(data)
-                #     print(newdata)
-                data = new_df(data.copy(), newdata, now_price)
-                # chk_flg, _ = tdx_dhmcl(df_day)
-                # tdx_base_func(data, "tdx_dhmcl", code)
-                # tdx_base_func(data.copy(), "tdx_dhmcl", code)
-                # tdx_base_func(data, "tdx_sxp", code)
-                # tdx_base_func(data.copy(), "tdx_hmdr", code)
-                calcR = tdx_base_func(data.copy(), func_name, code, newdata, last_price, mongo_np)
-                if calcR == {}:
+                    # print("data-len=0, code=", code)
                     continue
-                dataR = dataR.append(calcR, ignore_index=True)
-                # if len(dataR):
-                #     dataR = pd.DataFrame(calcR)
-                # else:
-                #     dataR.append(pd.DataFrame(calcR))
-            except Exception as e:
-                print("error code=%s" % code)
-                print("error code=", e)
-                # return
-        end_t = datetime.datetime.now()
-        print(end_t, 'tdx_func spent:{}'.format((end_t - start_t)))
-        print("tdx-fun-result-len", len(dataR))
+            else:
+                newdata = newdatas[code]
+            now_price = newdata['now']
+            last_price = newdata['now']
+            if type == 'B':
+                try:
+                    datal=datam_r.query("code=='%s'" % code)
+                    last_price = datal['close'][-1]
+                except:
+                    print("last-date=0, code=", code)
+                    last_price = 0
+                    continue
+            # if (code == '003001'):
+            #     print(data)
+            #     print(newdata)
+            data = new_df(data.copy(), newdata, now_price)
+            calcR = tdx_base_func(data.copy(), func_name, code, newdata, last_price, mongo_np)
+            if calcR == {}:
+                continue
+            dataR = dataR.append(calcR, ignore_index=True)
+        except Exception as e:
+            print("error code=%s" % code)
+            print("error code=", e)
+            # return
+    end_t = datetime.datetime.now()
+    print(end_t, 'tdx_func spent:{}'.format((end_t - start_t)))
+    print("tdx-fun-result-len", len(dataR))
 
-        if len(dataR) > 0:
-            dataR = dataR.fillna(0)
-            dataR = dataR.sort_values(by="dao")
-            if sort_type > 0:
-                dataR = dataR.tail(sort_type)
-            elif sort_type < 0:
-                dataR = dataR.tail(abs(sort_type))
-
-            dataER = dataR
-            code_list = dataR.code.to_list()
-        else:
-            return pd.DataFrame()
-
-
-    return dataER
+    if len(dataR) > 0:
+        code_list = dataR.code.to_list()
+    else:
+        code_list = {}
+        # return pd.DataFrame()
+    return dataR, key, code_list
 
 
 # print("pool size=%d" % pool_size)
