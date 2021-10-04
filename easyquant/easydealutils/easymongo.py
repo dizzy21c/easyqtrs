@@ -421,6 +421,13 @@ class MongoIo(object):
             df = df.set_index(['_id'])
         return df
 
+    def get_realtime_count(self, dateStr = None):
+        if dateStr == None:
+            # dateStr = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime())
+            dateStr = strftime('%Y-%m-%d',localtime())
+        table = 'realtime_%s' % dateStr
+        return self.db[table].estimated_document_count()
+
     def upd_positions(self, code, amount, price):
         table = 'positions'
         # self.db[table].insert_many(

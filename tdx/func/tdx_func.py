@@ -2006,12 +2006,55 @@ def tdx_dqe_test_A04(data):
     V4 = VW1 / (VW1 + VW2) * 100
     VM3 = 2*(V2 - V3)*5.5
     # XG = ((DYNAINFO(18)-DYNAINFO(19)-(2*(V2-V3)*5.5)-INTPART(V4))/(DYNAINFO(18)+DYNAINFO(19)+(2*(V2-V3)*5.5)+INTPART(V4))+1)*16/10
-
-    XG = ((DYNAINFO(18)-DYNAINFO(19)-VM3-INTPART(V4))/(DYNAINFO(18)+DYNAINFO(19)+VM3+INTPART(V4))+1)*16/10
+    (VARBUY, VARSELL) = BIDASK5VOL(data)
+    XG = ((VARBUY-VARSELL-VM3-V4)/(VARBUY+VARSELL+VM3+V4)+1)*16/10
     # (VAR0, VAR00) = BIDASK5VOL(data)
     # VAR = (VAR0-VAR00)/5
     # XG = VAR/CAPITAL(data)*100
-    return IF(XG,1,0), -1, False
+    return IF(XG>0,XG,0), -1, False
+
+def tdx_dqe_test_A05(data):
+    CLOSE = data.close
+    # C = data.close
+    VOL = data.volume
+    LOW = data.low
+    HIGH = data.high
+    OPEN = data.open
+
+def tdx_dqe_test_A06(data):
+    CLOSE = data.close
+    # C = data.close
+    VOL = data.volume
+    LOW = data.low
+    HIGH = data.high
+    OPEN = data.open
+
+    LOW=IF(HIGH==LOW,LOW-0.01,LOW)
+
+    jj = (HIGH+LOW+CLOSE) / 3
+#     qj0 = VOL/IF(HIGH==LOW,4,HIGH-LOW)
+    qj0 = VOL/(HIGH-LOW)
+    qj1 = qj0*(MIN(OPEN,CLOSE)-LOW)
+    qj2 = qj0*(jj-MIN(CLOSE,OPEN))
+    qj3 = qj0*(HIGH-MAX(OPEN,CLOSE))
+    qj4 = qj0*(MAX(CLOSE,OPEN)-jj)
+#     DDX = IF(HIGH==LOW,4*qj0,((qj1+qj2)-(qj3+qj4)))/SUM(VOL,10)*100
+    DDX = ((qj1+qj2)-(qj3+qj4))/SUM(VOL,10)*100
+    DDY = ((qj2+qj4)-(qj1+qj3))/SUM(VOL,10)*100
+    DDZ = ((qj1+qj2)-(qj3+qj4))/((qj1+qj2)+(qj3+qj4))*100*17
+    return ((DDX+DDY+DDZ)/3), -1, False
+
+def tdx_dqe_test_A07(data):
+#     CLOSE = data.close
+    # C = data.close
+    VOL = data.volume
+#     LOW = data.low
+#     HIGH = data.high
+#     OPEN = data.open
+#     VAR = data.volume
+    VAR1 = CAPITAL(data)
+    XG = VOL * 10 / VAR1
+    return XG, -1, False
 
 
 

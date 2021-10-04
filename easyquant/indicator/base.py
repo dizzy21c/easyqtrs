@@ -150,7 +150,7 @@ def HHV(Series, NS):
 
         lib.hhv(ncount, np_OUT, np_S, np_N)
 
-        return pd.Series(np.asarray(np_OUT), index=Series.index)
+        return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Series.index)
 
     if NS == 0:
         return Series
@@ -171,7 +171,7 @@ def LLV(Series, NS):
 
         lib.llv(ncount, np_OUT, np_S, np_N)
 
-        return pd.Series(np.asarray(np_OUT), index=Series.index)
+        return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Series.index)
 
     if NS == 0:
         return Series
@@ -190,7 +190,7 @@ def SUMS(Series, NS):
     
     lib.sum(ncount, np_OUT, np_S, np_N)
 
-    return pd.Series(np.asarray(np_OUT))
+    return pd.Series(np.asarray(np_OUT), dtype=np.float64)
 
 
 def DMA(Series, Weight):
@@ -205,7 +205,7 @@ def DMA(Series, Weight):
 
     lib.dma(ncount, np_OUT, np_S, np_W)
 
-    return pd.Series(np.asarray(np_OUT), index=Series.index)
+    return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Series.index)
 
 
 def SUM(Series, N):
@@ -549,7 +549,7 @@ def WINNER(Data,Price):
     na_Low = np.asarray(Data.low).astype(np.float32)
     na_Vol = np.asarray(Data.volume).astype(np.float32)
     na_Amount = np.asarray(Data.amount).astype(np.float32)
-    capital = CAPITAL(data)
+    capital = CAPITAL(Data)
 
     if Price is None:
         na_Close = np.asarray(Data.close).astype(np.float32)
@@ -569,9 +569,9 @@ def WINNER(Data,Price):
     np_C = cast(na_Close.ctypes.data, POINTER(c_float))
     # np_H = cast(na_High.ctypes.data, POINTER(c_float))
     # np_W = cast(na_Weight.ctypes.data, POINTER(c_float))
-    lib.winner(ncount, np_OUT, np_H, np_L, np_V, np_A, np_C, c_float(Capital))
+    lib.winner(ncount, np_OUT, np_H, np_L, np_V, np_A, np_C, c_float(capital))
     # lib.winner(ncount, np_OUT, np_S, np_W)
-    return pd.Series(np.asarray(np_OUT), index=Data.index)
+    return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Data.index)
 
 def COST(Data, Percent):
     # print(Capital, type(Capital))
@@ -594,7 +594,7 @@ def COST(Data, Percent):
     # np_W = cast(na_Weight.ctypes.data, POINTER(c_float))
     lib.cost(ncount, np_OUT, np_H, np_L, np_V, np_A, Percent, c_float(capital))
     # lib.winner(ncount, np_OUT, np_S, np_W)
-    return pd.Series(np.asarray(np_OUT), index=Data.index)
+    return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Data.index)
 
 def SLOPE(Series, timeperiod=14):
     Series = Series.fillna(0)

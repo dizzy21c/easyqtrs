@@ -43,6 +43,7 @@ data_buf_day = Manager().dict()
 data_buf_stockinfo = Manager().dict()
 databuf_mongo = Manager().dict()
 databuf_mongo_r = Manager().dict()
+databuf_mongo_rn = Manager().dict()
 databuf_mongo_1 = Manager().dict()
 databuf_mongo_5 = Manager().dict()
 databuf_mongo_15 = Manager().dict()
@@ -179,6 +180,21 @@ def do_get_data_mp(key, codelist, st_start, st_end, type=''):
         td = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(1)
         st_backtime = td.strftime('%Y-%m-%d')
         databuf_mongo_r[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime, st_end=st_backtime)
+        td2 = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(2)
+        while True:
+#             td2 = datetime.datetime.strptime(st_bakN, '%Y-%m-%d') + datetime.timedelta(2)
+            st_backtime2 = td2.strftime('%Y-%m-%d')
+            if st_backtime2 > datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(1), '%Y-%m-%d'):
+                databuf_mongo_rn[key] = pd.DataFrame()
+                break
+            databuf_mongo_rn[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime2, st_end=st_backtime2)
+            if len(databuf_mongo_rn[key]) == 0:
+#                 print("continue", st_backtime2)
+                st_endN = st_backtime2
+                td2 = datetime.datetime.strptime(st_endN, '%Y-%m-%d') + datetime.timedelta(1)
+                continue
+            else:
+                break
 
     # end_t = datetime.datetime.now()
     # print(end_t, 'get_data do_get_data_mp spent:{}'.format((end_t - start_t)))
@@ -396,6 +412,7 @@ def tdx_func(key, newdatas, func_name, code_list = None, type=''):
     datam = databuf_mongo[key]
     if type == 'B':
         datam_r = databuf_mongo_r[key]
+        datam_rn = databuf_mongo_rn[key]
     mongo_np = MongoIo()
     start_t = datetime.datetime.now()
     print("begin-tdx_func:", start_t)
@@ -427,19 +444,25 @@ def tdx_func(key, newdatas, func_name, code_list = None, type=''):
                 newdata = newdatas[code]
             now_price = newdata['now']
             last_price = newdata['now']
+            dataln = None
             if type == 'B':
                 try:
-                    datal=datam_r.query("code=='%s'" % code)
+                    datal = datam_r.query("code=='%s'" % code)
                     last_price = datal['close'][-1]
                 except:
+                    dataln = None
                     print("last-date=0, code=", code)
                     last_price = 0
                     continue
+                try:
+                    dataln = datam_rn.query("code=='%s'" % code)
+                except:
+                    dataln = None
             # if (code == '003001'):
             #     print(data)
             #     print(newdata)
             data = new_df(data.copy(), newdata, now_price)
-            calcR = tdx_base_func(data.copy(), func_name, code, newdata, last_price, mongo_np)
+            calcR = tdx_base_func(data.copy(), func_name, code, newdata, last_price, dataln, mongo_np)
             if calcR == {}:
                 continue
             dataR = dataR.append(calcR, ignore_index=True)
@@ -460,7 +483,7 @@ def tdx_func(key, newdatas, func_name, code_list = None, type=''):
 
 
 # print("pool size=%d" % pool_size)
-def tdx_base_func(data, func_name, code, newData, lastPrice, mongo_np, code_list = None):
+def tdx_base_func(data, func_name, code, newData, lastPrice, lastNData, mongo_np, code_list = None):
     """
     准备数据
     """
@@ -477,8 +500,19 @@ def tdx_base_func(data, func_name, code, newData, lastPrice, mongo_np, code_list
     PCT1 = nowPrice / oldClose - 1
     # PCT2 = newData['open'] / newData['close'] - 1
     PCT3 = nowPrice / nowOpen - 1
-    PCT4 = lastPrice / nowOpen - 1
+#     PCT4 = lastPrice / nowOpen - 1
     PCT4 = lastPrice / nowPrice - 1
+    if lastNData is None or len(lastNData) == 0:
+        PCTNO = 0
+        PCTNC = 0
+        PCTNL = 0
+        PCTNH = 0
+    else:
+        PCTNO = lastNData.iloc[-1].open / nowPrice - 1
+        PCTNC = lastNData.iloc[-1].close / nowPrice - 1
+        PCTNL = lastNData.iloc[-1].low / nowPrice - 1
+        PCTNH = lastNData.iloc[-1].high / nowPrice - 1
+
     # PCT = max(PCT1, PCT2)
     ##
     # if (code[0:3] == "300" or code[0:3] == 688) and (PCT > 1.08 ):# or PCT < 0.92):
@@ -522,10 +556,14 @@ def tdx_base_func(data, func_name, code, newData, lastPrice, mongo_np, code_list
     dao = tdx_func_result[-1]
     if dao <= 0:
         return {}
-    p1 = "%4.1f" % (PCT1 * 100)
-    p3 = "%4.1f" % (PCT3 * 100)
-    p4 = "%4.1f" % (PCT4 * 100)
-    return {'code': code, 'now':nowPrice, 'dao': tdx_func_result[-1], 'p1':p1, 'p3': p3, 'p4': p4}
+    pn = "%4.1f" % (PCT1 * 100)
+    po = "%4.1f" % (PCT3 * 100)
+    pc = "%4.1f" % (PCT4 * 100)
+    p2o = "%4.1f" % (PCTNO * 100)
+    p2c = "%4.1f" % (PCTNC * 100)
+    p2h = "%4.1f" % (PCTNH * 100)
+    p2l = "%4.1f" % (PCTNL * 100)
+    return {'code': code, 'now':nowPrice, 'dao': tdx_func_result[-1], 'pn':pn, 'po': po, 'pc': pc, 'p2o': p2o, 'p2c': p2c, 'p2h': p2h, 'p2l': p2l}
 
 def main_param(argv):
     st_begin = ''
@@ -567,6 +605,11 @@ if __name__ == '__main__':
     # st_start, st_end, func = main_param(sys.argv)
     # print("input", st_start, st_end, func)
     st_start, st_end, func, sort, type, back_time, all_data = main_param(sys.argv)
+    if type == 'B':
+        m = MongoIo()
+        rc = m.get_realtime_count(dateStr = back_time)
+        if rc == 0:
+            exit(0)
     if all_data == '':
         all_data = 'position'
     codelist = getCodeList(all_data)
@@ -613,5 +656,11 @@ if __name__ == '__main__':
         print("*** loop calc begin ***")
         tdx_func_mp(func, sort, codelist, type=type, backTime=back_time)
 
-        if type == 'B' or type == 'T':
+        if type == 'B':
+            break
+        if type == 'T':
             input()
+
+    end_t = datetime.datetime.now()
+    print(end_t, '__name__ spent:{}'.format((end_t - start_t)))
+#     print("__name__", len(dataR))
