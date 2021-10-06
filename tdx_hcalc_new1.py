@@ -13,6 +13,7 @@ import QUANTAXIS as QA
 import json
 import datetime
 import sys, getopt
+from easyquant import DataUtil
 
 # import redis
 import time
@@ -359,7 +360,7 @@ def tdx_func_mp(func_names, sort_types, codelist, type='', backTime=''):
                             sc.append(sk)
                     keysObj[key] = sc
     # todo end
-    print(dataR)
+#     print(dataR)
     dataR.to_csv("step-%s-%s.csv" % (func_name, backTime))
 
     end_t = datetime.datetime.now()
@@ -558,12 +559,12 @@ def tdx_base_func(data, func_name, code, newData, lastPrice, lastNData, mongo_np
         return {}
     pn = "%4.1f" % (PCT1 * 100)
     po = "%4.1f" % (PCT3 * 100)
-    pc = "%4.1f" % (PCT4 * 100)
-    p2o = "%4.1f" % (PCTNO * 100)
-    p2c = "%4.1f" % (PCTNC * 100)
+    pc = PCT4 * 100 # "%4.1f" % (PCT4 * 100)
+    p2o = PCTNO * 100 # "%4.1f" % (PCTNO * 100)
+    p2c = PCTNC * 100 # "%4.1f" % (PCTNC * 100)
     p2h = "%4.1f" % (PCTNH * 100)
     p2l = "%4.1f" % (PCTNL * 100)
-    return {'code': code, 'now':nowPrice, 'dao': tdx_func_result[-1], 'pn':pn, 'po': po, 'pc': pc, 'p2o': p2o, 'p2c': p2c, 'p2h': p2h, 'p2l': p2l}
+    return {'code': code, 'now':nowPrice, 'dao': tdx_func_result[-1], 'pn':pn, 'po': po, 'PC': pc, 'P2O': p2o, 'P2C': p2c, 'p2h': p2h, 'p2l': p2l}
 
 def main_param(argv):
     st_begin = ''
@@ -598,7 +599,95 @@ def main_param(argv):
             all_data = arg
     return st_begin, st_end, func, sort, type, back_time, all_data
 
+
+def main_back_test_work(back_timeN):
+    start_t = datetime.datetime.now()
+    print("begin-time:", start_t)
+
+    # st_start, st_end, func = main_param(sys.argv)
+    # print("input", st_start, st_end, func)
+    st_start, st_end, func, sort, type, back_time, all_data = main_param(sys.argv)
+    print("input st-start=%s, st-end=%s, func=%s, sort=%s, type=%s, back-time=%s, all_data = %s" % (st_start, st_end, func, sort, type, back_time, all_data))
+
+    m = MongoIo()
+    back_time = back_timeN
+    rc = m.get_realtime_count(dateStr = back_time)
+    if rc == 0:
+        return {}
+#         exit(0)
+
+    if all_data == '':
+        all_data = 'position'
+    codelist = getCodeList(all_data)
+    m = MongoIo()
+    his_real = m.get_realtime(dateStr = back_time)
+    all_top = {}
+    data_util = DataUtil()
+    hidx = 0
+#         dataA = pd.DataFrame()
+    for code in codelist:
+        temp = his_real.query("code=='%s'" % code)
+        if len(temp) > 0:
+            all_top = data_util.day_summary(data=temp.iloc[-1], rtn=all_top)
+#             hidx = hidx + 1
+#     print(all_top)
+#         exit(0)
+    # st_start = "2019-01-01"
+    # func = "test"
+#     print("input st-start=%s, st-end=%s, func=%s, sort=%s, type=%s, back-time=%s, all_data = %s" % (st_start, st_end, func, sort, type, back_time, all_data))
+    # 1, 读取数据（多进程，读入缓冲）
+    # 开始日期
+    # data_day = get_data(st_start)
+    # print(data_day)
+    # indices_rsrsT = tdx_func(data_day)
+    td = datetime.datetime.strptime(back_time, '%Y-%m-%d') + datetime.timedelta(-1)
+    st_end = td.strftime('%Y-%m-%d')
+    # data_buf_rlast-dateday[0] =
+
+    get_data(codelist, st_start, st_end, type)
+
+    # 2, 计算公式（多进程，读取缓冲）
+    print("*** loop calc begin ***")
+    dataEnd = tdx_func_mp(func, sort, codelist, type=type, backTime=back_time)
+#     print(dataEnd)
+    all_top['date'] = back_timeN
+    for idx in range(1, 7):
+        all_top['p1c-%s' % idx ] = dataEnd.tail(idx).PC.sum()  / int(idx) * 1.0
+        all_top['p2c-%s' % idx ] = dataEnd.tail(idx).P2C.sum() / int(idx) * 1.0
+        all_top['p2o-%s' % idx ] = dataEnd.tail(idx).P2O.sum() / int(idx) * 1.0
+#     print("all-top", all_top)
+    end_t = datetime.datetime.now()
+    print(end_t, '__name__ spent:{}'.format((end_t - start_t)))
+#     print("__name__", len(dataR))
+    return all_top
+
+def do_backtest():
+    dataR = pd.DataFrame()
+    btTime = '2020-09-22' #'2020-09-27'
+    while True:
+        nextDate = datetime.datetime.strptime(btTime, '%Y-%m-%d') + datetime.timedelta(1)
+        btTime = datetime.datetime.strftime(nextDate, '%Y-%m-%d')
+        if nextDate > datetime.datetime.now():
+            break
+        if nextDate.weekday() > 4:
+            continue
+        print(btTime)
+        calcR = main_back_test_work(btTime)
+        if calcR == {}:
+            pass
+        else:
+            dataR = dataR.append(calcR, ignore_index=True)
+    print(dataR)
+    dataR.to_csv("out.csv")
+#     dataR.append
+
 if __name__ == '__main__':
+    do_backtest()
+#     dataR.append
+
+# def testData():
+#     for
+if __name__ == '__main2__':
     start_t = datetime.datetime.now()
     print("begin-time:", start_t)
 
@@ -610,9 +699,24 @@ if __name__ == '__main__':
         rc = m.get_realtime_count(dateStr = back_time)
         if rc == 0:
             exit(0)
+
     if all_data == '':
         all_data = 'position'
     codelist = getCodeList(all_data)
+    if type == 'B':
+        m = MongoIo()
+        his_real = m.get_realtime(dateStr = back_time)
+        all_top = {}
+        data_util = DataUtil()
+        hidx = 0
+#         dataA = pd.DataFrame()
+        for code in codelist:
+            temp = his_real.query("code=='%s'" % code)
+            if len(temp) > 0:
+                all_top = data_util.day_summary(data=temp.iloc[-1], rtn=all_top)
+#             hidx = hidx + 1
+        print(all_top)
+#         exit(0)
     # st_start = "2019-01-01"
     # func = "test"
     print("input st-start=%s, st-end=%s, func=%s, sort=%s, type=%s, back-time=%s, all_data = %s" % (st_start, st_end, func, sort, type, back_time, all_data))
@@ -624,8 +728,8 @@ if __name__ == '__main__':
     if type == 'B':
         td = datetime.datetime.strptime(back_time, '%Y-%m-%d') + datetime.timedelta(-1)
         st_end = td.strftime('%Y-%m-%d')
-        # data_buf_rlast-dateday[0] = 
-    
+        # data_buf_rlast-dateday[0] =
+
     if type != 'R':
         get_data(codelist, st_start, st_end, type)
 
@@ -651,12 +755,13 @@ if __name__ == '__main__':
                 print("end trade time.")
                 # time.sleep(3600)
                 # break
-            
+
             time.sleep(10)
         print("*** loop calc begin ***")
         tdx_func_mp(func, sort, codelist, type=type, backTime=back_time)
 
         if type == 'B':
+            print("all-top", all_top)
             break
         if type == 'T':
             input()

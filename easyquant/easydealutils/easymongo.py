@@ -405,13 +405,16 @@ class MongoIo(object):
         del pdf['decimal_point']
         return pdf
 
-    def get_realtime(self, code = None, dateStr = None, time='09:30:00'):
+    def get_realtime(self, code = None, dateStr = None, time='09:30:00', beg_time = None):
         if dateStr == None:
             # dateStr = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime())
             dateStr = strftime('%Y-%m-%d',localtime())
         table = 'realtime_%s' % dateStr
         if code == None:
-            dtd = self.db[table].find({'time':{'$lt':time}})
+            if beg_time == None:
+                dtd = self.db[table].find({'time':{'$lt':time}})
+            else:
+                dtd = self.db[table].find({'time':{'$lt':time, '$gt':beg_time}})
         elif isinstance(code, list):
             dtd = self.db[table].find({'code':{'$in':code}, 'time':{'$lt':time}})
         else:
