@@ -14,6 +14,8 @@ import json
 import datetime
 import sys, getopt
 from easyquant import DataUtil
+import subprocess
+import pexpect
 
 # import redis
 import time
@@ -600,17 +602,18 @@ def main_param(argv):
     return st_begin, st_end, func, sort, type, back_time, all_data
 
 
-def main_back_test_work(back_timeN):
+def main_back_test_work(backTestArgs):
     start_t = datetime.datetime.now()
     print("begin-time:", start_t)
 
     # st_start, st_end, func = main_param(sys.argv)
     # print("input", st_start, st_end, func)
-    st_start, st_end, func, sort, type, back_time, all_data = main_param(sys.argv)
+#     st_start, st_end, func, sort, type, back_time, all_data = main_param(sys.argv)
+    st_start, st_end, func, sort, type, back_time, all_data = backTestArgs
     print("input st-start=%s, st-end=%s, func=%s, sort=%s, type=%s, back-time=%s, all_data = %s" % (st_start, st_end, func, sort, type, back_time, all_data))
 
     m = MongoIo()
-    back_time = back_timeN
+#     back_time = back_timeN
     rc = m.get_realtime_count(dateStr = back_time)
     if rc == 0:
         return {}
@@ -649,8 +652,10 @@ def main_back_test_work(back_timeN):
     # 2, 计算公式（多进程，读取缓冲）
     print("*** loop calc begin ***")
     dataEnd = tdx_func_mp(func, sort, codelist, type=type, backTime=back_time)
+    if len(dataEnd) == 0:
+        return {}
 #     print(dataEnd)
-    all_top['date'] = back_timeN
+    all_top['date'] = back_time
     for idx in range(1, 7):
         all_top['p1c-%s' % idx ] = dataEnd.tail(idx).PC.sum()  / int(idx) * 1.0
         all_top['p2c-%s' % idx ] = dataEnd.tail(idx).P2C.sum() / int(idx) * 1.0
@@ -662,26 +667,57 @@ def main_back_test_work(back_timeN):
     return all_top
 
 def do_backtest():
+    start_t = datetime.datetime.now()
+    print("begin-time:", start_t)
+
+    # st_start, st_end, func = main_param(sys.argv)
+    # print("input", st_start, st_end, func)
+    st_start, st_end, func, sort, type, back_time, all_data = main_param(sys.argv)
     dataR = pd.DataFrame()
-    btTime = '2020-09-22' #'2020-09-27'
+#     btTime = back_time
+    idx = 0
     while True:
-        nextDate = datetime.datetime.strptime(btTime, '%Y-%m-%d') + datetime.timedelta(1)
-        btTime = datetime.datetime.strftime(nextDate, '%Y-%m-%d')
-        if nextDate > datetime.datetime.now():
-            break
-        if nextDate.weekday() > 4:
-            continue
-        print(btTime)
-        calcR = main_back_test_work(btTime)
+        backTestArgs = st_start, st_end, func, sort, type, back_time, all_data
+        calcR = main_back_test_work(backTestArgs)
         if calcR == {}:
             pass
         else:
             dataR = dataR.append(calcR, ignore_index=True)
-    print(dataR)
-    dataR.to_csv("out.csv")
+
+        nextDate = datetime.datetime.strptime(back_time, '%Y-%m-%d') + datetime.timedelta(1)
+        back_time = datetime.datetime.strftime(nextDate, '%Y-%m-%d')
+        if nextDate > datetime.datetime.now():
+            break
+        if nextDate.weekday() > 4:
+            continue
+#         print(btTime)
+        idx = idx + 1
+        if idx % 5 == 0:
+            dataR.to_csv("out-%s.csv" % back_time)
+#             break
+            out = subprocess.getoutput('docker restart qadocker_mgdb_1')
+            print(out)
+            child = pexpect.spawn ('sudo swapoff -a')
+            try:
+                child.expect ('password')
+                child.sendline ('le1125le')
+            except:
+                pass
+            child.expect(pexpect.EOF)
+            result = child.before.decode()
+            print(result)
+        if idx == 15:
+            break
+#             val = os.popen('docker restart qadocker_mgdb_1')
+#             print(val)
+#     print(dataR)
+#     dataR.to_csv("out-%s.csv" % back_time)
 #     dataR.append
 
 if __name__ == '__main__':
+#     proc = Popen(['sudo', 'swapoff', '-a'], stdin=PIPE)
+#     proc.stdin.write('yourPassword\n')
+#     proc.stdin.flush()
     do_backtest()
 #     dataR.append
 
