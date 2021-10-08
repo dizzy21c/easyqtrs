@@ -44,6 +44,7 @@ import easyquotation
 data_codes = Manager().dict()
 data_buf_day = Manager().dict()
 data_buf_stockinfo = Manager().dict()
+databuf_func_mongo = Manager().dict()
 databuf_mongo = Manager().dict()
 databuf_mongo_r = Manager().dict()
 databuf_mongo_rn = Manager().dict()
@@ -278,6 +279,117 @@ def get_data(codelist, st_start, st_end, type):
     print(end_t, 'get_data spent:{}'.format((end_t - start_t)))
 
     # return data_day
+
+def tdx_func_mp_all(func_names, sort_types, codelist, type='', backTime=''):
+    start_t = datetime.datetime.now()
+    # if start_t.time() < datetime.time(9, 30, 00):
+    #     print("read web data from tencent begin-time:", start_t)
+    #     newdatas = fetch_quotation_data(source="tencent")
+    # else:
+    print("begin-tdx_func_mp :", start_t)
+
+    func_nameA = func_names.split(',')
+    sort_typeA = sort_types.split(',')
+    is_idx = 0
+    keysObj = {}
+    for key in range(pool_size):
+        keysObj[key] = None
+    funcSize = len(func_nameA)
+    for func_name in func_nameA:
+        # sort_type = int(sort_typeA[is_idx])
+        is_idx = is_idx + 1
+        if is_idx == funcSize - 1:
+            for key in keysObj:
+                databuf_func_mongo["%s:%s" % (func_name, key)] = pd.DataFrame()
+            break
+
+        task_list = []
+        # pool = Pool(cpu_count())
+        for key in keysObj:
+            # tdx_func(databuf_mongo[key])
+            # task_list.append(executor_func.submit(tdx_func, databuf_mongo[key], newdatas, func_name, type=type))
+            task_list.append(executor_func.submit(tdx_func_all, key, newdatas, func_name, code_list = keysObj[key], type=type))
+        # pool.close()
+        # pool.join()
+
+        # todo begin
+        dataR = pd.DataFrame()
+        # for i in range(pool_size):
+        #     if len(dataR) == 0:
+        #         dataR = databuf_tdxfunc[i]
+        #     else:
+        #         dataR = dataR.append(databuf_tdxfunc[i])
+        #     # print(len(dataR))
+        keysObj = {}
+        for task in as_completed(task_list):
+            dR, key, codeList = task.result()
+            keysObj[key] = codeList
+            # pass
+            if len(dataR) == 0:
+                dataR = dR
+            else:
+                dataR = dataR.append(dR)
+                dataR = dataR.fillna(0)
+
+            databuf_func_mongo["%s:%s" % (func_name, key)] = dataR
+
+def tdx_func_all(key, newdatas, func_name, code_list = None, type=''):
+    """
+    准备数据
+    """
+    # highs = data.high
+    datam = databuf_mongo[key]
+    # if type == 'B':
+    #     datam_r = databuf_mongo_r[key]
+        # datam_rn = databuf_mongo_rn[key]
+    # mongo_np = MongoIo()
+    start_t = datetime.datetime.now()
+    print("begin-tdx_func:", start_t)
+    # dataER = pd.DataFrame()
+    if code_list is None:
+        code_list = datam.index.levels[1]
+    # func_nameA = func_names.split(',')
+    # sort_typeA = sort_types.split(',')
+    is_idx = 0
+    # for func_name in func_nameA:
+    dataR = pd.DataFrame()
+    # sort_type = int(sort_typeA[is_idx])
+    is_idx = is_idx + 1
+    for code in code_list:
+        data=datam.query("code=='%s'" % code)
+        # pb_value = pba_calc(code)
+        # if not pb_value:
+        #     print("pb < 0 code=%s" % code)
+        #     continue
+        try:
+            tdx_func_result, tdx_func_sell_result, next_buy = eval(func_name)(data)
+            
+            dataR = dataR.append(calcR, ignore_index=True)
+        except Exception as e:
+            print("calc %s code=%s ERROR:FUNC-CALC-ERROR " % (func_name, code))
+            tdx_func_result, tdx_func_sell_result, next_buy = [0], [0], False
+            print("error code=%s" % code)
+            # print("error code=", e)
+            # return
+    end_t = datetime.datetime.now()
+    print(end_t, 'tdx_func spent:{}'.format((end_t - start_t)))
+    print("tdx-fun-result-len", len(dataR))
+
+    if len(dataR) > 0:
+        code_list = dataR.code.to_list()
+    else:
+        code_list = {}
+        # return pd.DataFrame()
+    return dataR, key, code_list
+
+def tdx_base_func_all(data, func_name, code, newData, lastPrice, lastNData, mongo_np, code_list = None):
+    try:
+        tdx_func_result, tdx_func_sell_result, next_buy = eval(func_name)(data)
+    except:
+        print("calc %s code=%s ERROR:FUNC-CALC-ERROR " % (func_name, code))
+        tdx_func_result, tdx_func_sell_result, next_buy = [0], [0], False
+
+    return tdx_func_result
 
 def tdx_func_mp(func_names, sort_types, codelist, type='', backTime=''):
     start_t = datetime.datetime.now()
