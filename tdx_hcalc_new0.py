@@ -333,7 +333,7 @@ def tdx_func_mp_all(func_names, sort_types, codelist, type='', backTime=''):
 
             databuf_func_mongo["%s:%s" % (func_name, key)] = dataR
 
-def tdx_func_all(key, newdatas, func_name, code_list = None, type=''):
+def tdx_func_all(key, newdatas, func_name, code_list, type=''):
     """
     准备数据
     """
@@ -357,14 +357,19 @@ def tdx_func_all(key, newdatas, func_name, code_list = None, type=''):
     is_idx = is_idx + 1
     for code in code_list:
         data=datam.query("code=='%s'" % code)
+        data = data.copy()
         # pb_value = pba_calc(code)
         # if not pb_value:
         #     print("pb < 0 code=%s" % code)
         #     continue
         try:
             tdx_func_result, tdx_func_sell_result, next_buy = eval(func_name)(data)
-            
-            dataR = dataR.append(calcR, ignore_index=True)
+            if type(tdx_func_result) == pd.Series:
+                dataR = tdx_func_result.to_frame(name="dao")
+            else:
+                data['dao'] =  tdx_func_result[-1]
+                dataR = data.drop(['close', 'open', 'high', 'low', 'volume', 'amount'], axis=1)
+                # dataR = data
         except Exception as e:
             print("calc %s code=%s ERROR:FUNC-CALC-ERROR " % (func_name, code))
             tdx_func_result, tdx_func_sell_result, next_buy = [0], [0], False
@@ -375,21 +380,12 @@ def tdx_func_all(key, newdatas, func_name, code_list = None, type=''):
     print(end_t, 'tdx_func spent:{}'.format((end_t - start_t)))
     print("tdx-fun-result-len", len(dataR))
 
-    if len(dataR) > 0:
-        code_list = dataR.code.to_list()
-    else:
-        code_list = {}
-        # return pd.DataFrame()
+    # if len(dataR) > 0:
+    #     code_list = dataR.code.to_list()
+    # else:
+    #     code_list = {}
+    #     # return pd.DataFrame()
     return dataR, key, code_list
-
-def tdx_base_func_all(data, func_name, code, newData, lastPrice, lastNData, mongo_np, code_list = None):
-    try:
-        tdx_func_result, tdx_func_sell_result, next_buy = eval(func_name)(data)
-    except:
-        print("calc %s code=%s ERROR:FUNC-CALC-ERROR " % (func_name, code))
-        tdx_func_result, tdx_func_sell_result, next_buy = [0], [0], False
-
-    return tdx_func_result
 
 def tdx_func_mp(func_names, sort_types, codelist, type='', backTime=''):
     start_t = datetime.datetime.now()
