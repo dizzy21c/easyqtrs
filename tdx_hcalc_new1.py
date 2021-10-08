@@ -362,7 +362,7 @@ def tdx_func_mp(func_names, sort_types, codelist, type='', backTime=''):
                             sc.append(sk)
                     keysObj[key] = sc
     # todo end
-#     print(dataR)
+    print(dataR)
     dataR.to_csv("step-%s-%s.csv" % (func_name, backTime))
 
     end_t = datetime.datetime.now()
@@ -714,7 +714,7 @@ def do_backtest():
 #     dataR.to_csv("out-%s.csv" % back_time)
 #     dataR.append
 
-if __name__ == '__main__':
+if __name__ == '__main2__':
 #     proc = Popen(['sudo', 'swapoff', '-a'], stdin=PIPE)
 #     proc.stdin.write('yourPassword\n')
 #     proc.stdin.flush()
@@ -723,7 +723,7 @@ if __name__ == '__main__':
 
 # def testData():
 #     for
-if __name__ == '__main2__':
+if __name__ == '__main__':
     start_t = datetime.datetime.now()
     print("begin-time:", start_t)
 
@@ -799,8 +799,8 @@ if __name__ == '__main2__':
         if type == 'B':
             print("all-top", all_top)
             break
-        if type == 'T':
-            input()
+        # if type == 'T':
+        #     input()
 
     end_t = datetime.datetime.now()
     print(end_t, '__name__ spent:{}'.format((end_t - start_t)))
