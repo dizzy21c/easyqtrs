@@ -308,7 +308,7 @@ def tdx_func_mp_all(func_names, sort_types, codelist, type='', backTime=''):
         for key in keysObj:
             # tdx_func(databuf_mongo[key])
             # task_list.append(executor_func.submit(tdx_func, databuf_mongo[key], newdatas, func_name, type=type))
-            task_list.append(executor_func.submit(tdx_func_all, key, newdatas, func_name, code_list = keysObj[key], type=type))
+            task_list.append(executor_func.submit(tdx_func_all, key, func_name))
         # pool.close()
         # pool.join()
 
@@ -333,7 +333,7 @@ def tdx_func_mp_all(func_names, sort_types, codelist, type='', backTime=''):
 
             databuf_func_mongo["%s:%s" % (func_name, key)] = dataR
 
-def tdx_func_all(key, newdatas, func_name, code_list, type=''):
+def tdx_func_all(key, func_name):
     """
     准备数据
     """
@@ -346,8 +346,8 @@ def tdx_func_all(key, newdatas, func_name, code_list, type=''):
     start_t = datetime.datetime.now()
     print("begin-tdx_func:", start_t)
     # dataER = pd.DataFrame()
-    if code_list is None:
-        code_list = datam.index.levels[1]
+    # if code_list is None:
+    code_list = datam.index.levels[1]
     # func_nameA = func_names.split(',')
     # sort_typeA = sort_types.split(',')
     is_idx = 0
@@ -357,6 +357,8 @@ def tdx_func_all(key, newdatas, func_name, code_list, type=''):
     is_idx = is_idx + 1
     for code in code_list:
         data=datam.query("code=='%s'" % code)
+        if len(data) == 0:
+            continue
         data = data.copy()
         # pb_value = pba_calc(code)
         # if not pb_value:
@@ -365,11 +367,15 @@ def tdx_func_all(key, newdatas, func_name, code_list, type=''):
         try:
             tdx_func_result, tdx_func_sell_result, next_buy = eval(func_name)(data)
             if type(tdx_func_result) == pd.Series:
-                dataR = tdx_func_result.to_frame(name="dao")
+                data = tdx_func_result.to_frame(name="dao")
+                print("ok1")
             else:
                 data['dao'] =  tdx_func_result[-1]
-                dataR = data.drop(['close', 'open', 'high', 'low', 'volume', 'amount'], axis=1)
+                data = data.drop(['close', 'open', 'high', 'low', 'volume', 'amount'], axis=1)
+                print("ok2")
                 # dataR = data
+            dataR.append(data)
+            print(dataR.tail(10))
         except Exception as e:
             print("calc %s code=%s ERROR:FUNC-CALC-ERROR " % (func_name, code))
             tdx_func_result, tdx_func_sell_result, next_buy = [0], [0], False
