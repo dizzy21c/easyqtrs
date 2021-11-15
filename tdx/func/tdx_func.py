@@ -1873,7 +1873,7 @@ def tdx_dqe_xqc_A1(data, sort=False):
     MC = (0.3609454219 * JC - 0.03309329629 * REF(C, 1) - 0.04241822779 * REF(C, 2) - 0.026737249 * REF(C, 3) \
            - 0.007010041271 * REF(C, 4) - 0.002652859952 * REF(C, 5) - 0.0008415042966 * REF(C, 6) \
            - 0.0002891931964 * REF(C, 7) - 0.0000956265934 * REF(C, 8) - 0.0000321286052 * REF(C, 9) \
-           - 0.0000106773454 * REF(C, 10) - 0.0000035457562 * REF(C, 11) -- 0.0000011670713 * REF(C, 12)) / (1 - 0.7522406533)
+           - 0.0000106773454 * REF(C, 10) - 0.0000035457562 * REF(C, 11) - 0.0000011670713 * REF(C, 12)) / (1 - 0.7522406533)
     # 竞价涨幅 := (DYNAINFO(4) / DYNAINFO(3) - 1) * 100;
     竞价涨幅 = (C / REF(C, 1) - 1) * 100
     # ST := STRFIND(stkname, 'ST', 1) > 0;
@@ -1922,8 +1922,9 @@ def tdx_dqe_test_A01(data):
     一字板 = IFAND3(C/REF(C,1)>1.095,  H==O ,  L==H, True, False)
     # not(ST) and not(S)  and not(停牌) AND 
     # XG=IFAND4( CAPITAL(data) / 1000000 < 10, CLOSE <80, 一字板, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0) 
-    data['cap'] = CAPITAL(data) / 1000000 < 10
-    XG=IFAND4( data['cap'], CLOSE <80, 一字板 == False, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0) 
+    # data['cap'] = CAPITAL(data) / 1000000 < 10
+    # XG=IFAND4( data['cap'], CLOSE <80, 一字板 == False, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0) 
+    XG=IFAND3(CLOSE < 100, 一字板 == False, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0) 
     return XG, -1, False
 
 def tdx_dqe_test_A01_N(data):
@@ -2114,3 +2115,42 @@ def tdx_sl5560(data):
     # X_10:=MA(CLOSE,3)>REF(MA(CLOSE,3),1) AND MA(CLOSE,5)>REF(MA(CLOSE,5),1) AND MA(CLOSE,10)>REF(MA(CLOSE,10),1) AND VOL/240>REF(VOL,30)*1.2/240*1.5 AND CLOSE>LOW*1.059 AND CLOSE>REF(MA(CLOSE,3),1) AND REF(CLOSE,1) AND MA(CLOSE,5)>REF(MA(CLOSE,5),1) AND MA(CLOSE,10)>REF(MA(CLOSE,10),1) AND MA(CLOSE,20)>REF(MA(CLOSE,20),1) AND MA(VOL,5)>REF(MA(VOL,5),1) AND MA(CLOSE,5)-MA(CLOSE,10)<=0.579;
     # X_11:=FILTER(X_10,5);
     # XG:X_7 OR X_8 AND X_11,STICK,COLORYELLOW;
+
+def tdx_lbqs(data):
+#     {趋势多空线XG}
+    CLOSE = data.close
+    C = data.close
+    VOL = data.volume
+    LOW = data.low
+    HIGH = data.high
+    OPEN = data.open
+
+    N=13
+    M=34
+    P=55
+    趋势=5*SMA((CLOSE-LLV(LOW,M))/(HHV(HIGH,M)-LLV(LOW,M))*100,5,1)-3*SMA(SMA((CLOSE-LLV(LOW,M))/(HHV(HIGH,M)-LLV(LOW,M))*100,5,1),3,1)-SMA(SMA(SMA((CLOSE-LLV(LOW,M))/(HHV(HIGH,M)-LLV(LOW,M))*100,5,1),3,1),2,1)
+    底部=5
+    XG0=IF(CROSS(趋势,底部),60,0)
+#     {底底抬高}
+    M3=MA(C,3)
+    M10=MA(C,10)
+    M60=MA(C,60)
+    第一底=C<=LLV(C,10)
+    天数1=BARSLAST(第一底)
+    最小=C<=LLV(C,5)
+    天数2=BARSLAST(最小)
+#     底底抬高A=天数1>5 AND C> 第一底 AND M3<M10 AND REF(M3,天数1)<REF(M10,天数1) AND ((C<=LLV(C,5)) OR ( C> 第一底 AND 天数2>=1)) AND 天数1<=20
+#     底底抬高 =天数1>5 AND C> 第一底 AND M3<M10 AND REF(M3,天数1)<REF(M10,天数1) AND
+#         ((C<=LLV(C,5)) OR ( C> 第一底 AND 天数2>=1))
+#         AND 天数1<=30 AND (VOL/REF(VOL,1)>0.5)
+#     底底抬高 = 1
+    底底抬高1 =IFAND4(天数1>5 , C> 第一底 , M3<M10 , REF(M3,天数1)<REF(M10,天数1), True, False)
+    XG1=底底抬高1 * 30
+    A30=EMA(C,34)>REF(EMA(C,34),1)
+    A50=COST(data, 50) #,COLORRED,LINETHICK2
+    A70=WINNER(data, C)*100>50
+    A90=CROSS(C,A50)
+    突破密集=IFAND4(A30, A50, A70, A90, True, False)
+    XG2 = IFAND4(突破密集, REF(XG0,1), REF(XG1,1), C/REF(C,1) < 1.05, True, False)
+#     XG2=突破密集 * 90 AND REF(XG0,1) AND REF(XG1,1) AND C/REF(C,1) < 1.05
+    return XG2
