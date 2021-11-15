@@ -1926,6 +1926,27 @@ def tdx_dqe_test_A01(data):
     XG=IFAND4( data['cap'], CLOSE <80, 一字板 == False, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0) 
     return XG, -1, False
 
+def tdx_dqe_test_A01_N(data):
+    CLOSE = data.close
+    VOL = data.volume
+    C = data.close
+    H = data.high
+    L = data.low
+    O = data.open
+    # ST =STRFIND(stkname,'ST',1)>0
+    # S =STRFIND(stkname,'S',1)>0
+    # 停牌 =(DYNAINFO(4)=0)
+    一字板 = IFAND3(C/REF(C,1)>1.095,  H==O ,  L==H, True, False)
+    # not(ST) and not(S)  and not(停牌) AND
+    # XG=IFAND4( CAPITAL(data) / 1000000 < 10, CLOSE <80, 一字板, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0)
+    A1 = 6.3 / 10000
+    B1 = 522
+    BZ1 = CAPITAL(data) * A1 + B1
+    # data['cap'] = CAPITAL(data) / 1000000 < 10
+    # XG=IFAND4( data['cap'], CLOSE <80, 一字板 == False, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0)
+    XG = IFAND2(一字板 == False, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0)
+    return XG, -1, False
+
 def tdx_dqe_test_A02(data):
     CLOSE = data.close
     C = data.close
@@ -1986,7 +2007,11 @@ def tdx_dqe_test_A02(data):
 def tdx_dqe_test_A03(data):
     (VAR0, VAR00) = BIDASK5VOL(data)
     VAR = (VAR0-VAR00)/5
-    XG = VAR/CAPITAL(data)*100
+    CD = CAPITAL(data)
+    if CD == 0:
+        XG = 0
+    else:
+        XG = VAR/CAPITAL(data)*100
     return [XG,XG,XG], -1, False
 
 def tdx_dqe_test_A04(data):
@@ -2055,6 +2080,19 @@ def tdx_dqe_test_A07(data):
     VAR1 = CAPITAL(data)
     XG = VOL * 10 / VAR1
     return XG, -1, False
+
+def tdx_ltqd(data):
+    CLOSE = data.close
+    # C = data.close
+    VOL = data.volume
+    LOW = data.low
+    HIGH = data.high
+    OPEN = data.open
+    VAR14 = IF(CLOSE>REF(CLOSE,1),1,0)
+    VAR15 = IFAND3(CLOSE/REF(CLOSE,1)>1.095, HIGH/CLOSE<1.035, VAR14>0,1,0)
+    XG = FILTER(VAR15>0,30)
+    return REF(XG,1), -1, False
+    #return XG, -1, False
 
 
 
