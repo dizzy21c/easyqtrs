@@ -578,7 +578,7 @@ def COST(Data, Percent):
     ncount = len(Data)
     tf_p = c_float * ncount
     np_OUT = tf_p(0)
-    capital = CAPITAL(data)
+    capital = CAPITAL(Data)
 
     na_High = np.asarray(Data.high).astype(np.float32)
     na_Low = np.asarray(Data.low).astype(np.float32)
