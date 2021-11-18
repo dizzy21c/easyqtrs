@@ -383,7 +383,7 @@ def IFOR4(COND1, COND2, COND3, COND4, V1, V2):
 
 ##TODO 通达信测试结果的出的
 def FILTER(COND,N):
-    return COND
+    return IFAND(COND, COUNT(COND,N) == 1, True, False)
 
 def REF(Series, N):
     if isinstance(Series[0], bool) or isinstance(Series[0], np.bool_):

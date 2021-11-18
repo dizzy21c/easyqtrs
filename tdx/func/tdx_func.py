@@ -2082,7 +2082,8 @@ def tdx_dqe_test_A07(data):
     XG = VOL * 10 / VAR1
     return XG, -1, False
 
-def tdx_ltqd(data):
+def tdx_lyqd(data):
+    # 龙妖启动
     CLOSE = data.close
     # C = data.close
     VOL = data.volume
