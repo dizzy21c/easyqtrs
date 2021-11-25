@@ -14,7 +14,7 @@ import re
 class MongoIo(object):
     """Redis操作类"""
     
-    def __init__(self, host='127.0.0.1', port=27017, database='quantaxis'):
+    def __init__(self, host='mgdb', port=27017, database='quantaxis'):
         # self.config = self.file2dict(conf)
         client = mongo.MongoClient(host, port)
         self.db = client[database]

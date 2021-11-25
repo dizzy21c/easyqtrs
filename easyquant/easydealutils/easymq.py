@@ -5,7 +5,7 @@ import random
 
 class EasyMq(object):
   # def __init__(self, , host=host, port=port, user=user, password=password, channel_number=1, queue_name='', routing_key='default',  exchange='', exchange_type='fanout', vhost='/'):
-  def __init__(self, host='127.0.0.1', port=5672, user='admin', password='admin', channel_number=1, vhost='/'):
+  def __init__(self, host='qaeventmq', port=5672, user='admin', password='admin', channel_number=1, vhost='/'):
     self.host = host
     self.port = port
     self.user = user
