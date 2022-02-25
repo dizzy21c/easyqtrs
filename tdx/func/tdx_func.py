@@ -1759,7 +1759,7 @@ def tjS(data):
     C1 = C < REF(C,1)
     C2 = C < REF(C,2)
     C3 = C < REF(C,3)
-    ma5=MA(C,5)
+    ma5=MA(C,3)
     C4 = C < ma5
     J=KDJ(data, N = 19)['KDJ_J'] < 80
     TJ = IFAND5(C1,C2,C3,C4,J, 1, 0)
@@ -2155,3 +2155,120 @@ def tdx_lbqs(data):
     XG2 = IFAND4(突破密集, REF(XG0,1), REF(XG1,1), C/REF(C,1) < 1.05, True, False)
 #     XG2=突破密集 * 90 AND REF(XG0,1) AND REF(XG1,1) AND C/REF(C,1) < 1.05
     return XG2
+
+def tdx_zttj(data):
+    CLOSE = data.close
+    C = data.close
+    VOL = data.volume
+    LOW = data.low
+    HIGH = data.high
+    OPEN = data.open
+
+    VAR1 = MA(100*(CLOSE-LLV(CLOSE,34))/(HHV(HIGH,34)-LLV(LOW,34)),5)-20
+    VAR2 =2*ABS(VAR1)
+    VAR3 = 100-3*SMA((CLOSE-LLV(LOW,75))/(HHV(HIGH,75)-LLV(LOW,75))*100,20,1)+2*SMA(SMA((CLOSE-LLV(LOW,75))/(HHV(HIGH,75)-LLV(LOW,75))*100,20,1),15,1)
+    VAR4 = 100-3*SMA((OPEN-LLV(LOW,75))/(HHV(HIGH,75)-LLV(LOW,75))*100,20,1)+2*SMA(SMA((OPEN-LLV(LOW,75))/(HHV(HIGH,75)-LLV(LOW,75))*100,20,1),15,1)
+    情报 = ABS(100-VAR3)
+    红军 = IF(VAR1>0,VAR1,0)
+    绿军 = IF(VAR1<0,VAR2,0)
+    VAR27 = IFAND3(VAR3<REF(VAR4,1), VOL>REF(VOL,1), CLOSE>REF(CLOSE,1), True, False)
+    买入 = IFAND(VAR27, COUNT(VAR27,30)==1,1,0)
+    XG = COUNT(买入>0,21) == 1
+    return REF(XG,1), -1, False
+
+def tdx_zttj1(data):
+    CLOSE = data.close
+    C = data.close
+    VOL = data.volume
+    LOW = data.low
+    HIGH = data.high
+    OPEN = data.open
+
+    VAR1 = MA(100*(CLOSE-LLV(CLOSE,34))/(HHV(HIGH,34)-LLV(LOW,34)),5)-20
+    VAR2 =2*ABS(VAR1)
+    VAR3 = 100-3*SMA((CLOSE-LLV(LOW,75))/(HHV(HIGH,75)-LLV(LOW,75))*100,20,1)+2*SMA(SMA((CLOSE-LLV(LOW,75))/(HHV(HIGH,75)-LLV(LOW,75))*100,20,1),15,1)
+    VAR4 = 100-3*SMA((OPEN-LLV(LOW,75))/(HHV(HIGH,75)-LLV(LOW,75))*100,20,1)+2*SMA(SMA((OPEN-LLV(LOW,75))/(HHV(HIGH,75)-LLV(LOW,75))*100,20,1),15,1)
+    情报 = ABS(100-VAR3)
+    红军 = IF(VAR1>0,VAR1,0)
+    绿军 = IF(VAR1<0,VAR2,0)
+    VAR27 = IFAND3(VAR3<REF(VAR4,1), VOL>REF(VOL,1), CLOSE>REF(CLOSE,1), True, False)
+    买入 = IFAND(VAR27, COUNT(VAR27,30)==1,1,0)
+    XG = COUNT(买入>0,21) == 1
+    XG = 买入
+    return REF(XG,1), -1, False
+
+def tdx_cmfx(data):
+    CLOSE = data.close
+    C = data.close
+    VOL = data.volume
+    LOW = data.low
+    HIGH = data.high
+    OPEN = data.open
+
+    HSL=EMA(VOL/CAPITAL(data),3)
+    ZDL=HHV(HSL,240)
+    ZXL=LLV(HSL,240)
+    XS=MA(C,33)
+    锁定筹码=EMA((HSL-ZXL)/ZXL*XS,13)
+    浮动筹码=EMA((ZDL-HSL)/HSL*XS,13)
+    力量对比=锁定筹码/浮动筹码
+    XLV=(锁定筹码 - REF(锁定筹码,1)) / REF(锁定筹码,1) * 100
+    XLV2=(力量对比 - REF(力量对比,1)) / REF(力量对比,1) * 100
+    HL=13
+    A1=CROSS(XLV,HL)
+    A2=CROSS(XLV2,HL)
+    A11=IFOR(A1>00,A2>0,True,False)
+    # XG=(A1 OR A2) AND (C>REF(C,1) AND C>O AND REF(C,1) / REF(C,2) < 1.09)* 50;
+    XG=IFAND5(A11, C>REF(C,1), C>OPEN, REF(C,1) / REF(C,2) < 1.09, HHV(C,5) / LLV(C,5) < 1.3, True, False)
+    return REF(XG,1), -1, False
+    # return A11
+
+# def tdx_cmfxbl(data):
+# {机构筹码分析}
+# XA_32:=(CLOSE-LLV(LOW,27))/(HHV(HIGH,27)-LLV(LOW,27))*100;
+# XA_34:=SMA(XA_32,3,1);
+# 趋势:=SMA(XA_34,3,1),COLORRED,LINETHICK2;
+# 人气:=SMA(趋势,3,1),COLORYELLOW,LINETHICK2;
+# XGL:=IF(CROSS(趋势,人气),1,0);
+
+# {筹码分析2}
+# HSL:=EMA(VOL/CAPITAL,3);
+# ZDL:=HHV(HSL,240);
+# ZXL:=LLV(HSL,240);
+# XS:=MA(C,33);
+# 锁定筹码:=EMA((HSL-ZXL)/ZXL*XS,13);
+# 浮动筹码:=EMA((ZDL-HSL)/HSL*XS,13);
+# 力量对比:=锁定筹码/浮动筹码 ,COLORSTICK;
+# XLV:=(锁定筹码 - REF(锁定筹码,1)) / REF(锁定筹码,1) * 100;
+# XLV2:=(力量对比 - REF(力量对比,1)) / REF(力量对比,1) * 100;
+# HL:=13;
+# A1:=CROSS(XLV,HL);
+# A2:=CROSS(XLV2,HL);
+# A11:=(A1 OR A2) AND (C>REF(C,1) AND C>O AND REF(C,1) / REF(C,2) < 1.09)* 50;
+# XG_CM:=XGL AND A11;
+
+
+
+
+
+
+# X_8:=(REF(CLOSE,3)-CLOSE)/REF(CLOSE,3)*100>5;
+# X_9:=FILTER(X_8,10);
+# X_10:=BARSLAST(X_9);
+# X_11:=REF(HIGH,X_10+2);
+# X_12:=REF(HIGH,X_10+1);
+# X_13:=REF(HIGH,X_10);
+# X_14:=MAX(X_11,X_12);
+# X_15:=MAX(X_14,X_13);
+# X_16:=(CLOSE-REF(CLOSE,1))/REF(CLOSE,1)*100>5;
+# X_17:=X_10<150;
+# X_18:=(OPEN-X_15)/X_15*100<30;
+# X_19:=(CLOSE-LLV(LOW,X_10))/LLV(LOW,X_10)*100<50;
+# X_20:=(CLOSE-REF(OPEN,5))/REF(OPEN,5)*100<30;
+# X_21:=VOL/MA(VOL,5)<3.5;
+# X_22:=(CLOSE-REF(CLOSE,89))/REF(CLOSE,89)*100<80;
+
+# X_25:=X_16 AND X_17 AND X_18 AND X_19 AND X_20 AND X_21 AND X_22 ;
+# BL:=FILTER(X_25,15),COLORYELLOW;
+
+# XG:XG_CM AND BL;

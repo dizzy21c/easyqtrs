@@ -48,6 +48,7 @@ def do_init_data_buf(code):
     # print("do-init data end, code=%s, data-buf size=%d " % (code, len(data_day)))
 
 def do_main_work(code, data, log, positions):
+    # log.info("data=%s" % data)
     hold_price = positions['price']
     now_price = data['now']
     high_price = data['high']

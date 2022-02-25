@@ -15,7 +15,7 @@ need_data = '' #get_broker_need_data(broker)
 
 class DataSinaEngine(SinaEngine):
     EventType = 'data-sina'
-    PushInterval = 10
+    PushInterval = 60
     # config = "stock_list"
     mongo = MongoIo()
     # market = 'sh'  or 'sz'
