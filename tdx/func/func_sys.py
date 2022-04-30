@@ -12,15 +12,17 @@ def getCodeList(dataType = 'position'):
         mongo = MongoIo()
         return list(mongo.get_positions().index)
     else:
-        df = pd.read_csv(dataType, sep='\t')
+        df = pd.read_csv(dataType, sep='\t', encoding='iso-8859-1')
         if len(df) > 1:
-            return list(df['代码'])[:-1]
+            # return list(df['代码'])[:-1]
+            return list(df.iloc[:-1,0])
         else:
             return []
 
 def getCodelistFromFile(tdxFileName):
-  codeDf = pd.read_csv(tdxFileName, sep='\t')
-  return list(codeDf['代码'])[:-1]
+  codeDf = pd.read_csv(tdxFileName, sep='\t', encoding='iso-8859-1')
+#   return list(codeDf['代码'])[:-1]
+  return list(codeDf.iloc[:-1,0])
   
 def getCodeListFromMongo(mongo):
 #   pool_size = cpu_count()
