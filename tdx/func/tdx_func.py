@@ -2238,9 +2238,14 @@ def tdx_TLBXXF(data):
     V2=EMA(CLOSE,3)>REF(EMA(CLOSE,3),1)
     V3=IFAND(V1,V2,True,False)
     V4=V3[V3==True].index
-    V5=(V4[-1][0] - V4[-2][0]).days
-    data['A']=V5<15
-    XG=IFAND3(data['A'], CLOSE[V4[-1]] < CLOSE[V4[-2]], CLOSE.index[-1] == V4[-1], True, False)
+    if len(V4) <= 1:
+        data['A'] = False
+        #XG=IFAND3(data['A'], CLOSE[V4[-1]] < CLOSE[V4[-1]], CLOSE.index[-1] == V4[-1], True, False)
+        XG=data['A']
+    else:
+        V5=(V4[-1][0] - V4[-2][0]).days
+        data['A']=V5<15
+        XG=IFAND3(data['A'], CLOSE[V4[-1]] < CLOSE[V4[-2]], CLOSE.index[-1] == V4[-1], True, False)
     return XG, -1, False
 
 # def tdx_cmfxbl(data):
