@@ -56,7 +56,7 @@ class Strategy(StrategyTemplate):
 
     def __init__(self, user, log_handler, main_engine):
         StrategyTemplate.__init__(self, user, log_handler, main_engine)
-        self.log.info('init event:%s'% self.name)
+        #self.log.info('init event:%s'% self.name)
         # self.redis = RedisIo()
         self.data_util = DataUtil()
         
@@ -67,7 +67,7 @@ class Strategy(StrategyTemplate):
         if event.event_type != self.EventType:
             return
 
-        self.log.info('Strategy =%s, event_type=%s' %(self.name, event.event_type))
+        #self.log.info('Strategy =%s, event_type=%s' %(self.name, event.event_type))
         task_list = []
         rtn = {}
         # print(datetime.datetime.now())
@@ -88,7 +88,7 @@ class Strategy(StrategyTemplate):
         for task in as_completed(task_list):
             # result = task.result()
             pass
-        self.log.info('Strategy =%s, event_type=%s done.' %(self.name, event.event_type))
+        #self.log.info('Strategy =%s, event_type=%s done.' %(self.name, event.event_type))
 
 class CJsonEncoder(json.JSONEncoder):
     def default(self, obj):

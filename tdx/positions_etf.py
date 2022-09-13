@@ -150,7 +150,10 @@ class Strategy:
     def callback(self, a, b, c, data):
         # self.log.info('Strategy =%s, start calc...' % self.name)
         data = json.loads(data)
-        code =data['code']
+        if data['code'][:1] == 'S':
+            code =data['code'][2:]
+        else:
+            code =data['code']
         # t.start()
         executor.submit(do_main_work, code, data, self.log, self.df_positions.loc[code])
 
