@@ -122,6 +122,7 @@ class Strategy:
         for code in self.df_positions.index:
             task_list.append(executor.submit(do_init_data_buf, code))
             self.easymq.add_sub_key(routing_key=code)
+        self.easymq.add_sub_key(routing_key='data')
             
         for task in as_completed(task_list):
             # result = task.result()
@@ -155,13 +156,17 @@ class Strategy:
     def callback(self, a, b, c, data):
         # self.log.info('Strategy =%s, start calc...' % self.name)
         data = json.loads(data)
+        for stdata in data:
+            code = stdata['code'][2:]
+            if code in self.df_positions.index:
+                executor.submit(do_main_work, code, stdata, self.log, self.df_positions.loc[code])
         #code =data['code']
-        if data['code'][:1] == 'S':
-            code =data['code'][2:]
-        else:
-            code = data['code']
-        # t.start()
-        executor.submit(do_main_work, code, data, self.log, self.df_positions.loc[code])
+#         if data['code'][:1] == 'S':
+#             code =data['code'][2:]
+#         else:
+#             code = data['code']
+#         # t.start()
+#         executor.submit(do_main_work, code, data, self.log, self.df_positions.loc[code])
 
 if __name__ == "__main__":
     log_type = 'file'#'stdout' if log_type_choose == '1' else 'file'

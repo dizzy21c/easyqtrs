@@ -320,6 +320,13 @@ class MongoIo(object):
         # )
         self.db[table].replace_one({'_id':data['_id']}, data, True)
 
+    def save_realtime2(self, data):
+        table = 'realtime2_{}'.format(date.today())
+        # self.db[table].insert_many(
+        #     [data]
+        # )
+        self.db[table].replace_one({'_id':data['_id']}, data, True)
+
     def upd_data_min(self, df_data_min, json_data, minute):
         # index_time =pd.to_datetime(easytime.get_minute_date(minute=5))
         et = EasyTime()

@@ -1,5 +1,6 @@
-
 import pandas as pd
+import numpy as np
+import math
 from easyquant.indicator.base import *
 from easyquant.indicator.talib_indicators import CCI
 def new_df(df_day, data, now_price):
@@ -1889,6 +1890,7 @@ def tdx_dqe_xqc_A1(data, sort=False):
     else:
         刀 = (MC - JC) / JC * 1000 * 附加条件
         # 刀 = (MC - JC) / JC * 1000
+    #刀 = 刀* data.volume / CAPITAL(data) * 100
 
     return 刀, -1, False
 
@@ -1945,7 +1947,7 @@ def tdx_dqe_test_A01_N(data):
     BZ1 = CAPITAL(data) * A1 + B1
     # data['cap'] = CAPITAL(data) / 1000000 < 10
     # XG=IFAND4( data['cap'], CLOSE <80, 一字板 == False, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0)
-    XG = IFAND2(一字板 == False, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0)
+    XG = IFAND(一字板 == False, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0)
     return XG, -1, False
 
 def tdx_dqe_test_A02(data):
@@ -2091,9 +2093,12 @@ def tdx_lyqd(data):
     HIGH = data.high
     OPEN = data.open
     VAR14 = IF(CLOSE>REF(CLOSE,1),1,0)
-    VAR15 = IFAND3(CLOSE/REF(CLOSE,1)>1.095, HIGH/CLOSE<1.035, VAR14>0,1,0)
-    XG = FILTER(VAR15>0,30)
-    return REF(XG,1), -1, False
+    VAR141=LOW<REF(HIGH,1)
+    VAR142=REF(LOW,1)<REF(HIGH,2)
+    VAR15 = IFAND5(CLOSE/REF(CLOSE,1)>1.095, HIGH/CLOSE<1.035, VAR14>0,VAR141, VAR142, 1,0)
+    # XG = FILTER(VAR15>0,30)
+    # return REF(XG,1), -1, False
+    return REF(VAR15,1), -1, False
     #return XG, -1, False
 
 
@@ -2231,6 +2236,18 @@ def tdx_TLBXX(data):
     XG=IFAND(V1,V2,True,False)
     return XG, -1, False
 
+def tdx_LDX(data):
+    #流动性
+    CLOSE = data.close
+    OPEN = data.open
+    AM = data.amount
+    V1=ABS(np.log(CLOSE) - np.log(OPEN))
+    V2=ABS(np.log(CLOSE) - np.log(REF(CLOSE,1)))
+    #V3=MA(MAX(V1,V2)/AM * CAPITAL(data),10)
+    V3=MA(MAX(V1,V2)/AM * 10000000000,10)
+    V4=REF(V3,1)
+    return V4, -1, False
+
 def tdx_TLBXXF(data):
     #天冷不下雪
     CLOSE = data.close
@@ -2247,6 +2264,29 @@ def tdx_TLBXXF(data):
         data['A']=V5<15
         XG=IFAND3(data['A'], CLOSE[V4[-1]] < CLOSE[V4[-2]], CLOSE.index[-1] == V4[-1], True, False)
     return XG, -1, False
+
+def tdx_CTLJJ(data):
+    #朝天龙竞价
+    CLOSE = data.close
+    VOL = data.volume
+    data['JEBZ'] = CAPITAL(data) * 100 / 100000000
+    竞价量 = VOL > 45000
+    竞价金额 = data.amount > 20000000
+    竞量比 = 竞价金额 / CLOSE / 100 / REF(MA(CLOSE, 5),1);
+    data['tj1']=IFAND(data['JEBZ'] > 0.6, data['JEBZ'] < 50, True, False)
+    JLTJ = IFAND(竞量比 > 15, 竞量比 < 500000000, True, False)
+    TJ1 = data['tj1']
+    XG = IFAND4(竞价量,竞价金额,TJ1,JLTJ, True, False)
+    return XG, -1, False
+
+def tdx_ZSMA(data):
+    C = data.close
+    M5 = MA(C, 5)
+    M55 = MA(C, 55)
+    XG = CROSS(M5,M55)
+    return REF(XG, 1), -1, False
+    
+
 
 # def tdx_cmfxbl(data):
 # {机构筹码分析}
