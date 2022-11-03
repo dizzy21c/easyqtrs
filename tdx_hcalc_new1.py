@@ -363,7 +363,8 @@ def tdx_func_mp(func_names, sort_types, codelist, type='', backTime=''):
                     keysObj[key] = sc
     # todo end
     print(dataR)
-    dataR.to_csv("step-%s-%s.csv" % (func_name, backTime))
+    #dataR.to_csv("step-%s-%s.csv" % (func_name, backTime))
+    dataR.to_csv("step-%s-%s.csv" % (func_names, backTime))
 
     end_t = datetime.datetime.now()
     print(end_t, 'tdx_func_mp spent:{}'.format((end_t - start_t)))

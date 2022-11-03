@@ -131,7 +131,8 @@ def tdx_sxp(data):
     小阴小阳1 = ABS(C - REF(C, 1)) / REF(C, 1) * 100 < 9
     时间限制 = IFAND(COUNT(前炮, 30) == 1, BARSLAST(前炮) > 5, True, False)
     后炮 = IFAND(REF(IFAND(小阴小阳, 时间限制, 1, 0), 1) , 前炮, 1, 0)
-    return 后炮, -1, True
+    #return 后炮, -1, True
+    return REF(后炮,1), -1, True
 
 # 黑马大肉
 def tdx_hmdr(data):
