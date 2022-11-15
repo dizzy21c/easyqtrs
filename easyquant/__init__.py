@@ -6,6 +6,7 @@ from .log_handler.default_handler import DefaultLogHandler
 from .main_engine import MainEngine
 from .easydealutils.easyredis import RedisIo
 from .easydealutils.easymongo import MongoIo
+from .easydealutils.easymongo4polars import MongoIo4Pl
 from .easydealutils.easymq import EasyMq
 from .easydealutils.datautil import DataUtil
 from .easydealutils.easytime import EasyTime

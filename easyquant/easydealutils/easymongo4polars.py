@@ -3,43 +3,45 @@ import os
 import sys
 import pymongo as mongo
 import json
-import pandas as pd
+import polars as pl
 import numpy as np
 from datetime import date, datetime
 import time
 from time import strftime, localtime
 from QUANTAXIS.QAFetch import QATdx as tdx
 from easyquant.easydealutils.easytime import EasyTime
+from .easymongo import MongoIo
 import re
-class MongoIo(object):
+class MongoIo4Pl(MongoIo):
     """Redis操作类"""
     
     def __init__(self, host='mgdb', port=27017, database='quantaxis'):
+        super(MongoIo4Pl, self).__init__(host, port, database)
         # self.config = self.file2dict(conf)
-        client = mongo.MongoClient(host, port)
-        self.db = client[database]
-        self.st_start = '2018-01-01'
-        # self.st_end = '2030-12-31'
-        self.st_start_1min = '2020-01-01'
-        self.st_start_5min = '2020-01-01'
-        self.st_start_15min = '2020-01-01'
-        self.st_start_30min = '2020-01-01'
-        self.st_start_60min = '2020-01-01'
+#         client = mongo.MongoClient(host, port)
+#         self.db = client[database]
+#         self.st_start = '2018-01-01'
+#         # self.st_end = '2030-12-31'
+#         self.st_start_1min = '2020-01-01'
+#         self.st_start_5min = '2020-01-01'
+#         self.st_start_15min = '2020-01-01'
+#         self.st_start_30min = '2020-01-01'
+#         self.st_start_60min = '2020-01-01'
         # self.st_end_day = '2030-12-31'
         # if self.config['passwd'] is None:
         #     self.r = redis.Redis(host=self.config['redisip'], port=self.config['redisport'], db=self.config['db'])
         # else:
         #     self.r = redis.Redis(host=self.config['redisip'], port=self.config['redisport'], db=self.config['db'], password = self.config['passwd'])
 
-    def dateStr2stamp(self, dateObj):
-        dateStr = str(dateObj)[0:10]
-        date = time.mktime(time.strptime(dateStr, '%Y-%m-%d'))
-        return date
+#     def dateStr2stamp(self, dateObj):
+#         dateStr = str(dateObj)[0:10]
+#         date = time.mktime(time.strptime(dateStr, '%Y-%m-%d'))
+#         return date
 
-    def datetimeStr2stamp(self, dateObj):
-        dataTimeStr = str(dateObj)[0:19]
-        date = time.mktime(time.strptime(dataTimeStr, '%Y-%m-%d %H:%M:%S'))
-        return date
+#     def datetimeStr2stamp(self, dateObj):
+#         dataTimeStr = str(dateObj)[0:19]
+#         date = time.mktime(time.strptime(dataTimeStr, '%Y-%m-%d %H:%M:%S'))
+#         return date
 
     def _get_data_day(self, code, table, st_start, st_end):
         cursor = self.db[table].find(
@@ -56,29 +58,29 @@ class MongoIo(object):
             {"_id": 0},
             batch_size=10000
         )
-        res = pd.DataFrame([item for item in cursor])
-        try:
-            res = res.assign(
-                volume=res.vol,
-                date=pd.to_datetime(res.date)
-            ).drop_duplicates((['date',
-                                'code'])).query('volume>1').set_index(
-                'date',
-                drop=False
-            )
-            res = res.loc[:,
-                  [
-                      'code',
-                      'open',
-                      'high',
-                      'low',
-                      'close',
-                      'volume',
-                      'amount',
-                      'date'
-                  ]]
-        except:
-            res = None
+        res = pl.DataFrame([item for item in cursor])
+#         try:
+#             res = res.assign(
+#                 volume=res.vol,
+#                 date=pl.to_datetime(res.date)
+#             ).drop_duplicates((['date',
+#                                 'code'])).query('volume>1').set_index(
+#                 'date',
+#                 drop=False
+#             )
+#             res = res.loc[:,
+#                   [
+#                       'code',
+#                       'open',
+#                       'high',
+#                       'low',
+#                       'close',
+#                       'volume',
+#                       'amount',
+#                       'date'
+#                   ]]
+#         except:
+#             res = None
         # if format in ['P', 'p', 'pandas', 'pd']:
         return res
         # elif format in ['json', 'dict']:
@@ -112,29 +114,29 @@ class MongoIo(object):
             {"_id": 0},
             batch_size=10000
         )
-        res = pd.DataFrame([item for item in cursor])
-        try:
-            res = res.assign(
-                volume=res.vol,
-                date=pd.to_datetime(res.date)
-            ).drop_duplicates((['datetime',
-                                'code'])).query('volume>1').set_index(
-                'datetime',
-                drop=False
-            )
-            res = res.loc[:,
-                  [
-                      'code',
-                      'open',
-                      'high',
-                      'low',
-                      'close',
-                      'volume',
-                      'amount',
-                      'datetime'
-                  ]]
-        except:
-            res = None
+        res = pl.DataFrame([item for item in cursor])
+#         try:
+#             res = res.assign(
+#                 volume=res.vol,
+#                 date=pl.to_datetime(res.date)
+#             ).drop_duplicates((['datetime',
+#                                 'code'])).query('volume>1').set_index(
+#                 'datetime',
+#                 drop=False
+#             )
+#             res = res.loc[:,
+#                   [
+#                       'code',
+#                       'open',
+#                       'high',
+#                       'low',
+#                       'close',
+#                       'volume',
+#                       'amount',
+#                       'datetime'
+#                   ]]
+#         except:
+#             res = None
         # if format in ['P', 'p', 'pandas', 'pd']:
         return res
         # elif format in ['json', 'dict']:
@@ -181,16 +183,16 @@ class MongoIo(object):
                 dtd = self.db[table].find(
                     {'code': code, 'date': {'$gte': self.dateStr2stamp(st_start), "$lte": self.dateStr2stamp(st_end)},
                      'type': type}, {"_id": 0})
-        ptd = pd.DataFrame(list(dtd))
+        ptd = pl.DataFrame(list(dtd))
         if len(ptd) > 0:
             # del ptd['_id']
             del ptd['date_stamp']
             if type == 'D':
-                ptd.date = pd.to_datetime(ptd.date)
+                ptd.date = pl.to_datetime(ptd.date)
                 ptd = ptd.set_index(["date", "code"])
             else:
-                ptd.date = pd.to_datetime(ptd.date)
-                ptd.datetime = pd.to_datetime(ptd.datetime)
+                ptd.date = pl.to_datetime(ptd.date)
+                ptd.datetime = pl.to_datetime(ptd.datetime)
                 ptd = ptd.set_index(["datetime", "code"])
         # ptd.rename(columns={"vol":"volume"}, inplace=True)
         return ptd
@@ -204,25 +206,18 @@ class MongoIo(object):
             data = self._get_data_day(code, table, st_start, st_end)
         else:
             data = self._get_data_min(code, table, st_start, st_end, type)
-            # if isinstance(code, list):
-            #     dtd=self.db[table].find({'code':{'$in':code},'date':{'$gte':self.dateStr2stamp(st_start), "$lte":self.dateStr2stamp(st_end)}, 'type':type},{"_id": 0})
-            # else:
-            #     dtd=self.db[table].find({'code':code,'date':{'$gte':self.dateStr2stamp(st_start), "$lte":self.dateStr2stamp(st_end)}, 'type':type},{"_id": 0})
-        # ptd=pd.DataFrame(list(dtd))
+
         if data is None:
-            return pd.DataFrame()
+            return pl.DataFrame()
 
         if len(data) > 0:
-            # del ptd['_id']
-            # del ptd['date_stamp']
             if type == 'D':
-                data.date = pd.to_datetime(data.date)
-                data = data.set_index(["date","code"])
+                data = data.with_column(pl.col("date").str.strptime(pl.Date, fmt="%Y-%m-%d")).sort(['date','code'])
+#                 data.date = pl.to_datetime(data.date)
             else:
-                # data.date = pd.to_datetime(data.date)
-                data.datetime= pd.to_datetime(data.datetime)
-                data = data.set_index(["datetime","code"])
-        # ptd.rename(columns={"vol":"volume"}, inplace=True)
+#                 data.datetime= pl.to_datetime(data.datetime)
+#                 df=df.with_column(pl.col("date").alias("tenXValue").str.strptime(pl.Date, fmt="%Y-%m-%d"))
+                data = data.with_column(pl.col("datetime").str.strptime(pl.Datetime, fmt="%Y-%m-%d %H:%M:%S")).sort(['datetime','code'])
         return data
     
     def get_stock_day(self, code, st_start=None, st_end=None):
@@ -328,10 +323,10 @@ class MongoIo(object):
         self.db[table].replace_one({'_id':data['_id']}, data, True)
 
     def upd_data_min(self, df_data_min, json_data, minute):
-        # index_time =pd.to_datetime(easytime.get_minute_date(minute=5))
+        # index_time =pl.to_datetime(easytime.get_minute_date(minute=5))
         et = EasyTime()
-        index_time = pd.to_datetime(et.get_minute_date_str(minute=minute, str_date=json_data['datetime']))
-        begin_time = pd.to_datetime(et.get_begin_trade_date(minute=minute, str_date=json_data['datetime']))
+        index_time = pl.to_datetime(et.get_minute_date_str(minute=minute, str_date=json_data['datetime']))
+        begin_time = pl.to_datetime(et.get_begin_trade_date(minute=minute, str_date=json_data['datetime']))
         if len(df_data_min) > 0:
             sum_df=df_data_min.loc[df_data_min.index > begin_time]
             old_vol = sum_df['vol'].sum()
@@ -366,11 +361,11 @@ class MongoIo(object):
         # self.db[table].insert_many(
         #     [data]
         # )
-        dtd=self.db[table].find({'amount':{'$gte':0},"idx":idx,'status':'1'})
-        ptd=pd.DataFrame(list(dtd))
-        if len(ptd) > 0:
-            del ptd['_id']
-            ptd = ptd.set_index(["code"])
+        dtd=self.db[table].find({'amount':{'$gte':0},"idx":idx,'status':'1'}, {"_id":0})
+        ptd=pl.DataFrame(list(dtd))
+#         if len(ptd) > 0:
+#             del ptd['_id']
+#             ptd = ptd.set_index(["code"])
         return ptd
 
     def get_stock_info(self, code = None):
@@ -382,7 +377,7 @@ class MongoIo(object):
             dtd = self.db[table].find({'code': {'$in':code}},{"_id":0})
         else:
             dtd = self.db[table].find({'code': code},{"_id":0})
-        return pd.DataFrame(list(dtd))
+        return pl.DataFrame(list(dtd))
 
     def get_stock_list(self, code=None, notST = True, market = None):
         table = 'stock_list'
@@ -402,11 +397,11 @@ class MongoIo(object):
             dtd = self.db[table].find(query, noc)
         else:
             dtd = self.db[table].find({'code': code}, noc)
-        pdf = pd.DataFrame(list(dtd))
-        pdf = pdf.set_index('code')
+        pdf = pl.DataFrame(list(dtd))
+#         pdf = pdf.set_index('code')
         if len(pdf) == 0:
             return pdf
-        return pdf
+        return pdf.sort('code')
 
     def get_realtime(self, code = None, dateStr = None, time='09:30:00', beg_time = None):
         if dateStr == None:
@@ -422,7 +417,7 @@ class MongoIo(object):
             dtd = self.db[table].find({'code':{'$in':code}, 'time':{'$lt':time}})
         else:
             dtd = self.db[table].find({'code':code, 'time':{'$lt':time}})
-        df = pd.DataFrame(list(dtd))
+        df = pl.DataFrame(list(dtd))
         if len(df) > 0:
             df = df.set_index(['_id'])
         return df
@@ -529,7 +524,7 @@ class MongoIo(object):
             self.db[table].replace_one({'_id': data['_id']}, data, True)
 
 def main():
-    md = MongoIo()
+    md = MongoIo4Pl()
     md.get_stock_day('000001')
     # d.head
 
