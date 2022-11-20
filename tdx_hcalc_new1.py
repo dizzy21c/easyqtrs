@@ -779,7 +779,7 @@ if __name__ == '__main__':
 
         if type == 'T':
             nowtime = datetime.datetime.now().time()
-            if nowtime < datetime.time(9, 27, 50):
+            if nowtime < datetime.time(9, 25, 50):
                 time.sleep(10)
                 print("log:sleep PM")
                 continue
