@@ -22,6 +22,7 @@
 # SOFTWARE.
 from .indicators import *
 from .base import *
+from .base4pl import *
 # from .udf import StrategyBase
 from .udf_formula import *
 

@@ -11,5 +11,6 @@ from .easydealutils.easymq import EasyMq
 from .easydealutils.datautil import DataUtil
 from .easydealutils.easytime import EasyTime
 from .indicator import base
+from .indicator import base4pl
 from .indicator import udf_formula 
 from .indicator import talib_indicators as talib_qa

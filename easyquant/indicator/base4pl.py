@@ -86,18 +86,24 @@ def __REALTIME_DATA(code, dateStr):
 def EMA(Series, N):
     # return pd.Series.ewm(Series, span=N, min_periods=N - 1, adjust=True).mean()
     Series = Series.fill_nan(0).fill_null(0)
+    if type(Series) is pl.internals.dataframe.frame.DataFrame:
+        Series = Series.to_series()
     res = talib.EMA(Series.to_numpy(), N)
-    return pd.Series(res, index=Series.index)
+    return pd.Series(res)
 
 def EXPMA(Series, N):
     # return pd.Series.ewm(Series, span=N, min_periods=N - 1, adjust=True).mean()
     Series = Series.fill_nan(0).fill_null(0)
+    if type(Series) is pl.internals.dataframe.frame.DataFrame:
+        Series = Series.to_series()
     res = talib.EMA(Series.to_numpy(), N)
-    return pd.Series(res, index=Series.index)
+    return pd.Series(res)
 
 def MA(Series, N):
     # return pd.Series.rolling(Series, N).mean()
     Series = Series.fill_nan(0).fill_null(0)
+    if type(Series) is pl.internals.dataframe.frame.DataFrame:
+        Series = Series.to_series()
     res = talib.MA(Series.to_numpy(), N)
     return pd.Series(res)
 
@@ -114,24 +120,20 @@ def SMA(Series, N, M=1):
     i = 1
     length = len(Series)
     # 跳过X中前面几个 nan 值
-    while i < length:
-        if np.isnan(Series.iloc[i]):
-            ret.append(0)
-            i += 1
-        else:
-            break
+    Series = Series.fill_nan(0).fill_null(0)
+    if type(Series) is pl.internals.dataframe.frame.DataFrame:
+        Series = Series.to_series()
     if i < length:
-        preY = Series.iloc[i]  # Y'
+        preY = Series[i]  # Y'
     else:
         preY = None
     ret.append(preY)
     while i < length:
-        Y = (M * Series.iloc[i] + (N - M) * preY) / float(N)
+        Y = (M * Series[i] + (N - M) * preY) / float(N)
         ret.append(Y)
         preY = Y
         i += 1
-    return pd.Series(ret, index=Series.tail(len(ret)).index)
-
+    return pd.Series(ret)
 
 def DIFF(Series, N=1):
     return pd.Series(Series).diff(N)
