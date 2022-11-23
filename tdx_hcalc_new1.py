@@ -286,8 +286,8 @@ def tdx_func_mp(func_names, sort_types, codelist, type='', backTime=''):
     #     newdatas = fetch_quotation_data(source="tencent")
     # else:
     print("read web data-begin-time:", start_t)
+    mongo = MongoIo()
     if type == 'B':
-        mongo = MongoIo()
         newdatas = mongo.get_realtime(codelist, backTime)
     else:
         newdatas = fetch_quotation_data(codelist, source="sina")
@@ -364,6 +364,7 @@ def tdx_func_mp(func_names, sort_types, codelist, type='', backTime=''):
     # todo end
     print(dataR)
     #dataR.to_csv("step-%s-%s.csv" % (func_name, backTime))
+    mongo.upd_backtest(func_names, dataR, backTime, type)
     dataR.to_csv("step-%s-%s.csv" % (func_names, backTime))
 
     end_t = datetime.datetime.now()
@@ -736,6 +737,9 @@ if __name__ == '__main__':
         rc = m.get_realtime_count(dateStr = back_time)
         if rc == 0:
             exit(0)
+            
+    if type == 'T':
+        back_time = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
 
     if all_data == '':
         all_data = 'position'

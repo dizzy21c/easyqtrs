@@ -285,7 +285,7 @@ def get_next_date(calcDate):
     if cDate.weekday() < 5:
         return datetime.datetime.strftime(cDate,'%Y-%m-%d')
     else: # if calcDate.weekday() == 5:
-        cDate = cDate + datetime.timedelta(3)
+        cDate = cDate + datetime.timedelta(2)
         return datetime.datetime.strftime(cDate,'%Y-%m-%d')
 #     else: # calcDate.weekday() == 6:
 #         cDate = cDate + datetime.timedelta(2)
@@ -315,8 +315,8 @@ def tdx_func_mp(func_names, sort_types, codelist, calc_type='', backTime=''):
     #     newdatas = fetch_quotation_data(source="tencent")
     # else:
     print("read web data-begin-time:", start_t)
+    mongo = MongoIo()
     if type == 'B':
-        mongo = MongoIo()
         newdatas = mongo.get_realtime(codelist, backTime)
         if len(newdatas) == 0:
             return
@@ -395,6 +395,7 @@ def tdx_func_mp(func_names, sort_types, codelist, calc_type='', backTime=''):
     # todo end
     print(dataR)
     #dataR.to_csv("step-%s-%s.csv" % (func_name, backTime))
+    mongo.upd_backtest("all-%s" % func_names, dataR, backTime, calc_type)
     dataR.to_csv("step-%s-%s.csv" % (func_names, backTime))
 
     end_t = datetime.datetime.now()
@@ -468,7 +469,7 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calc_type='')
         #     continue
         try:
             if type == 'B':
-                data=datam.query(" code=='%s' and date < '%s' " % (code, calcDate))
+                data=datam.query(" code=='%s' and date < '%s' " % (code, calcDate)).copy()
                 newdata0 = newdatas.query("code=='%s'" % code)
                 if len(newdata0) > 0:
                     newdata = newdata0.iloc[-1]
@@ -499,6 +500,8 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calc_type='')
             #     print(data)
             #     print(newdata)
             data = new_df(data.copy(), newdata, now_price)
+            if len(data) < 5:
+                continue
             calcR = tdx_base_func(data.copy(), func_name, code, newdata, last_price, dataln, mongo_np)
             if calcR == {}:
                 continue

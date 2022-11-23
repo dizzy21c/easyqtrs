@@ -456,6 +456,26 @@ class MongoIo(object):
                 data['trade_price'] = recal_price
             self.db[table].replace_one({'_id':data['_id']}, data, True)
 
+    def upd_backtest(self, func_name, datas, calcDate, calc_type):
+        table = 'st_orders-%s' % func_name
+        if len(datas) > 0:
+            insData = []
+            idx = 0
+            for idx1, rowdata in datas.iterrows():
+                djd = json.loads(rowdata.to_json())
+                keyId = "%s-%s-%s" % (rowdata.code, calcDate, calc_type)
+                dataChk = self.db[table].find_one({'_id': keyId})
+                if dataChk is not None and len(dataChk) > 0:
+                    self.db[table].remove(dataChk)
+                djd['_id'] = keyId
+                djd['calc_type'] = calc_type
+                djd['idx'] = len(datas) - idx
+                idx = idx + 1
+                djd['date'] = calcDate
+                insData.append(djd)
+            print(insData)
+            self.db[table].insert_many(insData)
+        
     def upd_order(self, func_name, dateObj, code, price, bs_flg = 'buy', insFlg = True):
         table = 'st_orders-%s' % func_name
         tax_comm = 1.003

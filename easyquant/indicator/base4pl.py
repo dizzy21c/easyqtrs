@@ -85,14 +85,14 @@ def __REALTIME_DATA(code, dateStr):
 
 def EMA(Series, N):
     # return pd.Series.ewm(Series, span=N, min_periods=N - 1, adjust=True).mean()
-    Series = Series.fillna(0)
-    res = talib.EMA(Series.values, N)
+    Series = Series.fill_nan(0).fill_null(0)
+    res = talib.EMA(Series.to_numpy(), N)
     return pd.Series(res, index=Series.index)
 
 def EXPMA(Series, N):
     # return pd.Series.ewm(Series, span=N, min_periods=N - 1, adjust=True).mean()
-    Series = Series.fillna(0)
-    res = talib.EMA(Series.values, N)
+    Series = Series.fill_nan(0).fill_null(0)
+    res = talib.EMA(Series.to_numpy(), N)
     return pd.Series(res, index=Series.index)
 
 def MA(Series, N):

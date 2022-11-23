@@ -46,7 +46,7 @@ def getCodeListFromMongo(mongo):
 
 def codelist2dict(codelist, splitNum = 4):
     code_len = len(codelist)
-    if splitNum <= 1:
+    if splitNum <= 1 or code_len < splitNum :
         return {0: codelist}
 
     subcode_len = math.ceil(code_len / splitNum)

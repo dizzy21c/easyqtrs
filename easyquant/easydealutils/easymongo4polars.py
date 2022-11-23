@@ -17,31 +17,6 @@ class MongoIo4Pl(MongoIo):
     
     def __init__(self, host='mgdb', port=27017, database='quantaxis'):
         super(MongoIo4Pl, self).__init__(host, port, database)
-        # self.config = self.file2dict(conf)
-#         client = mongo.MongoClient(host, port)
-#         self.db = client[database]
-#         self.st_start = '2018-01-01'
-#         # self.st_end = '2030-12-31'
-#         self.st_start_1min = '2020-01-01'
-#         self.st_start_5min = '2020-01-01'
-#         self.st_start_15min = '2020-01-01'
-#         self.st_start_30min = '2020-01-01'
-#         self.st_start_60min = '2020-01-01'
-        # self.st_end_day = '2030-12-31'
-        # if self.config['passwd'] is None:
-        #     self.r = redis.Redis(host=self.config['redisip'], port=self.config['redisport'], db=self.config['db'])
-        # else:
-        #     self.r = redis.Redis(host=self.config['redisip'], port=self.config['redisport'], db=self.config['db'], password = self.config['passwd'])
-
-#     def dateStr2stamp(self, dateObj):
-#         dateStr = str(dateObj)[0:10]
-#         date = time.mktime(time.strptime(dateStr, '%Y-%m-%d'))
-#         return date
-
-#     def datetimeStr2stamp(self, dateObj):
-#         dataTimeStr = str(dateObj)[0:19]
-#         date = time.mktime(time.strptime(dataTimeStr, '%Y-%m-%d %H:%M:%S'))
-#         return date
 
     def _get_data_day(self, code, table, st_start, st_end):
         cursor = self.db[table].find(
@@ -428,28 +403,6 @@ class MongoIo4Pl(MongoIo):
             dateStr = strftime('%Y-%m-%d',localtime())
         table = 'realtime_%s' % dateStr
         return self.db[table].estimated_document_count()
-
-    def upd_positions(self, code, amount, price):
-        table = 'positions'
-        # self.db[table].insert_many(
-        #     [data]
-        # )
-        # data = self.db[table].
-        # data = list()
-        # self.db[table].replace_one({'_id':code}, {'$set':{'trade_amount':amount,'trade_price':price}}, True)
-        # data=list(self.db[table].find({'_id':code}))[0]
-        data=self.db[table].find_one({'_id':code})
-        if data is not None:
-            old_trade_amount = data['trade_amount']
-            old_trade_price = data['trade_price']
-            if old_trade_price == 0:
-                data['trade_amount'] = amount
-                data['trade_price'] = price
-            else:
-                data['trade_amount'] = old_trade_amount + amount
-                recal_price = ( old_trade_amount * old_trade_price + amount * price ) / (old_trade_amount + amount)
-                data['trade_price'] = recal_price
-            self.db[table].replace_one({'_id':data['_id']}, data, True)
 
     def upd_order(self, func_name, dateObj, code, price, bs_flg = 'buy', insFlg = True):
         table = 'st_orders-%s' % func_name
