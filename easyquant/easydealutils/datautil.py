@@ -52,10 +52,19 @@ class DataUtil:
         # return {'c':psc, 'h':psh, 'l':psl, 'o':pso, 'v':psv, 'd':psd, 'pc':pre_c}
         return {'C':psc, 'H':psh, 'L':psl, 'O':pso, 'V':psv, 'D':psd}
 
+    def day_summary_4pl(self, data, rtn={}):
+        pc = data.select('close').row(-1)[0]
+        c = data.select('now').row(-1)[0]
+        return self.day_summary_calc(pc, c, rtn)
 
     def day_summary(self, data, rtn={}):
         pc = data['close']
         c = data['now'] 
+        return self.day_summary_calc(pc, c, rtn)
+
+    def day_summary_calc(self, pc, c, rtn={}):
+#         pc = data['close']
+#         c = data['now'] 
         if c == 0 or pc == 0:
             return rtn
 

@@ -473,7 +473,7 @@ class MongoIo(object):
                 idx = idx + 1
                 djd['date'] = calcDate
                 insData.append(djd)
-            print(insData)
+#             print(insData)
             self.db[table].insert_many(insData)
         
     def upd_order(self, func_name, dateObj, code, price, bs_flg = 'buy', insFlg = True):
