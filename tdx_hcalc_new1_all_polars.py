@@ -42,6 +42,7 @@ import easyquotation
 
 # calc_thread_dict = Manager().dict()
 data_codes = Manager().dict()
+code_list_dict = Manager().dict()
 data_buf_day = Manager().dict()
 data_buf_stockinfo = Manager().dict()
 databuf_mongo = Manager().dict()
@@ -56,10 +57,9 @@ databuf_mongo_60 = Manager().dict()
 # data_buf_5min_0 = Manager().dict()
 
 easytime=EasyTime()
-pool_size = 1 #cpu_count()
+pool_size = cpu_count()
 executor = ThreadPoolExecutor(max_workers=pool_size)
-executor2 = ThreadPoolExecutor(max_workers=pool_size * 4)
-executor_func = ProcessPoolExecutor(max_workers=cpu_count() * 2)
+# executor2 = ThreadPoolExecutor(max_workers=pool_size * 4)
 codeDatas = []
 # class DataSinaEngine(SinaEngine):
 #     EventType = 'data-sina'
@@ -176,9 +176,9 @@ def do_main_work(code, data):
 
 def do_get_data_mp(key, codelist, st_start, st_end, type=''):
     mongo_mp = MongoIo4Pl()
-    # start_t = datetime.datetime.now()
-    st_end = None
-    # print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
+#     start_t = datetime.datetime.now()
+#     st_end = None
+#     print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
     databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end=st_end)
 #     if type == 'B':
 #         td = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(1)
@@ -200,10 +200,10 @@ def do_get_data_mp(key, codelist, st_start, st_end, type=''):
 #             else:
 #                 break
 
-    # end_t = datetime.datetime.now()
-    # print(end_t, 'get_data do_get_data_mp spent:{}'.format((end_t - start_t)))
     for code in codelist:
         data_buf_stockinfo[code] = mongo_mp.get_stock_info(code)
+#     end_t = datetime.datetime.now()
+#     print(end_t, 'get_data do_get_data_mp spent:{}'.format((end_t - start_t)))
 
 def pba_calc(code):
     try:
@@ -239,43 +239,20 @@ def get_data(codelist, st_start, st_end, type):
     # codelist = ['600380','600822']
 
 #     pool_size = cpu_count()
-    pool_size = 1
+    task_list = []
     limit_len = 0
-#     code_dict = codelist2dict(codelist, pool_size)
+    code_dict = codelist2dict(codelist, pool_size)
+    executorGetData = ThreadPoolExecutor(max_workers=len(code_dict))
     # print("get-data", code_dict)
-#     pool = Pool(pool_size)
-#     for i in code_dict.keys():
-        # if i < pool_size - 1:
-            # code_dict[str(i)] = codelist[i* subcode_len : (i+1) * subcode_len]
-        # else:
-            # code_dict[str(i)] = codelist[i * subcode_len:]
-#         pool.apply_async(do_get_data_mp, args=(i, code_dict[i], st_start, st_end, type))
-    do_get_data_mp(0, codelist, st_start, st_end, type)
+#     pool = Pool(cpu_count())
+    for i in code_dict.keys():
+        code_list_dict[i] = code_dict[i]
+        task_list.append(executorGetData.submit(do_get_data_mp, i, code_dict[i], st_start, st_end, type))
+#         task_list.executor(do_get_data_mp, args=(i, code_dict[i], st_start, st_end, type))
 
-#     pool.close()
-#     pool.join()
-
-    # # todo begin
-    # data_day = pd.DataFrame()
-    # for i in range(pool_size):
-    #     if len(data_day) == 0:
-    #         data_day = databuf_mongo[i]
-    #     else:
-    #         data_day = data_day.append(databuf_mongo[i])
-    #     # print(len(dataR))
-    # data_day.sort_index()
-    # # todo end
-    # 获取股票中文名称，只是为了看得方便，交易策略并不需要股票中文名称
-    # stock_names = QA.QA_fetch_stock_name(codelist)
-    # codename = [stock_names.at[code] for code in codelist]
-
-    # data_day = QA.QA_fetch_stock_day_adv(codelist,
-    #                                     '2010-01-01',
-    #                                     '{}'.format(datetime.date.today(),)).to_qfq()
-
-    # st_start="2018-12-01"
-    # data_day = mongo.get_stock_day(codelist, st_start=st_start)
-
+    for task in as_completed(task_list):
+        # result = task.result()
+        pass
     end_t = datetime.datetime.now()
     # print("data-total-len:", len(dataR))
     print(end_t, 'get_data spent:{}'.format((end_t - start_t)))
@@ -312,6 +289,7 @@ def tdx_func_mp_all(func_names, sort_types, codelist, calc_type='', backTime='')
     
 def tdx_func_mp(func_names, sort_types, codelist, calc_type='', backTime=''):
     start_t = datetime.datetime.now()
+    executor_func = ProcessPoolExecutor(max_workers=pool_size)
     # if start_t.time() < datetime.time(9, 30, 00):
     #     print("read web data from tencent begin-time:", start_t)
     #     newdatas = fetch_quotation_data(source="tencent")
@@ -340,16 +318,33 @@ def tdx_func_mp(func_names, sort_types, codelist, calc_type='', backTime=''):
     sort_typeA = sort_types.split(',')
     is_idx = 0
     keysObj = {}
-#     for key in range(pool_size):
-    keysObj[0] = codelist
+    for key in range(pool_size):
+        keysObj[key] = code_list_dict[key]
 
     for func_name in func_nameA:
         sort_type = int(sort_typeA[is_idx])
         is_idx = is_idx + 1
         task_list = []
+        # pool = Pool(cpu_count())
+        for key in keysObj:
+            # tdx_func(databuf_mongo[key])
+            # task_list.append(executor_func.submit(tdx_func, databuf_mongo[key], newdatas, func_name, type=type))
+            task_list.append(executor_func.submit(tdx_func, key, backTime, newdatas, func_name, code_list = keysObj[key], calc_type=calc_type))
+        # pool.close()
+        # pool.join()
+
+        # todo begin
         dataR = pd.DataFrame()
-        dR, key, codeList = tdx_func(0, backTime, newdatas, func_name, code_list = keysObj[0], calc_type=calc_type)
-        keysObj[0] = codeList
+        # for i in range(pool_size):
+        #     if len(dataR) == 0:
+        #         dataR = databuf_tdxfunc[i]
+        #     else:
+        #         dataR = dataR.append(databuf_tdxfunc[i])
+        #     # print(len(dataR))
+        keysObj = {}
+        for task in as_completed(task_list):
+            dR, key, codeList = task.result()
+            keysObj[key] = codeList
         # pass
         if len(dataR) == 0:
             dataR = dR
@@ -435,7 +430,7 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calc_type='')
 #         datam_rn = databuf_mongo_rn[key]
     mongo_np = MongoIo4Pl()
     start_t = datetime.datetime.now()
-    print("begin-tdx_func:", start_t)
+    print("begin-tdx_func:", start_t, calcDate)
     # dataER = pd.DataFrame()
 #     if code_list is None:
 #         code_list = datam.index.levels[1]
@@ -474,7 +469,7 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calc_type='')
                     last_price = datal['close'][-1]
                 except:
                     dataln = None
-#                     print("last1-date=0, code=", code)
+                    print("last-date=0, code=", code)
                     last_price = 0
                     continue
                 try:
