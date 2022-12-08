@@ -395,7 +395,10 @@ class MongoIo4Pl(MongoIo):
         df = pl.DataFrame(list(dtd))
 #         if len(df) > 0:
 #             df = df.set_index(['_id'])
-        return df.sort("_id")
+        if len(df) > 0:
+            return df.sort("_id")
+        else:
+            return df
 
     def get_realtime_count(self, dateStr = None):
         if dateStr == None:

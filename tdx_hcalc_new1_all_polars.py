@@ -13,7 +13,7 @@ import QUANTAXIS as QA
 import json
 import datetime
 import sys, getopt
-from easyquant import DataUtil
+# from easyquant import DataUtil
 import subprocess
 import pexpect
 
@@ -33,9 +33,9 @@ from tdx.func.func_sys import *
 # from easyquant import EasyMq
 from easyquant import MongoIo4Pl
 from easyquant import EasyTime
-from multiprocessing import Process, Pool, cpu_count, Manager
+from multiprocessing import Pool, cpu_count, Manager
 # from easyquant.indicator.base import *
-from concurrent.futures import ProcessPoolExecutor,ThreadPoolExecutor,as_completed
+from concurrent.futures import ThreadPoolExecutor,as_completed
 #from pyalgotrade.strategy import position
 # from custom.sinadataengine import SinaEngine
 import easyquotation
@@ -106,7 +106,7 @@ def do_init_data_buf(code):
     #     data_day = mongo.get_index_day(code=code)
         # data_min = mc.get_index_min_realtime(code=code)
     data_buf_day[code] = data_day
-    data_buf_stockinfo[code] = mongo.get_stock_info(code)
+    data_buf_stockinfo[0] = mongo.get_stock_info(code = None)
     # data_buf_5min[code] = data_min
     # print("do-init data end, code=%s, data-buf size=%d " % (code, len(data_day)))
     
@@ -176,39 +176,14 @@ def do_main_work(code, data):
 
 def do_get_data_mp(key, codelist, st_start, st_end, type=''):
     mongo_mp = MongoIo4Pl()
-#     start_t = datetime.datetime.now()
-#     st_end = None
-#     print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
-    databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end=st_end)
-#     if type == 'B':
-#         td = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(1)
-#         st_backtime = td.strftime('%Y-%m-%d')
-#         databuf_mongo_r[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime, st_end=st_backtime)
-#         td2 = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(2)
-#         while True:
-# #             td2 = datetime.datetime.strptime(st_bakN, '%Y-%m-%d') + datetime.timedelta(2)
-#             st_backtime2 = td2.strftime('%Y-%m-%d')
-#             if st_backtime2 > datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(1), '%Y-%m-%d'):
-#                 databuf_mongo_rn[key] = pd.DataFrame()
-#                 break
-#             databuf_mongo_rn[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime2, st_end=st_backtime2)
-#             if len(databuf_mongo_rn[key]) == 0:
-# #                 print("continue", st_backtime2)
-#                 st_endN = st_backtime2
-#                 td2 = datetime.datetime.strptime(st_endN, '%Y-%m-%d') + datetime.timedelta(1)
-#                 continue
-#             else:
-#                 break
-
-    for code in codelist:
-        data_buf_stockinfo[code] = mongo_mp.get_stock_info(code)
-#     end_t = datetime.datetime.now()
-#     print(end_t, 'get_data do_get_data_mp spent:{}'.format((end_t - start_t)))
+    databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end='2035-12-31')
+#     for code in codelist:
+    data_buf_stockinfo[0] = mongo_mp.get_stock_info(code = None)
 
 def pba_calc(code):
     try:
-        stockinfo = data_buf_stockinfo[code]
-        return stockinfo.jinglirun[0] > 0
+        stockinfo = data_buf_stockinfo[0]
+        return data_buf_stockinfo[0].filter((pl.col('code') == code)).select(pl.col('jinglirun')).row(0)[0] > 0
     except:
         return False
 
@@ -284,17 +259,31 @@ def tdx_func_mp_all(func_names, sort_types, codelist, calc_type='', backTime='')
             calcDate = get_next_date(calcDate)
 #         print(backDates)
 #         return
+        mongo = MongoIo4Pl()
+        data_util = DataUtil()
         for backDate in backDates:
+            rc = mongo.get_realtime_count(dateStr = back_time)
+            if rc == 0:
+                continue
+            all_top = {}
+            his_real = mongo.get_realtime(dateStr = backDate)
+            if len(his_real) == 0:
+                continue
+            for code in codelist:
+                temp = his_real.filter(pl.col('code') == code)
+                if len(temp) > 0:
+                    all_top = data_util.day_summary_4pl(data=temp, rtn=all_top)
+            print("backDate=", backDate, all_top)
             tdx_func_mp(func_names, sort_types, codelist, calc_type, backDate)
     
 def tdx_func_mp(func_names, sort_types, codelist, calc_type='', backTime=''):
     start_t = datetime.datetime.now()
-    executor_func = ProcessPoolExecutor(max_workers=pool_size)
+    executor_func = ThreadPoolExecutor(max_workers=pool_size)
     # if start_t.time() < datetime.time(9, 30, 00):
     #     print("read web data from tencent begin-time:", start_t)
     #     newdatas = fetch_quotation_data(source="tencent")
     # else:
-    print("read web data-begin-time:", start_t)
+    print(backTime, "read web data-begin-time:", start_t)
     mongo = MongoIo4Pl()
     if type == 'B':
         newdatas = mongo.get_realtime(codelist, backTime)
@@ -378,7 +367,7 @@ def tdx_func_mp(func_names, sort_types, codelist, calc_type='', backTime=''):
     dataR.to_csv("step-%s-%s.csv" % (func_names, backTime))
 
     end_t = datetime.datetime.now()
-    print(end_t, 'tdx_func_mp spent:{}'.format((end_t - start_t)))
+    print(backTime, end_t, 'tdx_func_mp spent:{}'.format((end_t - start_t)))
 
     return dataR
 
@@ -419,7 +408,7 @@ def tdx_func_upd_hist_order(func_name):
 
 
 # def tdx_func(datam, newdatas, func_name, code_list = None, type=''):
-def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calc_type=''):
+def tdx_func(key, calcDate, newdatas, func_name, code_list, calc_type=''):
     """
     准备数据
     """
@@ -430,7 +419,7 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calc_type='')
 #         datam_rn = databuf_mongo_rn[key]
     mongo_np = MongoIo4Pl()
     start_t = datetime.datetime.now()
-    print("begin-tdx_func:", start_t, calcDate)
+    print("begin-tdx_func:", start_t, calcDate, key, len(datam))
     # dataER = pd.DataFrame()
 #     if code_list is None:
 #         code_list = datam.index.levels[1]
@@ -465,11 +454,16 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calc_type='')
             if calc_type == 'B':
                 try:
                     datal = datam.filter((pl.col('code') == code) & (pl.col('date') == datetime.datetime.strptime(calcDate, '%Y-%m-%d'))).to_pandas()
+                    if len(datal) == 0:
+                        continue
+#                     print("datal", datal)
 #                     last_price = datal.select(['close']).row(-1)
                     last_price = datal['close'][-1]
-                except:
+#                     print("last_price", last_price)
+                except Exception as e:
+#                     print("error", e)
                     dataln = None
-                    print("last-date=0, code=", code)
+#                     print(calcDate, "last-date=0, code=", code)
                     last_price = 0
                     continue
                 try:
@@ -491,6 +485,7 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calc_type='')
             print("error code=%s" % code)
             print("error code=", e)
             # return
+#         break
     end_t = datetime.datetime.now()
     print(end_t, 'tdx_func spent:{}'.format((end_t - start_t)))
     print("tdx-fun-result-len", len(dataR))
@@ -748,29 +743,29 @@ if __name__ == '__main__':
     # st_start, st_end, func = main_param(sys.argv)
     # print("input", st_start, st_end, func)
     st_start, st_end, func, sort, type, back_time, all_data = main_param(sys.argv)
-    if type == 'B':
-        m = MongoIo4Pl()
-        rc = m.get_realtime_count(dateStr = back_time)
-        if rc == 0:
-            exit(0)
+#     if type == 'B':
+#         m = MongoIo4Pl()
+#         rc = m.get_realtime_count(dateStr = back_time)
+#         if rc == 0:
+#             exit(0)
 
     if all_data == '':
         all_data = 'position'
     codelist = getCodeList(all_data)
-    if type == 'B':
-        m = MongoIo4Pl()
-        his_real = m.get_realtime(dateStr = back_time)
-        all_top = {}
-        data_util = DataUtil()
-        hidx = 0
-#         dataA = pd.DataFrame()
-        for code in codelist:
-            temp = his_real.filter(pl.col('code') == code)
-#             temp = his_real.query("code=='%s'" % code)
-            if len(temp) > 0:
-                all_top = data_util.day_summary_4pl(data=temp, rtn=all_top)
-#             hidx = hidx + 1
-        print(all_top)
+#     if type == 'B':
+#         m = MongoIo4Pl()
+#         his_real = m.get_realtime(dateStr = back_time)
+#         all_top = {}
+#         data_util = DataUtil()
+#         hidx = 0
+# #         dataA = pd.DataFrame()
+#         for code in codelist:
+#             temp = his_real.filter(pl.col('code') == code)
+# #             temp = his_real.query("code=='%s'" % code)
+#             if len(temp) > 0:
+#                 all_top = data_util.day_summary_4pl(data=temp, rtn=all_top)
+# #             hidx = hidx + 1
+#         print(all_top)
 #         exit(0)
     # st_start = "2019-01-01"
     # func = "test"
@@ -820,7 +815,7 @@ if __name__ == '__main__':
             tdx_func_mp(func, sort, codelist, calc_type=type, backTime=back_time)
 
         if type == 'B':
-            print("all-top", all_top)
+#             print("all-top", all_top)
             tdx_func_mp_all(func, sort, codelist, calc_type=type, backTime=back_time)
             break
         # if type == 'T':

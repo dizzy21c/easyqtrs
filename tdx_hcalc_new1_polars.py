@@ -799,6 +799,7 @@ if __name__ == '__main__':
 
             time.sleep(10)
         print("*** loop calc begin ***")
+        break
         tdx_func_mp(func, sort, codelist, type=type, backTime=back_time)
 
         if type == 'B':
