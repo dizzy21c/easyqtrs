@@ -30,10 +30,10 @@ class MongoIo4Pl(MongoIo):
                         "$gte": self.dateStr2stamp(st_start)
                     }
             },
-            {"_id": 0},
+            {"_id": 0, "date_stamp": 0},
             batch_size=10000
         )
-        res = pl.DataFrame([item for item in cursor])
+        res = pl.DataFrame([item for item in cursor]).with_column((pl.col("vol")).alias("volume")).drop('vol')
 #         try:
 #             res = res.assign(
 #                 volume=res.vol,
