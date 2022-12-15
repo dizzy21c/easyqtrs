@@ -45,8 +45,9 @@ data_codes = Manager().dict()
 data_buf_day = Manager().dict()
 data_buf_stockinfo = Manager().dict()
 databuf_mongo = Manager().dict()
-databuf_mongo_r = Manager().dict()
-databuf_mongo_rn = Manager().dict()
+databuf_mongo_cond = Manager().dict()
+# databuf_mongo_r = Manager().dict()
+# databuf_mongo_rn = Manager().dict()
 databuf_mongo_1 = Manager().dict()
 databuf_mongo_5 = Manager().dict()
 databuf_mongo_15 = Manager().dict()
@@ -65,6 +66,17 @@ codeDatas = []
 #     EventType = 'data-sina'
 #     PushInterval = 10
 #     config = "stock_list"
+def get_next_date(calcDate):
+    cDate = datetime.datetime.strptime(calcDate, '%Y-%m-%d')
+    cDate = cDate + datetime.timedelta(1)
+    if cDate.weekday() < 5:
+        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
+    else: # if calcDate.weekday() == 5:
+        cDate = cDate + datetime.timedelta(2)
+        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
+#     else: # calcDate.weekday() == 6:
+#         cDate = cDate + datetime.timedelta(2)
+#         return datetime.datetime.strftime(cDate,'%Y-%m-%d')
 
 def get_stock_codes(config="stock_list"):
     if 1 in data_codes:
@@ -174,30 +186,56 @@ def do_main_work(code, data):
     #     print("calc code=%s now=%6.2f TPCQPZ" % (code, now_price))
 
 
-def do_get_data_mp(key, codelist, st_start, st_end, calcType=''):
+def do_get_data_mp(key, codelist, st_start, st_end, func_name, calcType=''):
     mongo_mp = MongoIo()
     # start_t = datetime.datetime.now()
     # print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
-    databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end=st_end)
-    if calcType == 'B':
-        td = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(1)
-        st_backtime = td.strftime('%Y-%m-%d')
-        databuf_mongo_r[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime, st_end=st_backtime)
-        td2 = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(2)
-        while True:
-#             td2 = datetime.datetime.strptime(st_bakN, '%Y-%m-%d') + datetime.timedelta(2)
-            st_backtime2 = td2.strftime('%Y-%m-%d')
-            if st_backtime2 > datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(1), '%Y-%m-%d'):
-                databuf_mongo_rn[key] = pd.DataFrame()
-                break
-            databuf_mongo_rn[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime2, st_end=st_backtime2)
-            if len(databuf_mongo_rn[key]) == 0:
-#                 print("continue", st_backtime2)
-                st_endN = st_backtime2
-                td2 = datetime.datetime.strptime(st_endN, '%Y-%m-%d') + datetime.timedelta(1)
-                continue
-            else:
-                break
+    databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end='2035-12-31')
+    result = pd.DataFrame()
+    if len(databuf_mongo[key]) > 0:
+        for code in codelist:
+            try:
+#                 print("code", code)
+                tempData = databuf_mongo[key].query("code=='%s'" % code)
+                if len(tempData) == 0:
+                    continue
+                tdx_func_result, tdx_func_sell_result, next_buy = eval(func_name)(tempData)
+#                 tempData['cond'] = tdx_func_result
+                if len(result) == 0:
+                    result = pd.DataFrame(tdx_func_result)
+#                     result.columns = ['cond']
+                else:
+                    if len(tdx_func_result) > 0:
+                        result1 = pd.DataFrame(tdx_func_result)
+#                         result.columns = ['cond']
+                        result = result.append(result1)
+            # 斜率
+            except Exception as e:
+#                 tempData['cond'] = 0
+                print("code-result", code, len(result), e)
+#     databuf_mongo_cond[key] = result.fillna(0)
+    result = result.fillna(0)
+    result.columns = ['cond']
+    databuf_mongo_cond[key] = result
+#     if calcType == 'B':
+#         td = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(1)
+#         st_backtime = td.strftime('%Y-%m-%d')
+#         databuf_mongo_r[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime, st_end=st_backtime)
+#         td2 = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(2)
+#         while True:
+# #             td2 = datetime.datetime.strptime(st_bakN, '%Y-%m-%d') + datetime.timedelta(2)
+#             st_backtime2 = td2.strftime('%Y-%m-%d')
+#             if st_backtime2 > datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(1), '%Y-%m-%d'):
+#                 databuf_mongo_rn[key] = pd.DataFrame()
+#                 break
+#             databuf_mongo_rn[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime2, st_end=st_backtime2)
+#             if len(databuf_mongo_rn[key]) == 0:
+# #                 print("continue", st_backtime2)
+#                 st_endN = st_backtime2
+#                 td2 = datetime.datetime.strptime(st_endN, '%Y-%m-%d') + datetime.timedelta(1)
+#                 continue
+#             else:
+#                 break
 
     # end_t = datetime.datetime.now()
     # print(end_t, 'get_data do_get_data_mp spent:{}'.format((end_t - start_t)))
@@ -231,12 +269,12 @@ def do_get_data_mp_min(key, codelist, st_start, freq):
         # end_t = datetime.datetime.now()
     # print(end_t, 'get_data do_get_data_mp spent:{}'.format((end_t - start_t)))
 
-def get_data(codelist, st_start, st_end, calcType):
+def get_data(codelist, st_start, st_end, calcType, func_names):
     start_t = datetime.datetime.now()
     print("begin-get_data:", start_t)
     # ETF/股票代码，如果选股以后：我们假设有这些代码
     # codelist = ['600380','600822']
-
+    func_nameA = func_names.split(',')
     pool_size = cpu_count()
     limit_len = 0
     code_dict = codelist2dict(codelist, pool_size)
@@ -247,7 +285,7 @@ def get_data(codelist, st_start, st_end, calcType):
             # code_dict[str(i)] = codelist[i* subcode_len : (i+1) * subcode_len]
         # else:
             # code_dict[str(i)] = codelist[i * subcode_len:]
-        pool.apply_async(do_get_data_mp, args=(i, code_dict[i], st_start, st_end, calcType))
+        pool.apply_async(do_get_data_mp, args=(i, code_dict[i], st_start, st_end, func_nameA[0], calcType))
 
     pool.close()
     pool.join()
@@ -305,12 +343,18 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
 
     func_nameA = func_names.split(',')
     sort_typeA = sort_types.split(',')
-    is_idx = 0
     keysObj = {}
+    ##
+    condd=datetime.datetime.strptime(backTime, '%Y-%m-%d')
     for key in range(pool_size):
-        keysObj[key] = None
+#         keysObj[key] = None
+        df1 = databuf_mongo_cond[key].sort_index()
+        df1 = df1.loc[condd,]
+        keysObj[key] = list(df1[df1['cond'] == 1].index)
+#         print("keyObj", backTime, key, keysObj[key])
 
-    for func_name in func_nameA:
+    is_idx = 1
+    for func_name in func_nameA[1:]:
         sort_type = int(sort_typeA[is_idx])
         is_idx = is_idx + 1
         task_list = []
@@ -318,7 +362,7 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
         for key in keysObj:
             # tdx_func(databuf_mongo[key])
             # task_list.append(executor_func.submit(tdx_func, databuf_mongo[key], newdatas, func_name, calcType=calcType))
-            task_list.append(executor_func.submit(tdx_func, key, newdatas, func_name, code_list = keysObj[key], calcType=calcType))
+            task_list.append(executor_func.submit(tdx_func, key, backTime, newdatas, func_name, code_list = keysObj[key], calcType=calcType))
         # pool.close()
         # pool.join()
 
@@ -333,6 +377,7 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
         keysObj = {}
         for task in as_completed(task_list):
             dR, key, codeList = task.result()
+            print("result", dR)
             keysObj[key] = codeList
             # pass
             if len(dataR) == 0:
@@ -409,15 +454,15 @@ def tdx_func_upd_hist_order(func_name):
 
 
 # def tdx_func(datam, newdatas, func_name, code_list = None, calcType=''):
-def tdx_func(key, newdatas, func_name, code_list = None, calcType=''):
+def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calcType=''):
     """
     准备数据
     """
     # highs = data.high
-    datam = databuf_mongo[key]
-    if calcType == 'B':
-        datam_r = databuf_mongo_r[key]
-        datam_rn = databuf_mongo_rn[key]
+    datam = databuf_mongo[key].query(" date < '%s' " % (calcDate))
+#     if calcType == 'B':
+#         datam_r = databuf_mongo_r[key]
+#         datam_rn = databuf_mongo_rn[key]
     mongo_np = MongoIo()
     start_t = datetime.datetime.now()
     print("begin-tdx_func:", start_t)
@@ -452,7 +497,8 @@ def tdx_func(key, newdatas, func_name, code_list = None, calcType=''):
             dataln = None
             if calcType == 'B':
                 try:
-                    datal = datam_r.query("code=='%s'" % code)
+                    datal = databuf_mongo[key].query(" code=='%s' and date == '%s' " % (code, calcDate))
+#                     datal = datam_r.query("code=='%s'" % code)
                     last_price = datal['close'][-1]
                 except:
                     dataln = None
@@ -460,7 +506,8 @@ def tdx_func(key, newdatas, func_name, code_list = None, calcType=''):
                     last_price = 0
                     continue
                 try:
-                    dataln = datam_rn.query("code=='%s'" % code)
+                    nextCalcDate = get_next_date(calcDate)
+                    dataln = databuf_mongo[key].query(" code=='%s' and date == '%s' " % (code, nextCalcDate))
                 except:
                     dataln = None
             # if (code == '003001'):
@@ -772,7 +819,7 @@ if __name__ == '__main__':
         # data_buf_rlast-dateday[0] =
 
     if calcType != 'R':
-        get_data(codelist, st_start, st_end, calcType)
+        get_data(codelist, st_start, st_end, calcType, func)
 
     # 2, 计算公式（多进程，读取缓冲）
     while True:
