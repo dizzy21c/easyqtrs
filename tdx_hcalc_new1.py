@@ -702,7 +702,7 @@ def do_backtest():
             child = pexpect.spawn ('sudo swapoff -a')
             try:
                 child.expect ('password')
-                child.sendline ('le1125le')
+                child.sendline ('123')
             except:
                 pass
             child.expect(pexpect.EOF)

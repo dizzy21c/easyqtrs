@@ -78,6 +78,20 @@ def get_next_date(calcDate):
 #         cDate = cDate + datetime.timedelta(2)
 #         return datetime.datetime.strftime(cDate,'%Y-%m-%d')
 
+def tdx_func_mp_all(func_names, sort_types, codelist, calcType='', backTime=''):
+#     构造backTimeList
+    calcDate = backTime
+    backDates = [calcDate]
+    endDate = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
+    calcDate = get_next_date(calcDate)
+    while calcDate <= endDate:
+        backDates.append(calcDate)
+        calcDate = get_next_date(calcDate)
+#         print(backDates)
+#         return
+    for backDate in backDates:
+        tdx_func_mp(func_names, sort_types, codelist, calcType, backDate)
+
 def get_stock_codes(config="stock_list"):
     if 1 in data_codes:
         return data_codes[1]
@@ -122,70 +136,6 @@ def do_init_data_buf(code):
     # data_buf_5min[code] = data_min
     # print("do-init data end, code=%s, data-buf size=%d " % (code, len(data_day)))
     
-def do_main_work(code, data):
-    # hold_price = positions['price']
-    now_price = data['now']
-    # print("code=%s, price=%.2f" % (code, now_price))
-    # high_price = data['high']
-    ##TODO 绝对条件１
-    ## 止损卖出
-    # if now_price < hold_price / 1.05:
-    #     log.info("code=%s now=%6.2f solding..." % (code, now_price))
-    ## 止赢回落 %5，卖出
-    # if now_price > hold_price * 1.02 and now_price < high_price / 1.03:
-    #     log.info("code=%s now=%6.2f solding..." % (code, now_price))
-        # 卖出
-
-    # now_vol = data['volume']
-    # last_time = pd.to_datetime(data['datetime'][0:10])
-    # print("code=%s, data=%s" % (self.code, self._data['datetime']))
-    df_day = data_buf_day[code]
-    # print(len(df_day))
-    # print("code=%s, nums=%d" % (code, len(df_day)))
-    # print("code=%s, data=%s" % (data['code'], data['datetime']))
-    # print(data)
-    df_day = new_df(df_day, data, now_price)
-    # print(df_day.tail())
-    #chk_flg, _ = tdx_a06_zsd(df_day)
-    chk_flg, _ = tdx_yhzc(df_day)
-    # chk_flg2, _ = tdx_hm(df_day)
-    # chk_flg3, _ = tdx_tpcqpz(df_day)
-    # df_day.loc[last_time]=[0 for x in range(len(df_day.columns))]
-    # df_day.loc[(last_time,code),'open'] = data['open']
-    # df_day.loc[(last_time,code),'high']= data['high']
-    # df_day.loc[(last_time,code),'low'] = data['low']
-    # df_day.loc[(last_time,code),'close'] = now_price
-    # df_day.loc[(last_time,code),'vol'] = data['volume']
-    # df_day.loc[(last_time,code),'amount'] = data['amount']
-    # df=pd.concat([MA(df_day.close, x) for x in (5,10,20,30,60,90,120,250,500,750,1000,1500,2000,2500,) ], axis = 1)[-1:]
-    # df.columns = [u'm5',u'm10',u'm20',u'm30',u'm60',u'm90',u'm120', u'm250', u'm500', u'm750', u'm1000', u'm1500', u'm2000', u'm2500']
-    # df=pd.concat([MA(df_day.close, x) for x in (5,10,20,30,60,90,120,250,13, 34, 55,) ], axis = 1)
-    # df.columns = [u'm5',u'm10',u'm20',u'm30',u'm60',u'm90',u'm120', u'm250', u'm13', u'm34', u'm55']
-
-    # df_v=pd.concat([MA(df_day.vol, x) for x in (5,10,20,30,60,90,120,250,13, 34, 55,) ], axis = 1)
-    # df_v.columns = [u'm5',u'm10',u'm20',u'm30',u'm60',u'm90',u'm120', u'm250', u'm13', u'm34', u'm55']
-
-    # df_a=pd.concat([MA(df_day.amount, x) for x in (5,10,20,30,60,90,120,250,13, 34, 55,) ], axis = 1)
-    # df_a.columns = [u'm5',u'm10',u'm20',u'm30',u'm60',u'm90',u'm120', u'm250', u'm13', u'm34', u'm55']
-
-    # self.log.info("data=%s, m5=%6.2f" % (self.code, df.m5.iloc[-1]))
-    # self.upd_min(5)
-    # self.log.info()
-    # if now_vol > df_v.m5.iloc[-1]:
-    # self.log.info("code=%s now=%6.2f pct=%6.2f m5=%6.2f, now_vol=%10f, m5v=%10f" % (self.code, now_price, self._data['chg_pct'], df.m5.iloc[-1], now_vol, df_v.m5.iloc[-1]))
-    # if toptop_calc(df_day):
-    # if now_price < df.m5.iloc[-1]:
-    ## 低于５日线，卖出
-    # print(chk_flg[-1])
-    if chk_flg[-1]:
-        print("calc code=%s now=%6.2f" % (code, now_price))
-    # if chk_flg2[-1]:
-    #     print("calc code=%s now=%6.2f HM" % (code, now_price))
-    #
-    # if chk_flg3[-1]:
-    #     print("calc code=%s now=%6.2f TPCQPZ" % (code, now_price))
-
-
 def do_get_data_mp(key, codelist, st_start, st_end, func_name, calcType=''):
     mongo_mp = MongoIo()
     # start_t = datetime.datetime.now()
@@ -334,9 +284,12 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
     for key in range(pool_size):
 #         keysObj[key] = None
         df1 = databuf_mongo_cond[key].sort_index()
-        df1 = df1.loc[condd,]
-        keysObj[key] = list(df1[df1['cond'] == 1].index)
+        try:
+            df1 = df1.loc[condd,]
+            keysObj[key] = list(df1[df1['cond'] == 1].index)
 #         print("keyObj", backTime, key, keysObj[key])
+        except Exception as e:
+            keysObj[key] = []
 
     is_idx = 1
     for func_name in func_nameA[1:]:
@@ -393,9 +346,11 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
     # todo end
     print(dataR)
     #dataR.to_csv("step-%s-%s.csv" % (func_name, backTime))
-    mongo.upd_backtest(func_names, dataR, backTime, calcType)
-    dataR.to_csv("step-%s-%s.csv" % (func_names, backTime))
-
+    if calcType == 'B':
+        mongo.upd_backtest("%s-back" % func_names, dataR, backTime, calcType)
+        dataR.to_csv("step-%s-%s-pool.csv" % (func_names, backTime))
+    else:
+        mongo.upd_backtest("%s-real" % func_names, dataR, backTime, calcType)
     end_t = datetime.datetime.now()
     print(end_t, 'tdx_func_mp spent:{}'.format((end_t - start_t)))
 
@@ -634,128 +589,6 @@ def main_param(argv):
             all_data = arg
     return st_begin, st_end, func, sort, calcType, back_time, all_data
 
-
-def main_back_test_work(backTestArgs):
-    start_t = datetime.datetime.now()
-    print("begin-time:", start_t)
-
-    # st_start, st_end, func = main_param(sys.argv)
-    # print("input", st_start, st_end, func)
-#     st_start, st_end, func, sort, calcType, back_time, all_data = main_param(sys.argv)
-    st_start, st_end, func, sort, calcType, back_time, all_data = backTestArgs
-    print("input st-start=%s, st-end=%s, func=%s, sort=%s, calcType=%s, back-time=%s, all_data = %s" % (st_start, st_end, func, sort, calcType, back_time, all_data))
-
-    m = MongoIo()
-#     back_time = back_timeN
-    rc = m.get_realtime_count(dateStr = back_time)
-    if rc == 0:
-        return {}
-#         exit(0)
-
-    if all_data == '':
-        all_data = 'position'
-    codelist = getCodeList(all_data)
-    m = MongoIo()
-    his_real = m.get_realtime(dateStr = back_time)
-    all_top = {}
-    data_util = DataUtil()
-    hidx = 0
-#         dataA = pd.DataFrame()
-    for code in codelist:
-        temp = his_real.query("code=='%s'" % code)
-        if len(temp) > 0:
-            all_top = data_util.day_summary(data=temp.iloc[-1], rtn=all_top)
-#             hidx = hidx + 1
-#     print(all_top)
-#         exit(0)
-    # st_start = "2019-01-01"
-    # func = "test"
-#     print("input st-start=%s, st-end=%s, func=%s, sort=%s, calcType=%s, back-time=%s, all_data = %s" % (st_start, st_end, func, sort, calcType, back_time, all_data))
-    # 1, 读取数据（多进程，读入缓冲）
-    # 开始日期
-    # data_day = get_data(st_start)
-    # print(data_day)
-    # indices_rsrsT = tdx_func(data_day)
-    td = datetime.datetime.strptime(back_time, '%Y-%m-%d') + datetime.timedelta(-1)
-    st_end = td.strftime('%Y-%m-%d')
-    # data_buf_rlast-dateday[0] =
-
-    get_data(codelist, st_start, st_end, calcType)
-
-    # 2, 计算公式（多进程，读取缓冲）
-    print("*** loop calc begin ***")
-    dataEnd = tdx_func_mp(func, sort, codelist, calcType=calcType, backTime=back_time)
-    if len(dataEnd) == 0:
-        return {}
-#     print(dataEnd)
-    all_top['date'] = back_time
-    for idx in range(1, 7):
-        all_top['p1c-%s' % idx ] = dataEnd.tail(idx).PC.sum()  / int(idx) * 1.0
-        all_top['p2c-%s' % idx ] = dataEnd.tail(idx).P2C.sum() / int(idx) * 1.0
-        all_top['p2o-%s' % idx ] = dataEnd.tail(idx).P2O.sum() / int(idx) * 1.0
-#     print("all-top", all_top)
-    end_t = datetime.datetime.now()
-    print(end_t, '__name__ spent:{}'.format((end_t - start_t)))
-#     print("__name__", len(dataR))
-    return all_top
-
-def do_backtest():
-    start_t = datetime.datetime.now()
-    print("begin-time:", start_t)
-
-    # st_start, st_end, func = main_param(sys.argv)
-    # print("input", st_start, st_end, func)
-    st_start, st_end, func, sort, calcType, back_time, all_data = main_param(sys.argv)
-    dataR = pd.DataFrame()
-#     btTime = back_time
-    idx = 0
-    while True:
-        backTestArgs = st_start, st_end, func, sort, calcType, back_time, all_data
-        calcR = main_back_test_work(backTestArgs)
-        if calcR == {}:
-            pass
-        else:
-            dataR = dataR.append(calcR, ignore_index=True)
-
-        nextDate = datetime.datetime.strptime(back_time, '%Y-%m-%d') + datetime.timedelta(1)
-        back_time = datetime.datetime.strftime(nextDate, '%Y-%m-%d')
-        if nextDate > datetime.datetime.now():
-            break
-        if nextDate.weekday() > 4:
-            continue
-#         print(btTime)
-        idx = idx + 1
-        if idx % 5 == 0:
-            dataR.to_csv("out-%s.csv" % back_time)
-#             break
-            out = subprocess.getoutput('docker restart qadocker_mgdb_1')
-            print(out)
-            child = pexpect.spawn ('sudo swapoff -a')
-            try:
-                child.expect ('password')
-                child.sendline ('le1125le')
-            except:
-                pass
-            child.expect(pexpect.EOF)
-            result = child.before.decode()
-            print(result)
-        if idx == 15:
-            break
-#             val = os.popen('docker restart qadocker_mgdb_1')
-#             print(val)
-#     print(dataR)
-#     dataR.to_csv("out-%s.csv" % back_time)
-#     dataR.append
-
-if __name__ == '__main2__':
-#     proc = Popen(['sudo', 'swapoff', '-a'], stdin=PIPE)
-#     proc.stdin.write('yourPassword\n')
-#     proc.stdin.flush()
-    do_backtest()
-#     dataR.append
-
-# def testData():
-#     for
 if __name__ == '__main__':
     start_t = datetime.datetime.now()
     print("begin-time:", start_t)
@@ -833,11 +666,12 @@ if __name__ == '__main__':
                 # break
 
             time.sleep(10)
-        print("*** loop calc begin ***")
-        tdx_func_mp(func, sort, codelist, calcType=calcType, backTime=back_time)
+            print("*** loop calc begin ***")
+            tdx_func_mp(func, sort, codelist, calcType=calcType, backTime=back_time)
 
         if calcType == 'B':
             print("all-top", all_top)
+            tdx_func_mp_all(func, sort, codelist, calcType=calcType, backTime=back_time)
             break
         # if calcType == 'T':
         #     input()
