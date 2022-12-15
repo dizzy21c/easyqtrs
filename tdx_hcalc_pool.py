@@ -217,25 +217,6 @@ def do_get_data_mp(key, codelist, st_start, st_end, func_name, calcType=''):
     result = result.fillna(0)
     result.columns = ['cond']
     databuf_mongo_cond[key] = result
-#     if calcType == 'B':
-#         td = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(1)
-#         st_backtime = td.strftime('%Y-%m-%d')
-#         databuf_mongo_r[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime, st_end=st_backtime)
-#         td2 = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(2)
-#         while True:
-# #             td2 = datetime.datetime.strptime(st_bakN, '%Y-%m-%d') + datetime.timedelta(2)
-#             st_backtime2 = td2.strftime('%Y-%m-%d')
-#             if st_backtime2 > datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(1), '%Y-%m-%d'):
-#                 databuf_mongo_rn[key] = pd.DataFrame()
-#                 break
-#             databuf_mongo_rn[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime2, st_end=st_backtime2)
-#             if len(databuf_mongo_rn[key]) == 0:
-# #                 print("continue", st_backtime2)
-#                 st_endN = st_backtime2
-#                 td2 = datetime.datetime.strptime(st_endN, '%Y-%m-%d') + datetime.timedelta(1)
-#                 continue
-#             else:
-#                 break
 
     # end_t = datetime.datetime.now()
     # print(end_t, 'get_data do_get_data_mp spent:{}'.format((end_t - start_t)))
@@ -345,7 +326,11 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
     sort_typeA = sort_types.split(',')
     keysObj = {}
     ##
-    condd=datetime.datetime.strptime(backTime, '%Y-%m-%d')
+    if calcType == 'B':
+        condd=datetime.datetime.strptime(backTime, '%Y-%m-%d')
+    else:
+        condd = datetime.datetime.strptime(back_time, '%Y-%m-%d') + datetime.timedelta(-1)
+#         condd=datetime.datetime.strptime(backTime, '%Y-%m-%d')
     for key in range(pool_size):
 #         keysObj[key] = None
         df1 = databuf_mongo_cond[key].sort_index()
@@ -377,7 +362,6 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
         keysObj = {}
         for task in as_completed(task_list):
             dR, key, codeList = task.result()
-            print("result", dR)
             keysObj[key] = codeList
             # pass
             if len(dataR) == 0:
@@ -834,12 +818,12 @@ if __name__ == '__main__':
                 time.sleep(10)
                 print("log:sleep PM")
                 continue
-            if nowtime > datetime.time(9,30,0):
-                print("Pool stoped!!")
-                break
+#             if nowtime > datetime.time(9,30,0):
+#                 print("Pool stoped!!")
+#                 break
 
-            if datetime.time(11, 30, 10) < nowtime < datetime.time(12, 59, 50):
-                time.sleep(10)
+#             if datetime.time(11, 30, 10) < nowtime < datetime.time(12, 59, 50):
+#                 time.sleep(10)
                 # print("log:sleep AM")
                 # continue
 
