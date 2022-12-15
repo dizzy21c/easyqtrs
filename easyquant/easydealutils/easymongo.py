@@ -40,7 +40,11 @@ class MongoIo(object):
         dataTimeStr = str(dateObj)[0:19]
         date = time.mktime(time.strptime(dataTimeStr, '%Y-%m-%d %H:%M:%S'))
         return date
-
+    def get_table_data(self, tableName):
+        cursor = self.db[tableName].find({})
+        res = pd.DataFrame([item for item in cursor])
+        return res
+        
     def _get_data_day(self, code, table, st_start, st_end):
         cursor = self.db[table].find(
             {
