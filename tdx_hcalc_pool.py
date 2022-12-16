@@ -140,6 +140,10 @@ def do_get_data_mp(key, codelist, st_start, st_end, func_name, calcType=''):
     mongo_mp = MongoIo()
     # start_t = datetime.datetime.now()
     # print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
+    if calcType == 'B':
+        refFlg = True
+    else:
+        refFlg = False
     databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end='2035-12-31')
     result = pd.DataFrame()
     if len(databuf_mongo[key]) > 0:
@@ -149,7 +153,7 @@ def do_get_data_mp(key, codelist, st_start, st_end, func_name, calcType=''):
                 tempData = databuf_mongo[key].query("code=='%s'" % code)
                 if len(tempData) == 0:
                     continue
-                tdx_func_result, tdx_func_sell_result, next_buy = eval(func_name)(tempData)
+                tdx_func_result, tdx_func_sell_result, next_buy = eval(func_name)(tempData, refFlg)
 #                 tempData['cond'] = tdx_func_result
                 if len(result) == 0:
                     result = pd.DataFrame(tdx_func_result)

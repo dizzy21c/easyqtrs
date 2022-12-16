@@ -123,7 +123,7 @@ def tdx_dhmcl(data):
     大黑马出笼 = IFOR(HMTJ2, ZZ, 1, 0)
     return 大黑马出笼, -1, False
 
-def tdx_sxp(data):
+def tdx_sxp(data, refFlg = True):
     CLOSE=data.close
     C=data.close
     前炮 = CLOSE > REF(CLOSE, 1) * 1.099
@@ -132,7 +132,10 @@ def tdx_sxp(data):
     时间限制 = IFAND(COUNT(前炮, 30) == 1, BARSLAST(前炮) > 5, True, False)
     后炮 = IFAND(REF(IFAND(小阴小阳, 时间限制, 1, 0), 1) , 前炮, 1, 0)
     #return 后炮, -1, True
-    return REF(后炮,1), -1, True
+    if refFlg:
+        return REF(后炮,1), -1, True
+    else:
+        return 后炮, -1, True
 
 # 黑马大肉
 def tdx_hmdr(data):
