@@ -43,6 +43,8 @@ extern "C" {
 #endif
   // DLL_PUBLIC void Func1(int nCount, float *pOut, float *pHigh, float *pLow, float *pIgnore);
   DLL_PUBLIC void sum(int nCount, float *pfOut, float *pfIn, int *piIn2);
+    
+  DLL_PUBLIC void sumbars(int nCount, float *pfOut, float *pfIn, float *pfIn2);
 
   DLL_PUBLIC void barslast(int nCount, int *piOut, float *pfIn, int iIn2);
 

@@ -215,7 +215,7 @@ def tdx_A01(data):
     X06 = O / HHV(C, 30) < 0.78
     X07 = IFAND(V < MA(V, 5) , MA(V, 5) < MA(V, 55), True, False)
     X08 = IF(O == LLV(O, 30), True, False)
-    XG1 = IFAND5(X01 , X02 , X03 , X04 , X05 , X06, True, False)
+    XG1 = IFAND6(X01 , X02 , X03 , X04 , X05 , X06, True, False)
     率土之滨XG = IFAND3(XG1, X07, X08, 1, 0)
     return 率土之滨XG, -1, False
 
@@ -300,7 +300,7 @@ def tdx_swl(data):
     JS2 = BARSLAST(JS1==1)
     JS3 = IFAND(JS2 <= 5, C < REF(C, JS2), True, False)
     TJ = IFOR(SJ6, JS3, True, False)
-    耍无赖XG: IFAND(TJ == 0,   REF(TJ==1, 1), 1, 0)
+    耍无赖XG = IFAND(TJ == 0,   REF(TJ==1, 1), 1, 0)
     return 耍无赖XG, -1, False
 
 def tdx_func1(data):
@@ -440,7 +440,7 @@ def tdx_a06_zsd(data):
     超卖区 = MA((CLOSE - MA(CLOSE, 40)) / MA(CLOSE, 40) * 100, 2)
     Q2 = 超卖区 < -20
     钻石底XG = IFAND4(Q1, Q2, C > REF(C, 1) * 0.91, C < REF(C, 1), True, False)
-    XG = IFAND(钻石底XG, INDEXC(data) < REF(INDEXC(data), 1) ,  REF(C > REF(C, 1), 1), 1, 0)
+    XG = IFAND3(钻石底XG, INDEXC(data) < REF(INDEXC(data), 1) ,  REF(C > REF(C, 1), 1), 1, 0)
     return XG, -1, False
 
 def tdx_a12_zsd(data):
@@ -468,11 +468,12 @@ def tdx_a12_zsd(data):
     趋势=SMA(MAX(C-REF(C,1),0),8,1)/SMA(ABS(C-REF(C,1)),8,1)
     HMA=CROSS(趋势,0.15)
     X_21=(C-MA(C,25))/MA(C,45)*123
-    BAME=CROSS(X_21,(-25)) and C>REF(C,1)
+    BAME=IFAND(CROSS(X_21,(-25)), C>REF(C,1), True, False)
     HJ_1=C/MA(C,40)
     HJ_2=C/MA(C,60)*100<71
     MOGU=CROSS(HJ_1,HJ_2)
-    短线黑马XG:(DXHM and HMA) or (BAME and MOGU)
+    短线黑马XG = IFOR(IFAND(DXHM ,HMA, True, False), IFAND(BAME, MOGU, True, False), 1, 0)
+    return 短线黑马XG, -1, False
 
 def tdx_a13_zsd(data):
     # {A12.短线黑马}
@@ -800,14 +801,20 @@ def tdx_cptlzt(data):
     SZ2 = IFAND6(VAR1 > VAR2, VAR1 > REF(VAR1, 1), VAR2 > REF(VAR2, 1), H / VAR1 < 1.1, L > VAR2, CLOSE > VAR1, True, False)
     SZ3 = IFAND4(VAR1 > VAR2, VAR1 > REF(VAR1, 1), VAR2 >= REF(VAR2, 1), H / VAR1 > 1.1, True, False)
     SZ4 = IFAND5(VAR1 > VAR2, VAR1 > REF(VAR1, 1), VAR2 > REF(VAR2, 1), CLOSE > VAR2, CLOSE < VAR1, True, False)
-    # SZ5 = (VAR1 > VAR2, VAR2 > REF(VAR2, 1), VAR1 <> REF(VAR1, 1), CLOSE < VAR2)
+    
+    SZ51 = IFAND4(VAR1 > VAR2, VAR2 > REF(VAR2, 1), VAR1 != REF(VAR1, 1), CLOSE < VAR2, True, False)
+    SZ52 = IFAND4(VAR1 > VAR2, VAR1 < REF(VAR1, 1), VAR2 < REF(VAR2, 1), CLOSE < VAR2, True, False)
+    SZ5 = IFOR(SZ51, SZ52, True, False)
     # OR(VAR1 > VAR2, VAR1 < REF(VAR1, 1), VAR2 < REF(VAR2, 1), CLOSE < VAR2)
     SZ6 = IFAND3(REF(VAR1, 1) > REF(VAR2, 1), VAR1 == VAR2, CLOSE < VAR2, True, False)
     XD11 = IFAND4(VAR1 < REF(VAR1, 1), VAR2 < REF(VAR2, 1), REF(VAR1, 1) == REF(VAR2, 1), CLOSE < VAR2, True, False)
     XD1 = IFAND(VAR1 == VAR2, IFOR(CLOSE < VAR2, XD11, True, False), True, False)
     XD2 = IFAND(VAR1 == VAR2, CLOSE > VAR1, True, False)
+    
     SAT = (AMOUNT / C) / (HHV(AMOUNT, 20) / HHV(C, 20))
     量能饱和度 = IF(SAT > 1, 1, SAT) * 100
+#     return 量能饱和度, -1, False
+    return (SZ1, SZ2, SZ3, SZ4, SZ5, SZ6, XD11, XD1, XD2)
     # DRAWTEXT_FIX(BARSTATUS=2 AND SZ1,0.8,0.05,0,'调整结束短线介入'),COLORRED;
     # DRAWTEXT_FIX(BARSTATUS=2 AND SZ2,0.8,0.05,0,'上升通道走势良好'),COLORRED;
     # DRAWTEXT_FIX(BARSTATUS=2 AND SZ3,0.8,0.05,0,'股价偏离注意调整'),COLORRED;
@@ -1385,7 +1392,7 @@ def tdx_sxp_yhzc(data):
 #     # DRAWTEXT_FIX(CURRBARSCOUNT=1, 0, 0.28, 0, 27), COLORRED
 #     # DRAWTEXT_FIX(CURRBARSCOUNT=1, 0, 0.08, 0, 26), COLORGREEN
 #     # DRAWTEXT_FIX(CURRBARSCOUNT=1, 0, 0.13, 0, 2), COLORYELLOW
-
+# 白金买卖
 def tdx_bjmm(data):
     # AMOUNT = data.amount
     VOL = data.volume
@@ -1634,7 +1641,7 @@ def tdx_ltt(data, N=120):## 龙抬头
     return XG, -1, False 
 
 def tdx_blft(data):
-    CLOSE = data.CLOSE
+    CLOSE = data.close
     HIGH = data.high
     LOW = data.low
     OPEN = data.open
@@ -1771,16 +1778,67 @@ def tjS(data):
     return TJ
 
 def tjB(data):
+    CLOSE = data.close
     C = data.close
+    # HIGH = data.high
+    # LOW = data.low
+    # OPEN = data.open
+    # VOL = data.volume
+    DIF=EMA(CLOSE,8)-EMA(CLOSE,21)
+    DEA=EMA(DIF,5)
+    MACD=(DIF-DEA)*2
+
+    TJ11 = IFAND5( C >= MA(C,5),  C >= MA(C,10) , C >= MA(C,20),  C >= MA(C,30), C >= MA(C,60), True, False)
+    # TJ12 = IFAND3(DIF>=0 , DEA>=0,  MACD>=0, True, False)
+    TJ1 = TJ11 #IFAND(TJ11, TJ12, True, False)
+    TJ2 = IFAND6( C>MA(C,90), C>MA(C,120), C>MA(C,180), C>MA(C,240), C>MA(C,500), C>MA(C,360), True, False)
+    TJ3 = IFAND3(C>MA(C,750), C>MA(C,1000), C>MA(C,1500), True, False)
+    TJ4 = IFAND3(C>MA(C,2000), C>MA(C,3000), C>MA(C,5000), True, False)
+    #     XG:TJ1 AND TJ2 AND TJ3 AND TJ4;
+    #     XG1:TJ1 AND TJ2 AND TJ3;
+    #     XG2:TJ1 AND TJ2;
     C1 = C > REF(C,1)
     C2 = C > REF(C,2)
     C3 = C > REF(C,3)
-    C4=IFAND4(C > MA(C,5), C > MA(C, 10), C > MA(C, 20), C > MA(C, 60), True, False)
-    # C4 = C > ma5
-    # C5 = C > MA()
-    J=KDJ(data, N = 19)['KDJ_J'] > 50
-    TJ = IFAND5(C1,C2,C3,C4,J, 1, 0)
-    return TJ
+    J = KDJ(data, N = 19)['KDJ_J'] > 50
+    TJ5 = IFAND4(C1,C2,C3, J, True, False)
+
+    TJ6 = IFAND4(TJ1, TJ2, MACD >= 0, TJ5, 1, 0)
+    return TJ6
+
+def tdx_WYZBUY(data, refFlg = False):
+#     CLOSE = data.close
+    C = data.close
+#     # HIGH = data.high
+#     # LOW = data.low
+#     # OPEN = data.open
+#     # VOL = data.volume
+#     DIF=EMA(CLOSE,8)-EMA(CLOSE,21)
+#     DEA=EMA(DIF,5)
+#     MACD=(DIF-DEA)*2
+
+#     TJ11 = IFAND5( C >= MA(C,5),  C >= MA(C,10) , C >= MA(C,20),  C >= MA(C,30), C >= MA(C,60), True, False)
+#     # TJ12 = IFAND3(DIF>=0 , DEA>=0,  MACD>=0, True, False)
+#     TJ1 = TJ11 #IFAND(TJ11, TJ12, True, False)
+#     TJ2 = IFAND6( C>MA(C,90), C>MA(C,120), C>MA(C,180), C>MA(C,240), C>MA(C,500), C>MA(C,360), True, False)
+#     TJ3 = IFAND3(C>MA(C,750), C>MA(C,1000), C>MA(C,1500), True, False)
+#     TJ4 = IFAND3(C>MA(C,2000), C>MA(C,3000), C>MA(C,5000), True, False)
+#     #     XG:TJ1 AND TJ2 AND TJ3 AND TJ4;
+#     #     XG1:TJ1 AND TJ2 AND TJ3;
+#     #     XG2:TJ1 AND TJ2;
+#     C1 = C > REF(C,1)
+#     C2 = C > REF(C,2)
+#     C3 = C > REF(C,3)
+#     J = KDJ(data, N = 19)['KDJ_J'] > 50
+#     TJ5 = IFAND4(C1,C2,C3, J, True, False)
+
+#     TJ6 = IFAND4(TJ1, TJ2, MACD >= 0, TJ5, 1, 0)
+    TJ6 = tjB(data)
+    XG = IFAND(TJ6 == 1, C < MA(C,5) * 1.05, True, False)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
 
 def tdx_wyzbs(data):
     # CLOSE = data.close
@@ -2088,7 +2146,7 @@ def tdx_dqe_test_A07(data):
     XG = VOL * 10 / VAR1
     return XG, -1, False
 
-def tdx_lyqd(data):
+def tdx_lyqd(data, refFlg = True):
     # 龙妖启动
     CLOSE = data.close
     # C = data.close
@@ -2102,30 +2160,40 @@ def tdx_lyqd(data):
     VAR15 = IFAND5(CLOSE/REF(CLOSE,1)>1.095, HIGH/CLOSE<1.035, VAR14>0,VAR141, VAR142, 1,0)
     # XG = FILTER(VAR15>0,30)
     # return REF(XG,1), -1, False
-    return REF(VAR15,1), -1, False
+    if refFlg:
+        return REF(VAR15,1), -1, False
+    else:
+        return VAR15, -1, False
     #return XG, -1, False
 
 
-
-
-def tdx_sl5560(data):
-    CLOSE = data.close
+def tdx_sl5560(data, refFlg = True):
     VOL = data.volume
-    
+    CLOSE = data.close
+    HIGH = data.high
+    LOW = data.low
+    OPEN = data.open
+    AMOUNT = data.amount
     # {森林55560}
-    # X_1:=SUM(IF(CLOSE>REF(CLOSE,1),VOL,IF(CLOSE<REF(CLOSE,1),0-VOL,0)),0);
-    # X_2:=SUMBARS(VOL,CAPITAL);
-    # X_3:=IF(CLOSE>LLV(CLOSE,X_2),1,0-1)*IF(X_1>LLV(X_1,X_2),1,0-1);
-    # X_4:=COUNT(IF(X_3=0-1,1,0)=1,8)>2;
-    # X_5:=(CLOSE-DMA((3*HIGH+LOW+OPEN+2*CLOSE)/7,VOL/SUM(AMOUNT,13)/AMOUNT/VOL/100/100))/DMA((3*HIGH+LOW+OPEN+2*CLOSE)/7,VOL/SUM(AMOUNT,13)/AMOUNT/VOL/100/100)*100<0-18;
-    # X_6:=(CLOSE-MIN(REF(CLOSE,5)*0.865,REF(CLOSE,21)*0.772))/CLOSE<0.009;
-    # X_7:=X_4 AND X_5 AND X_6;
-    # X_8:=OPEN<EMA(CLOSE,5) AND CLOSE=HIGH AND CLOSE/OPEN>=1.105 AND VOL/CAPITAL>=0.019 AND VOL/CAPITAL<=0.2;
-    # X_9:=X_8 AND COUNT(X_8,5)=1;
-    # X_10:=MA(CLOSE,3)>REF(MA(CLOSE,3),1) AND MA(CLOSE,5)>REF(MA(CLOSE,5),1) AND MA(CLOSE,10)>REF(MA(CLOSE,10),1) AND VOL/240>REF(VOL,30)*1.2/240*1.5 AND CLOSE>LOW*1.059 AND CLOSE>REF(MA(CLOSE,3),1) AND REF(CLOSE,1) AND MA(CLOSE,5)>REF(MA(CLOSE,5),1) AND MA(CLOSE,10)>REF(MA(CLOSE,10),1) AND MA(CLOSE,20)>REF(MA(CLOSE,20),1) AND MA(VOL,5)>REF(MA(VOL,5),1) AND MA(CLOSE,5)-MA(CLOSE,10)<=0.579;
-    # X_11:=FILTER(X_10,5);
-    # XG:X_7 OR X_8 AND X_11,STICK,COLORYELLOW;
-
+    X_1 = SUM(IF(CLOSE>REF(CLOSE,1),VOL,IF(CLOSE<REF(CLOSE,1),0-VOL,0)),0)
+    X_2 = SUMBARS(VOL,CAPITAL(data))
+    X_3 = IF(CLOSE>LLV(CLOSE,X_2),1,0-1)*IF(X_1>LLV(X_1,X_2),1,0-1)
+    X_4 = COUNT(IF(X_3==0-1,1,0)==1,8)>2
+    X_5= (CLOSE-DMA((3*HIGH+LOW+OPEN+2*CLOSE)/7, VOL/SUM(AMOUNT,13) / AMOUNT/VOL/100/100))/DMA((3*HIGH+LOW+OPEN+2*CLOSE)/7,VOL/SUM(AMOUNT,13)/AMOUNT/VOL/100/100)*100<0-18
+    X_6=(CLOSE-MIN(REF(CLOSE,5)*0.865,REF(CLOSE,21)*0.772))/CLOSE<0.009
+    X_7= IFAND3(X_4,  X_5,   X_6, True, False)
+    X_8= IFAND5(OPEN<EMA(CLOSE,5), CLOSE==HIGH , CLOSE/OPEN >=1.105 , VOL/CAPITAL(data)>=0.019 , VOL/CAPITAL(data)<=0.2, True, False)
+    X_9= IFAND(X_8 ,COUNT(X_8,5)==1, True, False)
+    X_10_1 = IFAND6(MA(CLOSE,3)>REF(MA(CLOSE,3),1) , MA(CLOSE,5)>REF(MA(CLOSE,5),1) , MA(CLOSE,10)>REF(MA(CLOSE,10),1) , VOL/240>REF(VOL,30)*1.2/240*1.5 , CLOSE>LOW*1.059 , CLOSE>REF(MA(CLOSE,3),1) ,True, False)
+    X_10_2 = IFAND6(REF(CLOSE,1) , MA(CLOSE,5)>REF(MA(CLOSE,5),1) , MA(CLOSE,10)>REF(MA(CLOSE,10),1) , MA(CLOSE,20)>REF(MA(CLOSE,20),1) , MA(VOL,5)>REF(MA(VOL,5),1) , MA(CLOSE,5)-MA(CLOSE,10)<=0.579, True, False)
+    X_10 = IFAND(X_10_1, X_10_2, True, False)
+    X_11 = FILTER(X_10,5)
+    XG = IFAND(IFOR(X_7, X_8, True, False) , X_11, 1, 0)
+    if refFlg:
+        return REF(XG,1), -1, False
+    else:
+        return XG, -1, False
+    
 def tdx_lbqs(data):
 #     {趋势多空线XG}
     CLOSE = data.close
@@ -2269,7 +2337,7 @@ def tdx_TLBXXF(data):
         XG=IFAND3(data['A'], CLOSE[V4[-1]] < CLOSE[V4[-2]], CLOSE.index[-1] == V4[-1], True, False)
     return XG, -1, False
 
-def tdx_CTLJJ(data):
+def tdx_CTLJJ(data, refFlg = False):
     #朝天龙竞价
     CLOSE = data.close
     VOL = data.volume
@@ -2281,7 +2349,10 @@ def tdx_CTLJJ(data):
     JLTJ = IFAND(竞量比 > 15, 竞量比 < 500000000, True, False)
     TJ1 = data['tj1']
     XG = IFAND4(竞价量,竞价金额,TJ1,JLTJ, True, False)
-    return XG, -1, False
+    if refFlg:
+        return REF(XG,1), -1, False
+    else:
+        return XG, -1, False
 
 def tdx_ZSMA(data):
     C = data.close
@@ -2341,3 +2412,192 @@ def tdx_ZSMA(data):
 # BL:=FILTER(X_25,15),COLORYELLOW;
 
 # XG:XG_CM AND BL;
+
+def tdx_WYZ17MA(data, refFlg = True):
+    CLOSE = data.close
+    C = data.close
+    # HIGH = data.high
+    # LOW = data.low
+    # OPEN = data.open
+    # VOL = data.volume
+    DIF=EMA(CLOSE,8)-EMA(CLOSE,21)
+    DEA=EMA(DIF,5)
+    MACD=(DIF-DEA)*2
+
+    TJ11 = IFAND6(C>=MA(C,5), C>MA(C,10) , MA(C, 5)>MA(C,10), C>MA(C,20),  C>MA(C,30), C>MA(C,60), True, False)
+    TJ12 = IFAND3(DIF>=0 , DEA>=0,  MACD>=0, True, False)
+    TJ1 = IFAND(TJ11, TJ12, True, False)
+    TJ2 = IFAND6(C>MA(C,90), C>MA(C,120), C>MA(C,180), C>MA(C,240), C>MA(C,500), C>MA(C,360), True, False)
+    TJ3 = IFAND3(C>MA(C,750), C>MA(C,1000), C>MA(C,1500), True, False)
+    TJ4 = IFAND3(C>MA(C,2000), C>MA(C,3000), C>MA(C,5000), True, False)
+#     XG:TJ1 AND TJ2 AND TJ3 AND TJ4;
+#     XG1:TJ1 AND TJ2 AND TJ3;
+#     XG2:TJ1 AND TJ2;
+    XG = IF(TJ1, 1, 0)
+    
+#     XG = tjB(data)
+    MG = tjS(data)
+    return XG, MG, False
+    if refFlg:
+        return REF(XG,1), -1, False
+    else:
+        return XG, -1, False
+# 趋势智能选股
+def tdx_qszn(data, refFlg = True):
+    H = data.high
+    L = data.low
+    CLOSE = data.close
+    HIGH = data.high
+    LOW = data.low
+    C = data.close    
+    PL5=HHV(H,18)
+    AA=ABS((2*CLOSE+HIGH+LOW)/4-MA(CLOSE,30))/MA(CLOSE,30)
+    长期趋势线=DMA((2*CLOSE+LOW+HIGH)/4,AA)
+    CC=(CLOSE/长期趋势线);
+    MA1=MA(CC*(2*CLOSE+HIGH+LOW)/4,3)
+    MAAA=((MA1-长期趋势线)/长期趋势线)/3
+    TMP=MA1-MAAA*MA1
+    长期趋势上升=IF(TMP>长期趋势线 ,长期趋势线,0)
+    长期趋势下降=IF(TMP<=长期趋势线,长期趋势线,0)
+    HZS=CROSS(TMP,长期趋势线)
+    LZS=CROSS(长期趋势线,TMP)
+    JZ1=IFOR(HZS, REF(HZS,1), True, False)
+
+    MAH=(H*18+REF(H,1)*17+REF(H,2)*16+REF(H,3)*15+REF(H,4)*14+REF(H,5)*13+REF(H,6)*12+REF(H,7)*11+REF(H,8)*10+REF(H,9)*9+REF(H,10)*8+REF(H,11)*7+REF(H,12)*6+REF(H,13)*5+REF(H,14)*4+REF(H,15)*3+REF(H,16)*2+REF(H,17)*1)/171
+    MAL=(L*18+REF(L,1)*17+REF(L,2)*16+REF(L,3)*15+REF(L,4)*14+REF(L,5)*13+REF(L,6)*12+REF(L,7)*11+REF(L,8)*10+REF(L,9)*9+REF(L,10)*8+REF(L,11)*7+REF(L,12)*6+REF(L,13)*5+REF(L,14)*4+REF(L,15)*3+REF(L,16)*2+REF(L,17)*1)/171
+    MA5=MA(CLOSE,5)
+    MA10=MA(CLOSE,10)
+    MA20=MA(CLOSE,20)
+    MA60=MA(CLOSE,60)
+    DK= IFOR(CLOSE>=MAH , IFAND4(C>MA5 , C>MA10 , C>MA20 , C>MA60, True, False), True, False)
+    KK= IFOR(MAL>CLOSE , IFAND4(C<MA5 , C<MA10 , C<MA20 , C<MA60, True, False), True, False)
+    DK1=BARSLAST(DK)
+    KK1=BARSLAST(KK)
+    DK2=BARSLAST(CROSS(KK1,DK1))
+    KK2=BARSLAST(CROSS(DK1,KK1))
+    HS=DK2<KK2
+    LS=KK2<DK2
+
+    趋势线=(MAH+MAL)/2
+
+    TJB=IFAND3(JZ1 , HS , REF(HS,1) == 0, True, False)
+    TJS=IFAND(LS , REF(LS,1) == 0, True, False)
+
+#     N=14
+#     TYP=(HIGH+LOW+CLOSE)/3
+#     CCI=(TYP-MA(TYP,N))*1000/(15*AVEDEV(TYP,N))
+    
+#     XG=IFAND(REF(TJS,1) , CCI > REF(CCI,1), REF(CCI,1) < 0, CCI > 0, True, False)
+    XG=IFOR(TJS, TJB, 1, 0)
+#     return XG, -1, False
+    if refFlg:
+        return REF(XG,1), -1, True
+    else:
+        return XG, -1, True
+
+# 趋势智能选股
+def tdx_cci(data, refFlg = True):
+    H = data.high
+    L = data.low
+    CLOSE = data.close
+    HIGH = data.high
+    LOW = data.low
+    C = data.close    
+    N=14
+    TYP=(HIGH+LOW+CLOSE)/3
+    CCI=(TYP-MA(TYP,N))*1000/(15*AVEDEV(TYP,N))
+    XG=IFAND3(CCI > REF(CCI,1), CCI < 150, REF(CCI,1) < 0, 1, 0)
+    if refFlg:
+        return REF(XG,1), -1, True
+    else:
+        return XG, -1, True
+
+# 趋势智能选股
+def tdx_ngqd(data, refFlg = True):
+    CLOSE = data.close
+    C = data.close    
+    黄线=MA(CLOSE,25)+MA(CLOSE,25)*6/100
+    白轨=MA(CLOSE,25)+MA(CLOSE,25)*20/100
+    影子线=MA(CLOSE,25)+MA(CLOSE,25)*13/100
+
+    角度黄线=ATAN((黄线/REF(黄线,1)-1)*100)*180/3.1416
+
+
+    XG10=IFAND(CROSS(C,影子线), C/REF(C,1)>1.03, True, False)
+    XG11=IFAND3(CROSS(C,黄线), C/REF(C,1)>1.05, 角度黄线>0, True,False) ;
+    XG12=CROSS(C,白轨)
+    突破牛=IFOR(XG10, XG12, 1, 0)
+    if refFlg:
+        return REF(突破牛,1), -1, True
+    else:
+        return 突破牛, -1, True
+
+# 趋势智能选股
+def tdx_bollxg(data, refFlg = True):
+    CLOSE = data.close
+    C = data.close    
+    N = 20
+    N2 = 21
+    MID = MA(C,N)
+    VART1 = POW((C-MID),2)
+    VART2 = MA(VART1,N)
+    VART3 = SQRT(VART2)
+    UPPER = MID+2*VART3
+    LOWER = MID-2*VART3
+    BOLL =  REF(MID,1)
+    UB = REF(UPPER,1)
+    LB = REF(LOWER,1)
+
+    TJ1 = H >= REF(UPPER,1)
+    TJ2 = CROSS(C,REF(UPPER,1))
+    TJ3 = COUNT(TJ1,N2) == 0
+#     XG = REF(TJ3,1) AND TJ2 AND C > O AND H > L
+
+
+    
+#     黄线=MA(CLOSE,25)+MA(CLOSE,25)*6/100
+#     白轨=MA(CLOSE,25)+MA(CLOSE,25)*20/100
+#     影子线=MA(CLOSE,25)+MA(CLOSE,25)*13/100
+
+#     角度黄线=ATAN((黄线/REF(黄线,1)-1)*100)*180/3.1416
+
+
+#     XG10=IFAND(CROSS(C,影子线), C/REF(C,1)>1.03, True, False)
+#     XG11=IFAND3(CROSS(C,黄线), C/REF(C,1)>1.05, 角度黄线>0, True,False) ;
+#     XG12=CROSS(C,白轨)
+#     突破牛=IFOR(XG10, XG12, 1, 0)
+#     if refFlg:
+#         return REF(突破牛,1), -1, True
+#     else:
+#         return 突破牛, -1, True
+
+def _tdx_DQS_F1(Series, N):
+    return Series > MA(Series, N) * 0.89
+
+# 大趋势选股
+def tdx_DQS(data, refFlg = True):
+    CLOSE = data.close
+    C = data.close
+    DETA = 0.895
+    TJ1 = IFAND3(_tdx_DQS_F1(C, 60), _tdx_DQS_F1(C, 120), _tdx_DQS_F1(C, 240), 1, 0)
+#     TJ11 = IFAND5( C >= MA(C,5),  C >= MA(C,10) , C >= MA(C,20),  C >= MA(C,30), C >= MA(C,60), True, False)
+    # TJ12 = IFAND3(DIF>=0 , DEA>=0,  MACD>=0, True, False)
+#     TJ1 = TJ11 #IFAND(TJ11, TJ12, True, False)
+#     TJ2 = IFAND6( C>MA(C,90), C>MA(C,120), C>MA(C,180), C>MA(C,240), C>MA(C,500), C>MA(C,360), True, False)
+#     TJ3 = IFAND3(C>MA(C,750), C>MA(C,1000), C>MA(C,1500), True, False)
+#     TJ4 = IFAND3(C>MA(C,2000), C>MA(C,3000), C>MA(C,5000), True, False)
+    #     XG:TJ1 AND TJ2 AND TJ3 AND TJ4;
+    #     XG1:TJ1 AND TJ2 AND TJ3;
+    #     XG2:TJ1 AND TJ2;
+#     C1 = C > REF(C,1)
+#     C2 = C > REF(C,2)
+#     C3 = C > REF(C,3)
+#     J = KDJ(data, N = 19)['KDJ_J'] > 50
+#     TJ5 = IFAND4(C1,C2,C3, J, True, False)
+
+#     TJ6 = IFAND4(TJ1, TJ2, MACD >= 0, TJ5, 1, 0)
+    if refFlg:
+        return REF(TJ1,1), -1, True
+    else:
+        return TJ1, -1, True
+    

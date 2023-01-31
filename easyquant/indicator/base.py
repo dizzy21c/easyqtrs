@@ -85,12 +85,16 @@ def __REALTIME_DATA(code, dateStr):
 
 def EMA(Series, N):
     # return pd.Series.ewm(Series, span=N, min_periods=N - 1, adjust=True).mean()
+    if N == 1:
+        return Series
     Series = Series.fillna(0)
     res = talib.EMA(Series.values, N)
     return pd.Series(res, index=Series.index)
 
 def EXPMA(Series, N):
     # return pd.Series.ewm(Series, span=N, min_periods=N - 1, adjust=True).mean()
+    if N == 1:
+        return Series
     Series = Series.fillna(0)
     res = talib.EMA(Series.values, N)
     return pd.Series(res, index=Series.index)
@@ -179,7 +183,7 @@ def LLV(Series, NS):
     return pd.Series(Series).rolling(NS).min()
 
 def SUMS(Series, NS):
-    ncount = len(NS)
+    ncount = len(Series)
     tf_p=c_float * ncount
     np_OUT =tf_p(0)
     na_Series=np.asarray(Series).astype(np.float32)
@@ -192,6 +196,24 @@ def SUMS(Series, NS):
 
     return pd.Series(np.asarray(np_OUT), dtype=np.float64)
 
+def SUMBARS(Series, NS):
+    ncount = len(Series)
+    if isinstance(NS, pd.Series):
+        pass
+    else:
+        nsA = np.full(ncount, NS, dtype = float)
+        NS = pd.Series(nsA, index = Series.index)
+    tf_p=c_float * ncount
+    np_OUT =tf_p(0)
+    na_Series=np.asarray(Series).astype(np.float32)
+    na_NS=np.asarray(NS).astype(np.float32)
+    
+    np_S=cast(na_Series.ctypes.data, POINTER(c_float))
+    np_N=cast(na_NS.ctypes.data, POINTER(c_float))
+    
+    lib.sumbars(ncount, np_OUT, np_S, np_N)
+
+    return pd.Series(np.asarray(np_OUT), dtype=np.float64)
 
 def DMA(Series, Weight):
     ncount = len(Series)
@@ -712,3 +734,9 @@ def ASKVOL(data, dateStr = None):
     if len(df) > 0:
         return df.iloc[-1]['ask1_volume']
     return 0
+
+def POW(Series, N):
+    return Series.apply(lambda x : math.pow(x, N))
+
+def SQRT(Series):
+    return Series.apply(lambda x : math.sqrt(x))

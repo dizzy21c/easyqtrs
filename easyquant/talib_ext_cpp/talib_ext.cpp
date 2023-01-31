@@ -20,6 +20,30 @@ void sum_list(int nCount, float *pOut, float *pData, int *pNum)
   }
 }
 
+void sumbars_list(int nCount, float *pOut, float *pData, float *pfNum)
+{
+
+  for(int i = nCount - 1; i >= 0; i--)
+  {
+    float v_sum = 0.0;
+    int calc_value = 0;
+    bool bHas = false;
+    for(int j = i; j >= 0; j--)
+    {
+        calc_value += 1;
+        v_sum += pData[j];
+        if (v_sum >= pfNum[i]) {
+            bHas = true;
+            break;
+        }
+    }
+    if (bHas)
+        pOut[i] = calc_value;
+    else 
+        pOut[i] = nCount;
+  }
+}
+
 void barslast_list(int nCount, int *pOut, float *pData, int pNum)
 {
   int t_sum = 0.0;
@@ -517,6 +541,11 @@ void winner_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *p
 void sum(int nCount, float *pfOut, float *pfIn, int *piIn)
 {
   sum_list(nCount, pfOut, pfIn, piIn);
+}
+
+void sumbars(int nCount, float *pfOut, float *pfIn, float *pfIn2)
+{
+  sumbars_list(nCount, pfOut, pfIn, pfIn2);
 }
 
 void barslast(int nCount, int *piOut, float *pfIn, int iIn)

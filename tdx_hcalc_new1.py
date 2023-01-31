@@ -365,7 +365,7 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
     print(dataR)
     #dataR.to_csv("step-%s-%s.csv" % (func_name, backTime))
     mongo.upd_backtest(func_names, dataR, backTime, calcType)
-    dataR.to_csv("step-%s-%s.csv" % (func_names, backTime))
+#     dataR.to_csv("step-%s-%s.csv" % (func_names, backTime))
 
     end_t = datetime.datetime.now()
     print(end_t, 'tdx_func_mp spent:{}'.format((end_t - start_t)))
@@ -695,7 +695,7 @@ def do_backtest():
 #         print(btTime)
         idx = idx + 1
         if idx % 5 == 0:
-            dataR.to_csv("out-%s.csv" % back_time)
+#             dataR.to_csv("out-%s.csv" % back_time)
 #             break
             out = subprocess.getoutput('docker restart qadocker_mgdb_1')
             print(out)

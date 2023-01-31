@@ -171,7 +171,6 @@ def do_get_data_mp(key, codelist, st_start, st_end, func_name, calcType=''):
     result = result.fillna(0)
     result.columns = ['cond']
     databuf_mongo_cond[key] = result
-
     # end_t = datetime.datetime.now()
     # print(end_t, 'get_data do_get_data_mp spent:{}'.format((end_t - start_t)))
     for code in codelist:
@@ -282,18 +281,26 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
     ##
     if calcType == 'B':
         condd=datetime.datetime.strptime(backTime, '%Y-%m-%d')
-    else:
-        condd = datetime.datetime.strptime(back_time, '%Y-%m-%d') + datetime.timedelta(-1)
-#         condd=datetime.datetime.strptime(backTime, '%Y-%m-%d')
+#     else:
+#         condd = datetime.datetime.strptime(back_time, '%Y-%m-%d') + datetime.timedelta(-1)
+#   //      condd=datetime.datetime.strptime(backTime, '%Y-%m-%d')
     for key in range(pool_size):
 #         keysObj[key] = None
         df1 = databuf_mongo_cond[key].sort_index()
+        if calcType == 'T': 
+            condd = df1.iloc[-1].name[0]
+#         print('databuf_mongo_cond0', df1.tail(10))
         try:
             df1 = df1.loc[condd,]
+#             print('databuf_mongo_cond1', df1.tail())
+#             print('databuf_mongo_cond2', df1[df1['cond'] == 1].index)
             keysObj[key] = list(df1[df1['cond'] == 1].index)
+#             print('databuf_mongo_cond3', key, keysObj[key])
 #         print("keyObj", backTime, key, keysObj[key])
         except Exception as e:
+#             print("databuf_mongo_cond4", e)
             keysObj[key] = []
+#         print("tdx_func_mp", key, keysObj[key])
 
     is_idx = 1
     for func_name in func_nameA[1:]:
@@ -352,7 +359,7 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
     #dataR.to_csv("step-%s-%s.csv" % (func_name, backTime))
     if calcType == 'B':
         mongo.upd_backtest("%s-back" % func_names, dataR, backTime, calcType)
-        dataR.to_csv("step-%s-%s-pool.csv" % (func_names, backTime))
+#         dataR.to_csv("step-%s-%s-pool.csv" % (func_names, backTime))
     else:
         mongo.upd_backtest("%s-real" % func_names, dataR, backTime, calcType)
     end_t = datetime.datetime.now()
@@ -667,7 +674,7 @@ if __name__ == '__main__':
             if nowtime > datetime.time(15,0,30):
                 print("end trade time.")
                 # time.sleep(3600)
-                # break
+                 break
 
             time.sleep(10)
             print("*** loop calc begin ***")
