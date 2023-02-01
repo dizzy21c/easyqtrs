@@ -674,7 +674,7 @@ if __name__ == '__main__':
             if nowtime > datetime.time(15,0,30):
                 print("end trade time.")
                 # time.sleep(3600)
-                 break
+                break
 
             time.sleep(10)
             print("*** loop calc begin ***")

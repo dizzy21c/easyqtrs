@@ -2012,7 +2012,7 @@ def tdx_dqe_test_A01_N(data):
     XG = IFAND(一字板 == False, REF(VOL,1)/CAPITAL(data)>0.05, 1, 0)
     return XG, -1, False
 
-def tdx_dqe_test_A02(data):
+def tdx_dqe_test_A02(data, refFlg = False):
     CLOSE = data.close
     C = data.close
     VOL = data.volume
@@ -2066,8 +2066,10 @@ def tdx_dqe_test_A02(data):
     LLJX=EMA(VRA,3)
     VRB=LLJX
     A10=VRB>0
-    VRC=A1&A2&A3&A4&A5&A6&A7&A8&A9&A10
-    return IF(VRC,1,0), -1, False
+    VRC1 = IFAND5(A1, A2, A3, A4, A5, True, False)
+    VRC2 = IFAND5(A6, A7, A8, A9, A10, True, False)
+#     &A6&A7&A8&A9&A10
+    return IFAND(VRC1, VRC2,1,0), -1, False
 
 def tdx_dqe_test_A03(data):
     (VAR0, VAR00) = BIDASK5VOL(data)
