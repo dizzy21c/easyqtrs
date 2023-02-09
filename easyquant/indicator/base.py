@@ -87,23 +87,23 @@ def EMA(Series, N):
     # return pd.Series.ewm(Series, span=N, min_periods=N - 1, adjust=True).mean()
     if N == 1:
         return Series
-    Series = Series.fillna(0)
-    res = talib.EMA(Series.values, N)
-    return pd.Series(res, index=Series.index)
+#     Series = Series.fillna(0)
+    return talib.EMA(Series, N)
+#     return pd.Series(res, index=Series.index)
 
 def EXPMA(Series, N):
     # return pd.Series.ewm(Series, span=N, min_periods=N - 1, adjust=True).mean()
     if N == 1:
         return Series
-    Series = Series.fillna(0)
-    res = talib.EMA(Series.values, N)
-    return pd.Series(res, index=Series.index)
+#     Series = Series.fillna(0)
+    return talib.EMA(Series, N)
+#     return pd.Series(res, index=Series.index)
 
 def MA(Series, N):
-    # return pd.Series.rolling(Series, N).mean()
-    Series = Series.fillna(0)
-    res = talib.MA(Series.values, N)
-    return pd.Series(res, index=Series.index)
+    return talib.MA(Series, N)
+
+def VAR(Series, N, M = 1):
+    return talib.VAR(Series, timeperiod=N, nbdev=m)
 
 # 威廉SMA  参考https://www.joinquant.com/post/867
 def SMA(Series, N, M=1):
@@ -159,7 +159,7 @@ def HHV(Series, NS):
     if NS == 0:
         return Series
 
-    return pd.Series(Series).rolling(NS).max()
+    return talib.MAX(Series, NS) #pd.Series(Series).rolling(NS).max()
 
 
 def LLV(Series, NS):
@@ -180,7 +180,7 @@ def LLV(Series, NS):
     if NS == 0:
         return Series
 
-    return pd.Series(Series).rolling(NS).min()
+    return talib.MIN(Series, NS) #pd.Series(Series).rolling(NS).min()
 
 def SUMS(Series, NS):
     ncount = len(Series)
@@ -619,9 +619,9 @@ def COST(Data, Percent):
     return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Data.index)
 
 def SLOPE(Series, timeperiod=14):
-    Series = Series.fillna(0)
-    res = talib.LINEARREG_SLOPE(Series.values, timeperiod)
-    return pd.Series(res, index=Series.index)
+#     Series = Series.fillna(0)
+    return talib.LINEARREG_SLOPE(Series, timeperiod)
+#     return pd.Series(res, index=Series.index)
     # return pd.Series(res, index=SerLINEARREG_SLOPEies.index)
 
 def INDEX(data, code='000001', type='D'):
@@ -640,13 +640,13 @@ def INDEX(data, code='000001', type='D'):
 def INDEXC(data, code='000001', type='D'):
     return INDEX(data, code, type).close
 
-def POW(Series, M):
-    return Series.pow(M)
+# def POW(Series, M):
+#     return Series.pow(M)
 
 def ATAN(Series):
-    Series = Series.fillna(0)
-    res = talib.ATAN(Series.values)
-    return pd.Series(res, index=Series.index)
+#     Series = Series.fillna(0)
+    return talib.ATAN(Series)
+#     return pd.Series(res, index=Series.index)
 
 def EXIST(Series, N):
     return COUNT(Series, N) > 0
@@ -736,7 +736,15 @@ def ASKVOL(data, dateStr = None):
     return 0
 
 def POW(Series, N):
-    return Series.apply(lambda x : math.pow(x, N))
+    if N == 2:
+        return talib.MULT(Series, Series)
+    elif N == 3:
+        return talib.MULT(Series, talib.MULT(Series, Series))
+    elif N == 4:
+        temp = talib.MULT(Series, Series)
+        return talib.MULT(temp, temp)
+    else:
+        return Series.apply(lambda x : math.pow(x, N))
 
 def SQRT(Series):
-    return Series.apply(lambda x : math.sqrt(x))
+    return talib.SQRT(Series)

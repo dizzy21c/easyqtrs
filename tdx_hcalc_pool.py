@@ -136,7 +136,7 @@ def do_init_data_buf(code):
     # data_buf_5min[code] = data_min
     # print("do-init data end, code=%s, data-buf size=%d " % (code, len(data_day)))
     
-def do_get_data_mp(key, codelist, st_start, st_end, func_name, calcType=''):
+def do_get_data_mp(key, codelist, st_start, st_end, func_nameA, calcType=''):
     mongo_mp = MongoIo()
     # start_t = datetime.datetime.now()
     # print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
@@ -144,17 +144,19 @@ def do_get_data_mp(key, codelist, st_start, st_end, func_name, calcType=''):
         refFlg = True
     else:
         refFlg = False
+    func_name = func_nameA[0]
+    if len(func_nameA) == 1:
+        pass
+        # 取得当前数据
     databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end='2035-12-31')
     result = pd.DataFrame()
     if len(databuf_mongo[key]) > 0:
         for code in codelist:
             try:
-#                 print("code", code)
                 tempData = databuf_mongo[key].query("code=='%s'" % code)
                 if len(tempData) == 0:
                     continue
                 tdx_func_result, tdx_func_sell_result, next_buy = eval(func_name)(tempData, refFlg)
-#                 tempData['cond'] = tdx_func_result
                 if len(result) == 0:
                     result = pd.DataFrame(tdx_func_result)
 #                     result.columns = ['cond']
@@ -219,7 +221,7 @@ def get_data(codelist, st_start, st_end, calcType, func_names):
             # code_dict[str(i)] = codelist[i* subcode_len : (i+1) * subcode_len]
         # else:
             # code_dict[str(i)] = codelist[i * subcode_len:]
-        pool.apply_async(do_get_data_mp, args=(i, code_dict[i], st_start, st_end, func_nameA[0], calcType))
+        pool.apply_async(do_get_data_mp, args=(i, code_dict[i], st_start, st_end, func_nameA, calcType))
 
     pool.close()
     pool.join()
@@ -294,7 +296,7 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
             df1 = df1.loc[condd,]
 #             print('databuf_mongo_cond1', df1.tail())
 #             print('databuf_mongo_cond2', df1[df1['cond'] == 1].index)
-            keysObj[key] = list(df1[df1['cond'] == 1].index)
+            keysObj[key] = list(df1[df1['cond'] > 0].index)
 #             print('databuf_mongo_cond3', key, keysObj[key])
 #         print("keyObj", backTime, key, keysObj[key])
         except Exception as e:
@@ -415,7 +417,7 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calcType=''):
 #         datam_rn = databuf_mongo_rn[key]
     mongo_np = MongoIo()
     start_t = datetime.datetime.now()
-    print("begin-tdx_func:", start_t)
+    print("begin-tdx_func:", func_name, start_t)
     # dataER = pd.DataFrame()
     if code_list is None:
         code_list = datam.index.levels[1]
@@ -445,6 +447,10 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calcType=''):
             now_price = newdata['now']
             last_price = newdata['now']
             dataln = None
+            dataln2 = None
+            dataln3 = None
+            dataln4 = None
+            dataln5 = None
             if calcType == 'B':
                 try:
                     datal = databuf_mongo[key].query(" code=='%s' and date == '%s' " % (code, calcDate))
@@ -460,11 +466,31 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calcType=''):
                     dataln = databuf_mongo[key].query(" code=='%s' and date == '%s' " % (code, nextCalcDate))
                 except:
                     dataln = None
+                try:
+                    nextCalcDate = get_next_date(nextCalcDate)
+                    dataln2 = databuf_mongo[key].query(" code=='%s' and date == '%s' " % (code, nextCalcDate))
+                except:
+                    dataln2 = None
+                try:
+                    nextCalcDate = get_next_date(nextCalcDate)
+                    dataln3 = databuf_mongo[key].query(" code=='%s' and date == '%s' " % (code, nextCalcDate))
+                except:
+                    dataln3 = None
+                try:
+                    nextCalcDate = get_next_date(nextCalcDate)
+                    dataln4 = databuf_mongo[key].query(" code=='%s' and date == '%s' " % (code, nextCalcDate))
+                except:
+                    dataln4 = None
+                try:
+                    nextCalcDate = get_next_date(nextCalcDate)
+                    dataln5 = databuf_mongo[key].query(" code=='%s' and date == '%s' " % (code, nextCalcDate))
+                except:
+                    dataln5 = None
             # if (code == '003001'):
             #     print(data)
             #     print(newdata)
             data = new_df(data.copy(), newdata, now_price)
-            calcR = tdx_base_func(data.copy(), func_name, code, newdata, last_price, dataln, mongo_np)
+            calcR = tdx_base_func(data.copy(), func_name, code, newdata, last_price, dataln, mongo_np, dataln2, dataln3, dataln4, dataln5)
             if calcR == {}:
                 continue
             dataR = dataR.append(calcR, ignore_index=True)
@@ -473,7 +499,7 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calcType=''):
             print("error code=", e)
             # return
     end_t = datetime.datetime.now()
-    print(end_t, 'tdx_func spent:{}'.format((end_t - start_t)))
+    print(end_t, func_name, 'tdx_func spent:{}'.format((end_t - start_t)))
     print("tdx-fun-result-len", len(dataR))
 
     if len(dataR) > 0:
@@ -485,7 +511,7 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calcType=''):
 
 
 # print("pool size=%d" % pool_size)
-def tdx_base_func(data, func_name, code, newData, lastPrice, lastNData, mongo_np, code_list = None):
+def tdx_base_func(data, func_name, code, newData, lastPrice, lastNData, mongo_np, lastN2Data, lastN3Data, lastN4Data, lastN5Data, code_list = None):
     """
     准备数据
     """
@@ -510,11 +536,20 @@ def tdx_base_func(data, func_name, code, newData, lastPrice, lastNData, mongo_np
         PCTNL = 0
         PCTNH = 0
     else:
-        PCTNO = lastNData.iloc[-1].open / nowPrice - 1
-        PCTNC = lastNData.iloc[-1].close / nowPrice - 1
-        PCTNL = lastNData.iloc[-1].low / nowPrice - 1
-        PCTNH = lastNData.iloc[-1].high / nowPrice - 1
+#         PCTNO = (lastNData.iloc[-1].open - nowPrice) / nowPrice
+#         PCTNC = (lastNData.iloc[-1].close - nowPrice) / nowPrice
+#         PCTNL = (lastNData.iloc[-1].low - nowPrice) / nowPrice
+#         PCTNH = (lastNData.iloc[-1].high - nowPrice) / nowPrice
+        PCTNO = tdx_base_func_pct(lastNData, nowPrice, 'open')
+        PCTNC = tdx_base_func_pct(lastNData, nowPrice, 'close')
+        PCTNL = tdx_base_func_pct(lastNData, nowPrice, 'low')
+        PCTNH = tdx_base_func_pct(lastNData, nowPrice, 'high')
 
+    PCTN2C = tdx_base_func_pct(lastN2Data, nowPrice, 'close')
+    PCTN3C = tdx_base_func_pct(lastN3Data, nowPrice, 'close')
+    PCTN4C = tdx_base_func_pct(lastN4Data, nowPrice, 'close')
+    PCTN5C = tdx_base_func_pct(lastN5Data, nowPrice, 'close')
+        
     # PCT = max(PCT1, PCT2)
     ##
     # if (code[0:3] == "300" or code[0:3] == 688) and (PCT > 1.08 ):# or PCT < 0.92):
@@ -561,11 +596,23 @@ def tdx_base_func(data, func_name, code, newData, lastPrice, lastNData, mongo_np
     pn = "%4.1f" % (PCT1 * 100)
     po = "%4.1f" % (PCT3 * 100)
     pc = PCT4 * 100 # "%4.1f" % (PCT4 * 100)
-    p2o = PCTNO * 100 # "%4.1f" % (PCTNO * 100)
-    p2c = PCTNC * 100 # "%4.1f" % (PCTNC * 100)
-    p2h = "%4.1f" % (PCTNH * 100)
-    p2l = "%4.1f" % (PCTNL * 100)
-    return {'code': code, 'now':nowPrice, 'dao': tdx_func_result[-1], 'pn':pn, 'po': po, 'PC': pc, 'P2O': p2o, 'P2C': p2c, 'p2h': p2h, 'p2l': p2l}
+    p2o = PCTNO # * 100 # "%4.1f" % (PCTNO * 100)
+    p2c = PCTNC# * 100 # "%4.1f" % (PCTNC * 100)
+    p2h = PCTNH #"%4.1f" % (PCTNH * 100)
+    p2l = PCTNL #"%4.1f" % (PCTNL * 100)
+    
+    p3c = PCTN2C
+    p4c = PCTN3C
+    p5c = PCTN4C
+    p6c = PCTN5C
+    return {'code': code, 'now':nowPrice, 'dao': tdx_func_result[-1], 'pn':pn, 'po': po, 'PC': pc, 'P2O': p2o
+            , 'P2C': p2c, 'p2h': p2h, 'p2l': p2l, 'P3C': p3c, 'P4C': p4c, 'P5C': p5c, 'P6C': p6c}
+
+def tdx_base_func_pct(lastData, nowPrice, flag = 'close'):
+    if lastData is None or len(lastData) == 0:
+        return 0
+    else:
+        return "%4.1f" % (lastData.iloc[-1][flag] - nowPrice) / nowPrice * 100
 
 def main_param(argv):
     st_begin = ''
@@ -648,7 +695,6 @@ if __name__ == '__main__':
 
     if calcType != 'R':
         get_data(codelist, st_start, st_end, calcType, func)
-
     # 2, 计算公式（多进程，读取缓冲）
     while True:
         if calcType == 'R':
@@ -674,7 +720,7 @@ if __name__ == '__main__':
             if nowtime > datetime.time(15,0,30):
                 print("end trade time.")
                 # time.sleep(3600)
-                break
+#                 break
 
             time.sleep(10)
             print("*** loop calc begin ***")

@@ -3,6 +3,10 @@ import numpy as np
 import math
 from easyquant.indicator.base import *
 from easyquant.indicator.talib_indicators import CCI
+
+import easyquotation
+dataE = easyquotation.use('sina')
+
 def new_df(df_day, data, now_price):
     code = data['code']
     # now_vol = data['volume']
@@ -18,6 +22,16 @@ def new_df(df_day, data, now_price):
     df_day.at[(last_time, code), 'amount'] = data['volume']
     return df_day
 
+def pytdx_last_data(data, now_price = None):
+    code = data.index[0][1]
+    realdata = sina_datas.stocks(code)[code]
+    if now_price is None:
+        now_price = realdata['now']
+    return new_df(data, realdata, now_price)
+    
+def WYZMA(Series, N, bigFlg = True):
+    if len(Series) < N:
+        return Series > MA(Series, len(Series) - 4)
 # 彩钻花神
 def tdx_czhs(data):
     if len(data) < 10:
@@ -123,7 +137,7 @@ def tdx_dhmcl(data):
     大黑马出笼 = IFOR(HMTJ2, ZZ, 1, 0)
     return 大黑马出笼, -1, False
 
-def tdx_sxp(data, refFlg = True):
+def tdx_sxp(data, refFlg = False):
     CLOSE=data.close
     C=data.close
     前炮 = CLOSE > REF(CLOSE, 1) * 1.099
@@ -2148,7 +2162,7 @@ def tdx_dqe_test_A07(data):
     XG = VOL * 10 / VAR1
     return XG, -1, False
 
-def tdx_lyqd(data, refFlg = True):
+def tdx_lyqd(data, refFlg = False):
     # 龙妖启动
     CLOSE = data.close
     # C = data.close
@@ -2169,7 +2183,7 @@ def tdx_lyqd(data, refFlg = True):
     #return XG, -1, False
 
 
-def tdx_sl5560(data, refFlg = True):
+def tdx_sl5560(data, refFlg = False):
     VOL = data.volume
     CLOSE = data.close
     HIGH = data.high
@@ -2415,7 +2429,7 @@ def tdx_ZSMA(data):
 
 # XG:XG_CM AND BL;
 
-def tdx_WYZ17MA(data, refFlg = True):
+def tdx_WYZ17MA(data, refFlg = False):
     CLOSE = data.close
     C = data.close
     # HIGH = data.high
@@ -2445,7 +2459,7 @@ def tdx_WYZ17MA(data, refFlg = True):
     else:
         return XG, -1, False
 # 趋势智能选股
-def tdx_qszn(data, refFlg = True):
+def tdx_qszn(data, refFlg = False):
     H = data.high
     L = data.low
     CLOSE = data.close
@@ -2498,7 +2512,7 @@ def tdx_qszn(data, refFlg = True):
         return XG, -1, True
 
 # 趋势智能选股
-def tdx_cci(data, refFlg = True):
+def tdx_cci(data, refFlg = False):
     H = data.high
     L = data.low
     CLOSE = data.close
@@ -2515,7 +2529,7 @@ def tdx_cci(data, refFlg = True):
         return XG, -1, True
 
 # 趋势智能选股
-def tdx_ngqd(data, refFlg = True):
+def tdx_ngqd(data, refFlg = False):
     CLOSE = data.close
     C = data.close    
     黄线=MA(CLOSE,25)+MA(CLOSE,25)*6/100
@@ -2535,9 +2549,10 @@ def tdx_ngqd(data, refFlg = True):
         return 突破牛, -1, True
 
 # 趋势智能选股
-def tdx_bollxg(data, refFlg = True):
+def tdx_bollxg(data, refFlg = False):
     CLOSE = data.close
-    C = data.close    
+    C = data.close
+    H = data.high
     N = 20
     N2 = 21
     MID = MA(C,N)
@@ -2551,8 +2566,13 @@ def tdx_bollxg(data, refFlg = True):
     LB = REF(LOWER,1)
 
     TJ1 = H >= REF(UPPER,1)
-    TJ2 = CROSS(C,REF(UPPER,1))
-    TJ3 = COUNT(TJ1,N2) == 0
+    TJ2 = CROSS(C,UB)
+    TJ3 = COUNT(TJ1,N2) == 1
+    XG = IFAND3(TJ1, TJ2, TJ3, 1, 0)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
 #     XG = REF(TJ3,1) AND TJ2 AND C > O AND H > L
 
 
@@ -2573,11 +2593,11 @@ def tdx_bollxg(data, refFlg = True):
 #     else:
 #         return 突破牛, -1, True
 
-def _tdx_DQS_F1(Series, N):
-    return Series > MA(Series, N) * 0.89
+def _tdx_DQS_F1(Series, N, pct = 0.89):
+    return Series > MA(Series, N) * pct
 
 # 大趋势选股
-def tdx_DQS(data, refFlg = True):
+def tdx_DQS(data, refFlg = False):
     CLOSE = data.close
     C = data.close
     DETA = 0.895
@@ -2602,4 +2622,105 @@ def tdx_DQS(data, refFlg = True):
         return REF(TJ1,1), -1, True
     else:
         return TJ1, -1, True
+    
+def tdx_CDLPattern(data2, refFlg = False):
+    if refFlg:
+        data = data2
+    else:
+        data = data2.iloc[-20:]
+    close = data.close
+    open=data.open
+    low = data.low
+    high = data.high
+    da4 = pd.DataFrame()
+    da4['CDL2CROWS'] = talib.CDL2CROWS(open, high, low, close)
+    da4['CDL3BLACKCROWS'] = talib.CDL3BLACKCROWS(open, high, low, close)
+    da4['CDL3INSIDE'] = talib.CDL3INSIDE(open, high, low, close)
+    da4['CDL3LINESTRIKE'] = talib.CDL3LINESTRIKE(open, high, low, close)
+    da4['CDL3OUTSIDE'] = talib.CDL3OUTSIDE(open, high, low, close)
+    da4['CDL3STARSINSOUTH'] = talib.CDL3STARSINSOUTH(open, high, low, close)
+    da4['CDL3WHITESOLDIERS'] = talib.CDL3WHITESOLDIERS(open, high, low, close)
+    da4['CDLABANDONEDBABY'] = talib.CDLABANDONEDBABY(open, high, low, close)
+    da4['CDLADVANCEBLOCK'] = talib.CDLADVANCEBLOCK(open, high, low, close)
+    da4['CDLBELTHOLD'] = talib.CDLBELTHOLD(open, high, low, close)
+    da4['CDLBREAKAWAY'] = talib.CDLBREAKAWAY(open, high, low, close)
+    da4['CDLCLOSINGMARUBOZU'] = talib.CDLCLOSINGMARUBOZU(open, high, low, close)
+    da4['CDLCONCEALBABYSWALL'] = talib.CDLCONCEALBABYSWALL(open, high, low, close)
+    da4['CDLCOUNTERATTACK'] = talib.CDLCOUNTERATTACK(open, high, low, close)
+    da4['CDLDARKCLOUDCOVER'] = talib.CDLDARKCLOUDCOVER(open, high, low, close)
+    da4['CDLDOJI'] = talib.CDLDOJI(open, high, low, close)
+    da4['CDLDOJISTAR'] = talib.CDLDOJISTAR(open, high, low, close)
+    da4['CDLDRAGONFLYDOJI'] = talib.CDLDRAGONFLYDOJI(open, high, low, close)
+    da4['CDLENGULFING'] = talib.CDLENGULFING(open, high, low, close)
+    da4['CDLEVENINGDOJISTAR'] = talib.CDLEVENINGDOJISTAR(open, high, low, close)
+    da4['CDLEVENINGSTAR'] = talib.CDLEVENINGSTAR(open, high, low, close)
+    da4['CDLGRAVESTONEDOJI'] = talib.CDLGRAVESTONEDOJI(open, high, low, close)
+    da4['CDLHAMMER'] = talib.CDLHAMMER(open, high, low, close)
+    da4['CDLHANGINGMAN'] = talib.CDLHANGINGMAN(open, high, low, close)
+    da4['CDLHARAMI'] = talib.CDLHARAMI(open, high, low, close)
+    da4['CDLHARAMICROSS'] = talib.CDLHARAMICROSS(open, high, low, close)
+    da4['CDLHIGHWAVE'] = talib.CDLHIGHWAVE(open, high, low, close)
+    da4['CDLHIKKAKE'] = talib.CDLHIKKAKE(open, high, low, close)
+    da4['CDLHIKKAKEMOD'] = talib.CDLHIKKAKEMOD(open, high, low, close)
+    da4['CDLHOMINGPIGEON'] = talib.CDLHOMINGPIGEON(open, high, low, close)
+    da4['CDLIDENTICAL3CROWS'] = talib.CDLIDENTICAL3CROWS(open, high, low, close)
+    da4['CDLINNECK'] = talib.CDLINNECK(open, high, low, close)
+    da4['CDLINVERTEDHAMMER'] = talib.CDLINVERTEDHAMMER(open, high, low, close)
+    da4['CDLKICKING'] = talib.CDLKICKING(open, high, low, close)
+    da4['CDLKICKINGBYLENGTH'] = talib.CDLKICKINGBYLENGTH(open, high, low, close)
+    da4['CDLLADDERBOTTOM'] = talib.CDLLADDERBOTTOM(open, high, low, close)
+    da4['CDLLONGLEGGEDDOJI'] = talib.CDLLONGLEGGEDDOJI(open, high, low, close)
+    da4['CDLLONGLINE'] = talib.CDLLONGLINE(open, high, low, close)
+    da4['CDLMARUBOZU'] = talib.CDLMARUBOZU(open, high, low, close)
+    da4['CDLMATCHINGLOW'] = talib.CDLMATCHINGLOW(open, high, low, close)
+    da4['CDLMATHOLD'] = talib.CDLMATHOLD(open, high, low, close)
+    da4['CDLMORNINGDOJISTAR'] = talib.CDLMORNINGDOJISTAR(open, high, low, close)
+    da4['CDLMORNINGSTAR'] = talib.CDLMORNINGSTAR(open, high, low, close)
+    da4['CDLONNECK'] = talib.CDLONNECK(open, high, low, close)
+    da4['CDLPIERCING'] = talib.CDLPIERCING(open, high, low, close)
+    da4['CDLRICKSHAWMAN'] = talib.CDLRICKSHAWMAN(open, high, low, close)
+    da4['CDLRISEFALL3METHODS'] = talib.CDLRISEFALL3METHODS(open, high, low, close)
+    da4['CDLSEPARATINGLINES'] = talib.CDLSEPARATINGLINES(open, high, low, close)
+    da4['CDLSHOOTINGSTAR'] = talib.CDLSHOOTINGSTAR(open, high, low, close)
+    da4['CDLSHORTLINE'] = talib.CDLSHORTLINE(open, high, low, close)
+    da4['CDLSPINNINGTOP'] = talib.CDLSPINNINGTOP(open, high, low, close)
+    da4['CDLSTALLEDPATTERN'] = talib.CDLSTALLEDPATTERN(open, high, low, close)
+    da4['CDLSTICKSANDWICH'] = talib.CDLSTICKSANDWICH(open, high, low, close)
+    da4['CDLTASUKIGAP'] = talib.CDLTASUKIGAP(open, high, low, close)
+    da4['CDLTHRUSTING'] = talib.CDLTHRUSTING(open, high, low, close)
+    da4['CDLTRISTAR'] = talib.CDLTRISTAR(open, high, low, close)
+    da4['CDLUNIQUE3RIVER'] = talib.CDLUNIQUE3RIVER(open, high, low, close)
+    da4['CDLUPSIDEGAP2CROWS'] = talib.CDLUPSIDEGAP2CROWS(open, high, low, close)
+    da4['CDLXSIDEGAP3METHODS'] = talib.CDLXSIDEGAP3METHODS(open, high, low, close)
+    
+    TJ1 = da4.apply(lambda x: np.sum(x), axis=1)
+    XG = IF(TJ1 > 200, TJ1, IF(TJ1 < -200, TJ1, 0))
+#     da5['out2'] = da4.apply(lambda x: np.sum(abs(x)), axis=1)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+    
+def tdx_MID_BS_Check(data2, N = 5, M = 5):
+    data = data2.iloc[-90:]
+#     N = 5
+    CLOSE = data.close
+    LOW = data.low
+    HIGH = data.high
+#     stdDev = talib.STDDEV(CLOSE, timeperiod=N, nbdev=1)
+    var1 = talib.VAR(CLOSE, timeperiod=N, nbdev=1)
+    midPrice = talib.MIDPOINT(CLOSE, timeperiod=N)
+#     llv = LLV(close, M)
+#     hhv = HHV(close, M)
+    df = pd.DataFrame()
+    low1 = midPrice - SQRT(var1)
+#     low2 = midPrice - stdDev
+    high1 = midPrice + SQRT(var1)
+#     high2 = midPrice + stdDev
+    df['midp'] = midPrice
+    df['low1'] = midPrice - SQRT(var1)
+#     df['low2'] = LOW - SQRT(var1)
+    df['high1'] = midPrice + SQRT(var1)
+#     df['high2'] = HIGH + SQRT(var1)
+    return df.iloc[-1]
     

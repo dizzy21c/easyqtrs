@@ -69,8 +69,11 @@ def do_main_work(code, data, log, positions):
     m5 = MA(df_day.close, 5)
     # xg, sell_flg, nbFlg = tdx_buerfameng(df_day)
     xg = tjS(df_day)
+    midBS = tdx_MID_BS_Check(df_day)
+#     print("mid", midBS)
     chag_pct = (data['now'] - data['close']) / data['close'] * 100
-    log.info("code=%s bf=%d now=%6.2f pct=%6.2f m5=%6.2f, high=%6.2f, low=%6.2f" % (code, xg.iloc[-1], now_price, chag_pct, m5.iloc[-1], data['high'], data['low']))
+    log.info("code=%s bf=%d now=%6.2f pct=%6.2f m5=%6.2f, high=%6.2f, low=%6.2f, mid=%6.2f, low1=%6.2f, high1=%6.2f" % (code, xg.iloc[-1], now_price, chag_pct, m5.iloc[-1], data['high'], data['low'], midBS.midp, midBS.low1, midBS.high1))
+#     log.info("code=%s bf=%d now=%6.2f pct=%6.2f m5=%6.2f, high=%6.2f, low=%6.2f" % (code, xg.iloc[-1], now_price, chag_pct, m5.iloc[-1], data['high'], data['low']))
     #
     # # df_day.loc[last_time]=[0 for x in range(len(df_day.columns))]
     # # df_day.loc[(last_time,code),'open'] = data['open']

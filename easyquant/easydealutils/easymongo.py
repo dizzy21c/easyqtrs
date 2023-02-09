@@ -466,16 +466,20 @@ class MongoIo(object):
             insData = []
             idx = 0
             for idx1, rowdata in datas.iterrows():
+                ins_time = strftime('%Y-%m-%d %H:%M:%S',localtime())
                 djd = json.loads(rowdata.to_json())
-                keyId = "%s-%s-%s" % (rowdata.code, calcDate, calc_type)
+                keyId = "%s-%s" % (rowdata.code, calcDate)
                 dataChk = self.db[table].find_one({'_id': keyId})
                 if dataChk is not None and len(dataChk) > 0:
+                    ins_time = dataChk['ins-time']
                     self.db[table].remove(dataChk)
                 djd['_id'] = keyId
                 djd['calc_type'] = calc_type
                 djd['idx'] = len(datas) - idx
                 idx = idx + 1
                 djd['date'] = calcDate
+                djd['upd-time'] = strftime('%Y-%m-%d %H:%M:%S',localtime())
+                djd['ins-time'] = ins_time
                 insData.append(djd)
 #             print(insData)
             self.db[table].insert_many(insData)
