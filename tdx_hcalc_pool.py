@@ -612,7 +612,7 @@ def tdx_base_func_pct(lastData, nowPrice, flag = 'close'):
     if lastData is None or len(lastData) == 0:
         return 0
     else:
-        return "%4.1f" % (lastData.iloc[-1][flag] - nowPrice) / nowPrice * 100
+        return "%4.1f" % ((lastData.iloc[-1][flag] - nowPrice) / nowPrice * 100)
 
 def main_param(argv):
     st_begin = ''
