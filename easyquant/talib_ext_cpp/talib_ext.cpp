@@ -60,6 +60,46 @@ void barslast_list(int nCount, int *pOut, float *pData, int pNum)
   }
 }
 
+void filter_list(int nCount, int *pOut, int *pData, int iNum)
+{
+  for (int i = 0; i < nCount; i++)
+  {
+    if (pData[i] > 0) {
+      pOut[i] = 1;
+      for (int j = 1; j < iNum + 1; j++) {
+        if ( i + j < nCount) {
+          pOut[i + j] = 0;
+        } else {
+          break;
+        }
+      }
+      i += iNum;
+    } else {
+      pOut[i] = 0;
+    }
+  }
+}
+
+void filter_list2(int nCount, bool *pOut, bool *pData, int iNum)
+{
+  for (int i = 0; i < nCount; i++)
+  {
+    if (pData[i]) {
+      pOut[i] = true;
+      for (int j = 1; j < iNum + 1; j++) {
+        if ( i + j < nCount) {
+          pOut[i + j] = false;
+        } else {
+          break;
+        }
+      }
+      i += iNum;
+    } else {
+      pOut[i] = false;
+    }
+  }
+}
+
 void hhv_list(int nCount, float *pOut, float *pData, int *pNum)
 {
 //  float t_max = 0.0;
@@ -552,6 +592,17 @@ void barslast(int nCount, int *piOut, float *pfIn, int iIn)
 {
   barslast_list(nCount, piOut, pfIn, iIn);
 }
+
+void filter(int nCount, int *piOut, int *piIn, int iIn)
+{
+  filter_list(nCount, piOut, piIn, iIn);
+}
+
+void filter2(int nCount, bool *piOut, bool *piIn, int iIn)
+{
+  filter_list2(nCount, piOut, piIn, iIn);
+}
+
 
 void hhv(int nCount, float *pfOut, float *pfIn, int *piIn2)
 {

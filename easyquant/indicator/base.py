@@ -393,7 +393,7 @@ def IFOR(COND1, COND2, V1, V2):
     #     return pd.Series(var, index=V1.index)
     # else:
     #     return pd.Series(var, index=COND1.index)
-
+# 
 def IFOR3(COND1, COND2, COND3, V1, V2):
     COND_N = IFOR(COND1, COND2, True, False)
     return IFOR(COND_N, COND3, V1, V2)
@@ -404,8 +404,32 @@ def IFOR4(COND1, COND2, COND3, COND4, V1, V2):
     return IFOR(COND_N1, COND_N2, V1, V2)
 
 ##TODO 通达信测试结果的出的
-def FILTER(COND,N):
-    return IFAND(COND, COUNT(COND,N) == 1, True, False)
+## 0 - 1
+def FILTER(COND, N):
+    ncount = len(COND)
+    ti_p = c_int * ncount
+    np_OUT = ti_p(0)
+    na_Cond = np.asarray(COND).astype(np.int32)
+    # na_NS=np.asarray(NS).astype(np.int32)
+    np_S = cast(na_Cond.ctypes.data, POINTER(c_int))
+    # np_N=cast(na_NS.ctypes.data, POINTER(c_int))
+    lib.filter(ncount, np_OUT, np_S, N)
+    return pd.Series(np.asarray(np_OUT), index=COND.index)
+
+# true - false
+def FILTER2(COND, N):
+    ncount = len(cond)
+    ti_p=c_bool * ncount
+    np_OUT =ti_p(0)
+    na_Cond =np.asarray(cond).astype(np.bool)
+    # na_NS=np.asarray(NS).astype(np.int32)
+    
+    np_S=cast(na_Cond.ctypes.data, POINTER(c_bool))
+    # np_N=cast(na_NS.ctypes.data, POINTER(c_int))
+    
+    lib.filter2(ncount, np_OUT, np_S, N)
+    
+    return pd.Series(np.asarray(np_OUT), index=cond.index)
 
 def REF(Series, N):
     if isinstance(Series[0], bool) or isinstance(Series[0], np.bool_):

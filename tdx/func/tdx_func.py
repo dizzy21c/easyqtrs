@@ -2724,3 +2724,35 @@ def tdx_MID_BS_Check(data2, N = 5, M = 5):
 #     df['high2'] = HIGH + SQRT(var1)
     return df.iloc[-1]
     
+def tdx_JZZCJSD(data, refFlg = True):
+#     {JZZ超级赛道}
+    C = data.close
+    O = data.open
+    X_1=EMA(C,2)
+    X_2=EMA(C,5)
+    X_3=EMA(C,13)
+    X_4=EMA(C,30)
+    X_5=X_2>=REF(X_2,1)
+    X_6=MAX(MAX(X_2,X_3),X_4)
+    X_7=MIN(MIN(X_2,X_3),X_4)
+    X_8=IFAND4(X_6<C, O<X_7, X_5, X_1>REF(X_1,1), True, False)
+    X_9=IF(X_8,1,0)
+    X_10=MA(C,5)
+    X_11=ATAN((X_10/REF(X_10,1)-1)*100)*180/3.1416
+    X_12=SMA(EMA((X_10-REF(X_10,1))/REF(X_10,1),3)*100,3,1)
+    X_13=EMA((X_12-REF(X_12,1)),3)
+    X_14=MA(C,10)
+    X_15=MA(C,30)
+    X_16=(C-X_15)/X_15*100
+    X_17_1 = IFAND3(COUNT(CROSS(X_11,30),5) >= 1, X_10>REF(X_10,1), X_16>REF(X_16,1), True, False)
+    X_17_2 = IFAND3(X_14>REF(X_14,1), X_13>REF(X_13,1), X_12>REF(X_12,1), True, False)
+    X_17 = FILTER(IFAND(X_17_1, X_17_2, True, False), 10)
+#     X_17=FILTER(COUNT(CROSS(X_11,30),5)>=1 AND X_10>REF(X_10,1) AND X_16>REF(X_16,1) AND 
+#                 X_14>REF(X_14,1) AND X_13>REF(X_13,1) AND X_12>REF(X_12,1) ,10) 
+    强风口 = IFOR(X_9, X_17, 1, 0)
+#     预测风口 =  IF(X_9 == 1, 1, 0)
+#     超强风口 = IF(X_17 == 1, 1, 0)
+    if refFlg:
+        return REF(强风口, 1), -1, False
+    else:
+        return 强风口, -1, False

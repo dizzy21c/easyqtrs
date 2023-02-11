@@ -57,6 +57,10 @@ extern "C" {
   DLL_PUBLIC void cost(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, int percent, float capital);
 
   DLL_PUBLIC void winner(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float capital);
+    
+  DLL_PUBLIC void filter(int nCount, int *piOut, int *piIn, int iIn);
+    
+  DLL_PUBLIC void filter2(int nCount, bool *piOut, bool *piIn, int iIn);
 
     // subBuf* subBuf_new(){ return new subBuf(); }
     // int subBuf_sub(subBuf* subfuf, char* data, int num, char* outData){ subfuf->cursubBuf(data, num, outData); }
