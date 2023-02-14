@@ -24,7 +24,7 @@ def new_df(df_day, data, now_price):
 
 def pytdx_last_data(data, now_price = None):
     code = data.index[0][1]
-    realdata = sina_datas.stocks(code)[code]
+    realdata = dataE.stocks(code)[code]
     if now_price is None:
         now_price = realdata['now']
     return new_df(data, realdata, now_price)
@@ -2290,6 +2290,7 @@ def tdx_zttj1(data):
     XG = 买入
     return REF(XG,1), -1, False
 
+# 筹码分析
 def tdx_cmfx(data):
     CLOSE = data.close
     C = data.close
@@ -2724,7 +2725,7 @@ def tdx_MID_BS_Check(data2, N = 5, M = 5):
 #     df['high2'] = HIGH + SQRT(var1)
     return df.iloc[-1]
     
-def tdx_JZZCJSD(data, refFlg = True):
+def tdx_JZZCJSD(data, refFlg = False):
 #     {JZZ超级赛道}
     C = data.close
     O = data.open

@@ -717,14 +717,15 @@ if __name__ == '__main__':
                 # print("log:sleep AM")
                 # continue
 
-            if nowtime > datetime.time(15,0,30):
-                print("end trade time.")
-                # time.sleep(3600)
-#                 break
 
             time.sleep(10)
             print("*** loop calc begin ***")
             tdx_func_mp(func, sort, codelist, calcType=calcType, backTime=back_time)
+
+            if nowtime > datetime.time(15,0,30):
+                print("end trade time.")
+                # time.sleep(3600)
+                break
 
         if calcType == 'B':
             print("all-top", all_top)
