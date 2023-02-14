@@ -2311,7 +2311,7 @@ def tdx_cmfx(data):
     HL=13
     A1=CROSS(XLV,HL)
     A2=CROSS(XLV2,HL)
-    A11=IFOR(A1>00,A2>0,True,False)
+    A11=IFOR(A1>0,A2>0,True,False)
     # XG=(A1 OR A2) AND (C>REF(C,1) AND C>O AND REF(C,1) / REF(C,2) < 1.09)* 50;
     XG=IFAND5(A11, C>REF(C,1), C>OPEN, REF(C,1) / REF(C,2) < 1.09, HHV(C,5) / LLV(C,5) < 1.3, True, False)
     return REF(XG,1), -1, False
