@@ -1690,8 +1690,8 @@ def tdx_blft(data):
     暴利=IF(FILTER(X_25, 15), 1, 0)
     return 暴利, -1, False
 
+# 改CCI选股
 def tdx_cci_xg(data):
-    # {改CCI选股}
     CLOSE = data.close
     C = data.close
     HIGH = data.high
@@ -1952,7 +1952,7 @@ def tdx_dqe_xqc_A1(data, sort=False):
            - 0.0002891931964 * REF(C, 7) - 0.0000956265934 * REF(C, 8) - 0.0000321286052 * REF(C, 9) \
            - 0.0000106773454 * REF(C, 10) - 0.0000035457562 * REF(C, 11) - 0.0000011670713 * REF(C, 12)) / (1 - 0.7522406533)
     # 竞价涨幅 := (DYNAINFO(4) / DYNAINFO(3) - 1) * 100;
-    竞价涨幅 = (C / REF(C, 1) - 1) * 100
+    竞价涨幅 = (JC / REF(C, 1) - 1) * 100
     # ST := STRFIND(stkname, 'ST', 1) > 0;
     # S := STRFIND(stkname, 'S', 1) > 0;
     # 停牌 := (DYNAINFO(4)=0);
@@ -2291,7 +2291,7 @@ def tdx_zttj1(data):
     return REF(XG,1), -1, False
 
 # 筹码分析
-def tdx_cmfx(data):
+def tdx_cmfx(data, refFlag = False):
     CLOSE = data.close
     C = data.close
     VOL = data.volume
@@ -2313,8 +2313,11 @@ def tdx_cmfx(data):
     A2=CROSS(XLV2,HL)
     A11=IFOR(A1>0,A2>0,True,False)
     # XG=(A1 OR A2) AND (C>REF(C,1) AND C>O AND REF(C,1) / REF(C,2) < 1.09)* 50;
-    XG=IFAND5(A11, C>REF(C,1), C>OPEN, REF(C,1) / REF(C,2) < 1.09, HHV(C,5) / LLV(C,5) < 1.3, True, False)
-    return REF(XG,1), -1, False
+    XG=IFAND5(A11, C>REF(C,1), C>OPEN, REF(C,1) / REF(C,2) < 1.09, HHV(C,5) / LLV(C,5) < 1.3, 1, 0)
+    if refFlag:
+        return REF(XG,1), -1, False
+    else:
+        return XG, -1, False
     # return A11
 
 def tdx_TLBXX(data):
@@ -2549,11 +2552,13 @@ def tdx_ngqd(data, refFlg = False):
     else:
         return 突破牛, -1, True
 
-# 趋势智能选股
-def tdx_bollxg(data, refFlg = False):
+# 布林选股
+# 布林选股
+def _tdx_boll_xg(data):
     CLOSE = data.close
     C = data.close
     H = data.high
+    O = data.open
     N = 20
     N2 = 21
     MID = MA(C,N)
@@ -2564,19 +2569,52 @@ def tdx_bollxg(data, refFlg = False):
     LOWER = MID-2*VART3
     BOLL =  REF(MID,1)
     UB = REF(UPPER,1)
-    LB = REF(LOWER,1)
+#     LB = REF(LOWER,1)
 
     TJ1 = H >= REF(UPPER,1)
-    TJ2 = CROSS(C,UB)
-    TJ3 = COUNT(TJ1,N2) == 1
-    XG = IFAND3(TJ1, TJ2, TJ3, 1, 0)
+    TJ2 = CROSS(C, UB)
+    TJ3 = COUNT(TJ1, N2) == 1
+    TJ4 = C > O
+#     XG = IFAND3(TJ1, TJ2, TJ3, 1, 0)
+    return TJ1, TJ2, TJ3, TJ4
+
+def tdx_bollxg_end(data, refFlg = False):
+    CLOSE = data.close
+    VOL = data.volume
+
+    N = 20
+#     N2 = 21
+    TJ1, TJ2, TJ3, TJ4 = _tdx_boll_xg(data)
+#     TJ3 =  COUNT(TJ1,N2) == 0 ### ？？？？？？？？
+
+#     XG2 =  IFAND4(REF(TJ3,1), TJ2, C > O, H > L, True, False)
+#     XG1 =  IFAND4(REF(TJ3,1), TJ2, C > O, H > O, True, False)
+    XG1 =  IFAND4(TJ1, TJ2, TJ3, TJ4, True, False)
+    
+    SHORT  =  12
+    LONG  =  26
+    MID2  =  9
+    DIF  =  EMA(CLOSE,SHORT)-EMA(CLOSE,LONG)
+    DEA  =  EMA(DIF,MID2)
+    MACD  =  (DIF-DEA)*2
+    XG = IFAND3(XG1, MACD > 0,  CROSS(DIF,DEA), True, False)
+
+    MAV = MA(VOL,N)
+    VXG = IFAND(VOL > 2* REF(VOL,1),  VOL > MAV * 1.5, True, False)
+    XGN = IFAND(XG, VXG, 1, 0)
+    if refFlg:
+        return REF(XGN, 1), -1, False
+    else:
+        return XGN, -1, False
+    
+def tdx_bollxg_start(data, refFlg = False):
+    TJ1, TJ2, TJ3, TJ4 = _tdx_boll_xg(data)
+    XG = IFAND4(TJ1, TJ2, TJ3, TJ4, 1, 0)
     if refFlg:
         return REF(XG, 1), -1, False
     else:
         return XG, -1, False
 #     XG = REF(TJ3,1) AND TJ2 AND C > O AND H > L
-
-
     
 #     黄线=MA(CLOSE,25)+MA(CLOSE,25)*6/100
 #     白轨=MA(CLOSE,25)+MA(CLOSE,25)*20/100
@@ -2719,9 +2757,9 @@ def tdx_MID_BS_Check(data2, N = 5, M = 5):
     high1 = midPrice + SQRT(var1)
 #     high2 = midPrice + stdDev
     df['midp'] = midPrice
-    df['low1'] = midPrice - SQRT(var1)
+    df['low1'] = midPrice - 1.618 * SQRT(var1)
 #     df['low2'] = LOW - SQRT(var1)
-    df['high1'] = midPrice + SQRT(var1)
+    df['high1'] = midPrice + 1.618 * SQRT(var1)
 #     df['high2'] = HIGH + SQRT(var1)
     return df.iloc[-1]
     
@@ -2757,3 +2795,38 @@ def tdx_JZZCJSD(data, refFlg = False):
         return REF(强风口, 1), -1, False
     else:
         return 强风口, -1, False
+
+## 龙头波段趋势
+def tdx_LTBDQS(data, refFlg = False):
+#     {公式名称: 龙头波段趋势
+    CLOSE =data.close
+    主趋势线 = EMA(EMA(CLOSE,10),10)
+    HJ_5_20_GT = EMA(CLOSE,5) > EMA(CLOSE,20)
+#     HJ_C_O_LT = CLOSE < OPEN
+    XG = IF(HJ_5_20_GT, 1, 0)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+
+#     主趋势线 = EMA(EMA(CLOSE,10),10)
+#     HJ_3 =主趋势线>REF(主趋势线,1)
+#     IF(HJ_3-1,主趋势线,DRAWNULL),COLORGREEN,LINETHICK3;
+#     HJ_5_20_GT:=EMA(CLOSE,5)>EMA(CLOSE,20);
+#     HJ_5_20_LT:=EMA(CLOSE,5)<EMA(CLOSE,20);
+#     HJ_5_10_GT:=EMA(CLOSE,5)>EMA(CLOSE,10);
+#     HJ_5_10_LT:=EMA(CLOSE,5)<EMA(CLOSE,10);
+#     HJ_C_O_LT:=CLOSE<OPEN;
+#     STICKLINE(HJ_5_20_GT,HIGH,LOW,0,0),COLORRED;
+#     STICKLINE(HJ_5_20_GT,OPEN,CLOSE,3,1),COLORRED;
+#     STICKLINE(HJ_5_20_GT AND HJ_C_O_LT,OPEN,CLOSE,3,0),COLORRED;
+
+#     STICKLINE(HJ_5_20_LT,HIGH,LOW,0,0),COLORGREEN;
+#     STICKLINE(HJ_5_20_LT,OPEN,CLOSE,3,1),COLORGREEN;
+#     STICKLINE(HJ_5_20_LT AND HJ_C_O_LT,OPEN,CLOSE,3,0),COLORGREEN;
+#     STICKLINE(HJ_5_20_LT AND HJ_5_10_GT,HIGH,LOW,0,1),COLORWHITE;
+#     STICKLINE(HJ_5_20_LT AND HJ_5_10_GT,OPEN,CLOSE,3,1),COLORWHITE;
+#     STICKLINE(HJ_5_20_LT AND HJ_5_10_GT AND HJ_C_O_LT,OPEN,CLOSE,3,0),COLORWHITE;
+#     STICKLINE(HJ_5_20_GT AND HJ_5_10_LT,HIGH,LOW,0,0),COLORWHITE;
+#     STICKLINE(HJ_5_20_GT AND HJ_5_10_LT,OPEN,CLOSE,3,1),COLORWHITE;
+#     STICKLINE(HJ_5_20_GT AND HJ_5_10_LT AND HJ_C_O_LT,OPEN,CLOSE,3,0),COLORWHITE; 

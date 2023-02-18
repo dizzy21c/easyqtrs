@@ -789,7 +789,7 @@ if __name__ == '__main__':
                 continue
             if nowtime > datetime.time(9,30,0):
                 print("Pool stoped!!")
-                break
+#                 break
 
             if datetime.time(11, 30, 10) < nowtime < datetime.time(12, 59, 50):
                 time.sleep(10)
