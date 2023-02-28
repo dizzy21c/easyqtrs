@@ -468,10 +468,12 @@ class MongoIo(object):
             for idx1, rowdata in datas.iterrows():
                 ins_time = strftime('%Y-%m-%d %H:%M:%S',localtime())
                 djd = json.loads(rowdata.to_json())
+                ins_price = djd['now']
                 keyId = "%s-%s" % (rowdata.code, calcDate)
                 dataChk = self.db[table].find_one({'_id': keyId})
                 if dataChk is not None and len(dataChk) > 0:
                     ins_time = dataChk['ins-time']
+                    ins_price = dataChk['now']
                     self.db[table].remove(dataChk)
                 djd['_id'] = keyId
                 djd['calc_type'] = calc_type
@@ -480,9 +482,87 @@ class MongoIo(object):
                 djd['date'] = calcDate
                 djd['upd-time'] = strftime('%Y-%m-%d %H:%M:%S',localtime())
                 djd['ins-time'] = ins_time
+                djd['ins-price'] = ins_price
                 insData.append(djd)
 #             print(insData)
             self.db[table].insert_many(insData)
+
+    def ins_position(self, func_name, datas, calcDate, calc_type):
+        if calc_type != 'T':
+            return
+        table = 'positions'
+#         table = 'st_orders-%s' % func_name
+        if len(datas) > 0:
+            insDataList = []
+            for idx1, rowdata in datas.iterrows():
+                insData = {}
+                djd = json.loads(rowdata.to_json())
+                ins_time = strftime('%Y-%m-%d %H:%M:%S',localtime())
+                ins_date = calcDate
+                ins_price = djd['now']
+                keyId = "%s-%s" % (djd['code'], func_name)
+                
+                dataChk = self.db[table].find_one({'_id': keyId})
+                if dataChk is not None and len(dataChk) > 0:
+#                     ins_time = dataChk['ins-time']
+#                     ins_date = dataChk['ins-date']
+#                     ins_price = dataChk['ins-price']
+                    continue
+#                     self.db[table].remove(dataChk)
+                insData['_id'] = keyId
+                insData['code'] = djd['code']
+                insData['amount'] = 100
+                insData['status'] = '0'
+                insData['idx'] = 0
+                insData['price'] = djd['now']
+                
+                insData['func'] = func_name
+                insData['ins-price'] = ins_price
+                insData['ins-date'] = ins_date
+                insData['ins-time'] = ins_time
+                insData['upd-time'] = strftime('%Y-%m-%d %H:%M:%S',localtime())
+                insDataList.append(insData)
+#             print(insData)
+            if len(insDataList ) > 0:
+                self.db[table].insert_many(insDataList)
+##TODO Fixme
+    def upd_position(self, datas):
+        table = 'positions'
+#         table = 'st_orders-%s' % func_name
+        if len(datas) > 0:
+            insDataList = []
+            for idx1, rowdata in datas.iterrows():
+                insData = {}
+                djd = json.loads(rowdata.to_json())
+                ins_time = strftime('%Y-%m-%d %H:%M:%S',localtime())
+                ins_date = calcDate
+                ins_price = djd['now']
+                keyId = "%s" % (djd['code'])
+                dataChks = self.db[table].find({'code': keyId})
+                if dataChks is not None and len(dataChks) > 0:
+                    ptds=pd.DataFrame(list(dataChks))
+                    for idx2, rowdata2 in ptds.iterrows():
+                        ins_time = dataChk['ins-time']
+                        ins_date = dataChk['ins-date']
+                        ins_price = dataChk['ins-price']
+    #                     continue
+                        self.db[table].remove(dataChk)
+
+                        insData['_id'] = keyId
+                        insData['code'] = djd['code']
+                        insData['amount'] = 100
+                        insData['status'] = '1'
+                        insData['idx'] = 0
+                        insData['price'] = djd['now']
+
+                        insData['func'] = func_name
+                        insData['ins-price'] = ins_price
+                        insData['ins-date'] = ins_date
+                        insData['ins-time'] = ins_time
+                        insData['upd-time'] = strftime('%Y-%m-%d %H:%M:%S',localtime())
+                        insDataList.append(insData)
+#             print(insData)
+            self.db[table].insert_many(insDataList)
         
     def upd_order(self, func_name, dateObj, code, price, bs_flg = 'buy', insFlg = True):
         table = 'st_orders-%s' % func_name

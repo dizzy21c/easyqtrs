@@ -364,6 +364,7 @@ def tdx_func_mp(func_names, sort_types, codelist, calcType='', backTime=''):
 #         dataR.to_csv("step-%s-%s-pool.csv" % (func_names, backTime))
     else:
         mongo.upd_backtest("%s-real" % func_names, dataR, backTime, calcType)
+        mongo.ins_position(func_names, dataR, backTime, calcType)
     end_t = datetime.datetime.now()
     print(end_t, 'tdx_func_mp spent:{}'.format((end_t - start_t)))
 
