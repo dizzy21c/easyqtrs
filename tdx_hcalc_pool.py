@@ -444,8 +444,12 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calcType=''):
                     continue
             else:
                 newdata = newdatas[code]
+#             if (code == '688786'):
+#                 print("st1", newdata)
             now_price = newdata['now']
             last_price = newdata['now']
+#             if (code == '688786'):
+#                 print("st2", code)
             dataln = None
             dataln2 = None
             dataln3 = None
@@ -486,9 +490,8 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calcType=''):
                     dataln5 = databuf_mongo[key].query(" code=='%s' and date == '%s' " % (code, nextCalcDate))
                 except:
                     dataln5 = None
-            # if (code == '003001'):
-            #     print(data)
-            #     print(newdata)
+#             if (code == '688786'):
+#                 print("st3", code)
             data = new_df(data.copy(), newdata, now_price)
             calcR = tdx_base_func(data.copy(), func_name, code, newdata, last_price, dataln, mongo_np, dataln2, dataln3, dataln4, dataln5)
             if calcR == {}:
@@ -496,7 +499,8 @@ def tdx_func(key, calcDate, newdatas, func_name, code_list = None, calcType=''):
             dataR = dataR.append(calcR, ignore_index=True)
         except Exception as e:
             print("error code=%s" % code)
-            print("error code=", e)
+            print("error info=", e)
+#             pass
             # return
     end_t = datetime.datetime.now()
     print(end_t, func_name, 'tdx_func spent:{}'.format((end_t - start_t)))
@@ -666,6 +670,7 @@ if __name__ == '__main__':
     if all_data == '':
         all_data = 'position'
     codelist = getCodeList(all_data)
+#     codelist = ['688786','000001','000002','000003','000004','000005','000006','000007','000008','000009','000011','000012','000013','000014','000015','000016','000017','000018','000019']
     if calcType == 'B':
         m = MongoIo()
         his_real = m.get_realtime(dateStr = back_time)
