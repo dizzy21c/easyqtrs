@@ -8,6 +8,7 @@ from .easydealutils.easyredis import RedisIo
 from .easydealutils.easymongo import MongoIo
 from .easydealutils.easymongo4polars import MongoIo4Pl
 from .easydealutils.easymq import EasyMq
+from .easydealutils.easymqtt import EasyMqtt
 from .easydealutils.datautil import DataUtil
 from .easydealutils.easytime import EasyTime
 from .indicator import base
