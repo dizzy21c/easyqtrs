@@ -38,7 +38,7 @@ def do_init_data_buf(code):
     # mc = MongoIo()
     # mongo = MongoIo()
     # if idx == 0:
-    data_day = mongo.get_stock_day(code=code) #, st_start="2020-05-15")
+    data_day = mongo.get_index_day(code=code) #, st_start="2020-05-15")
         # data_min = mc.get_stock_min_realtime(code=code, freq=freq)
     # else:
     #     data_day = mongo.get_index_day(code=code)
@@ -105,13 +105,13 @@ def do_main_work(code, data, log, positions):
     #     # 卖出
 
 class Strategy:
-    name = 'calc-stock'  ### day
+    name = 'calc-etf'  ### day
 
     def __init__(self, log_handler):
         self.log = log_handler
         self.log.info('init event:%s'% self.name)
         
-        self.df_positions = mongo.get_positions()
+        self.df_positions = mongo.get_positions(idx=1)
         
         self.easymqtt = EasyMqtt(on_message=self.on_msg)
         # self.easymq.init_receive(exchange="stockcn")
@@ -120,11 +120,12 @@ class Strategy:
         start_time = time.time()
         task_list = []
         for code in self.df_positions.index:
-            task_list.append(executor.submit(do_init_data_buf, code))
-            if code[:1] == '6':
-                self.easymqtt.subscribe('/stock/SH%s' % code)
-            else:
-                self.easymqtt.subscribe('/stock/SZ%s' % code)
+            task_list.append(executor.submit(do_init_data_buf, code[2:]))
+            self.easymqtt.subscribe('/stock/%s' % code)
+            #if code[:1] == '6':
+            #    self.easymqtt.subscribe('/stock/SH%s' % code)
+            #else:
+            #    self.easymqtt.subscribe('/stock/SZ%s' % code)
         # self.easymq.add_sub_key(routing_key='data')
             
         for task in as_completed(task_list):
@@ -163,9 +164,12 @@ class Strategy:
         data = eval(jsMsg)
         # self.log.info(data)
         # for stdata in data:
-        code = data['code'][2:]
-        if code in self.df_positions.index:
-            executor.submit(do_main_work, code, data, self.log, self.df_positions.loc[code])
+        code = data['code']
+        #code = data['code']
+        #print("code", code)
+        executor.submit(do_main_work, code[2:], data, self.log, self.df_positions.loc[code])
+        #if code in self.df_positions.index:
+        #    executor.submit(do_main_work, code, data, self.log, self.df_positions.loc[code])
         
     def callback(self, a, b, c, data):
         # self.log.info('Strategy =%s, start calc...' % self.name)
