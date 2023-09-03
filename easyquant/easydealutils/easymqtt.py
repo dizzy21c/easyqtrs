@@ -3,7 +3,7 @@ from paho.mqtt import client as mqtt_client
 
  
 class EasyMqtt(object):
-    def __init__(self, mqtt_host = '127.0.0.1', mqtt_port = 1883, on_message = None, mqtt_user = 'easyqtrs', mqtt_pass = '1qaz@WSX', mqtt_keepalive = 600):
+    def __init__(self, mqtt_host = 'easyqtrs', mqtt_port = 1883, on_message = None, mqtt_user = 'easyqtrs', mqtt_pass = '1qaz@WSX', mqtt_keepalive = 600):
         super(EasyMqtt, self).__init__()
         self.mqtt_host = mqtt_host
         self.mqtt_port = mqtt_port

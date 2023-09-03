@@ -105,7 +105,7 @@ def do_main_work(code, data, log, positions):
     #     # 卖出
 
 class Strategy:
-    name = 'calc-stock'  ### day
+    name = 'calc-stock-mqtt'  ### day
 
     def __init__(self, log_handler):
         self.log = log_handler
