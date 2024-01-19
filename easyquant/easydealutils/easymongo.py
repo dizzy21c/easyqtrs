@@ -307,9 +307,12 @@ class MongoIo(object):
             return json.load(f)
 
     def save(self, table, data):
-        self.db[table].insert_many(
-            [data]
-        )
+        if type(data) is list:
+            self.db[table].insert_many(data)
+        else:
+            self.db[table].insert_many(
+                [data]
+            )
 
     def save_data_min(self, data, idx=0):
         if idx == 0:
@@ -483,6 +486,28 @@ class MongoIo(object):
                 djd['upd-time'] = strftime('%Y-%m-%d %H:%M:%S',localtime())
                 djd['ins-time'] = ins_time
                 djd['ins-price'] = ins_price
+                insData.append(djd)
+#             print(insData)
+            self.db[table].insert_many(insData)
+
+    def upd_backtest_bs(self, func_name, datas):
+        table = 'st_orders-bs-%s' % func_name
+        if len(datas) > 0:
+            insData = []
+            idx = 0
+            for idx1, rowdata in datas.iterrows():
+                buy_time = datas.loc[idx1]['buy-date'].strftime('%Y-%m-%d')
+                djd = json.loads(rowdata.to_json())
+#                 ins_price = djd['now']
+                keyId = "%s-%s" % (rowdata.code, buy_time)
+                dataChk = self.db[table].find_one({'_id': keyId})
+                if dataChk is not None and len(dataChk) > 0:
+                    # ins_time = dataChk['ins-time']
+                    # ins_price = dataChk['now']
+                    self.db[table].remove(dataChk)
+                djd['_id'] = keyId
+                djd['buy-date'] = buy_time
+                djd['sell-date'] = datas.loc[idx1]['sell-date'].strftime('%Y-%m-%d')
                 insData.append(djd)
 #             print(insData)
             self.db[table].insert_many(insData)

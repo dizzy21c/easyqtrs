@@ -60,17 +60,19 @@ def do_main_work(code, data, log, positions):
     # if now_price > hold_price * 1.02 and now_price < high_price / 1.03:
     #     log.info("code=%s now=%6.2f solding..." % (code, now_price))
         # 卖出
-    now_vol = data['volume']
+#     now_vol = data['volume']
+    now_vol = data['amount'] / 100
     # last_time = pd.to_datetime(data['datetime'][0:10])
     # print("code1=%s, date=%s" % (code, data['datetime']))
     df_day = data_buf_day[code]
+    old_vol = df_day.volume.iloc[-1]
     df_day = new_df(df_day, data, now_price)
     m5 = MA(df_day.close, 5)
     # xg, sell_flg, nbFlg = tdx_buerfameng(df_day)
     xg = tjS(df_day)
     chag_pct = (data['now'] - data['close']) / data['close'] * 100
-    log.info("code=%s bf=%d now=%6.3f pct=%6.2f m5=%6.3f, high=%6.3f, low=%6.3f" % (code, xg.iloc[-1], now_price, chag_pct, m5.iloc[-1], data['high'], data['low']))
-
+    vol_pct = now_vol / old_vol
+    log.info("code=%s bf=%d now=%6.3f pct=%6.2f vpct=%6.2f m5=%6.3f, high=%6.3f, low=%6.3f" % (code, xg.iloc[-1], now_price, chag_pct, vol_pct, m5.iloc[-1], data['high'], data['low']))
     # df_day.loc[last_time]=[0 for x in range(len(df_day.columns))]
     # df_day.loc[(last_time,code),'open'] = data['open']
     # df_day.loc[(last_time,code),'high']= data['high']

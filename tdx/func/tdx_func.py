@@ -29,6 +29,13 @@ def pytdx_last_data(data, now_price = None):
         now_price = realdata['now']
     return new_df(data, realdata, now_price)
     
+def func_check_data(data, N = 40):
+    ## 不是新股
+    if len(data) < N:
+        return False
+    else:
+        return True
+    
 def WYZMA(Series, N, bigFlg = True):
     if len(Series) < N:
         return Series > MA(Series, len(Series) - 4)
@@ -185,7 +192,7 @@ def tdx_hmdr(data):
     N3 = 89
 
     C1 = C / REF(C, 1)
-    MX = EMA(SLOPE(C, N2) * 20 + C, N1)
+    MX = EMA((SLOPE(C, N2) * 20 + C).fillna(0), N1)
     MXR = MX / REF(MX, 1)
     MR = SLOPE(MX, 2)
     MRD = CROSS(0, MR)
@@ -204,7 +211,7 @@ def tdx_hmdr(data):
     # return 金K线, False
     return 大肉, -1, False
 
-def tdx_tpcqpz(data, N = 55, M = 34):
+def tdx_tpcqpz_func(data, N = 55, M = 34):
     C = data.close
     CLOSE = data.close
     H = data.high
@@ -213,6 +220,10 @@ def tdx_tpcqpz(data, N = 55, M = 34):
     HCV = (HHV(C, N) - LLV(C, N)) / LLV(C, N) * 100
     TJN = REF(H, 1) < REF(HHV(H, N), 1)
     XG = IFAND3(REF(HCV, 1) <= M, CLOSE > REF(HHV(HIGH, N), 1), TJN, 1, 0)
+    return XG #, -1, False
+
+def tdx_tpcqpz(data, N = 55, M = 34):
+    XG = tdx_tpcqpz_func(data, N, M)
     return XG, -1, False
 
 def tdx_A01(data):
@@ -308,13 +319,35 @@ def tdx_swl(data):
     SJ1 = DR2
     SJ2 = E2 < -2.30
     SJ3 = BIAS0 < -2.7
-    SJ5 = IFAND3(SJ1, SJ2, SJ3, True, False)
-    SJ6 = CROSS(0.5, SJ5)
-    JS1 = CROSS(SJ6, 0.5)
-    JS2 = BARSLAST(JS1==1)
-    JS3 = IFAND(JS2 <= 5, C < REF(C, JS2), True, False)
-    TJ = IFOR(SJ6, JS3, True, False)
-    耍无赖XG = IFAND(TJ == 0,   REF(TJ==1, 1), 1, 0)
+#     SJ5 = IFAND3(SJ1, SJ2, SJ3, True, False)
+#     SJ6 = CROSS(0.5, SJ5)
+#     JS1 = CROSS(SJ6, 0.5)
+#     JS2 = BARSLAST(JS1==1)
+#     JS3 = IFAND(JS2 <= 5, C < REF(C, JS2), True, False)
+#     TJ = IFOR(SJ6, JS3, True, False)
+#     耍无赖XG = IFAND(TJ == 0,   REF(TJ==1, 1), 1, 0)
+    if len(SJ1) == len(SJ2):
+        SJ5 = IFAND3(SJ1, SJ2, SJ3, True, False)
+        SJ6 = CROSS(0.5, SJ5)
+        JS1 = CROSS(SJ6, 0.5)
+        JS2 = BARSLAST(JS1==1)
+        JS3 = IFAND(JS2 <= 5, C < REF(C, JS2), True, False)
+        TJ = IFOR(SJ6, JS3, True, False)
+        耍无赖XG = IFAND(TJ == 0,   REF(TJ==1, 1), 1, 0)
+    else:
+        DN1 = pd.DataFrame()
+        DN1['SJ1'] = SJ1
+        DN1['SJ2'] = SJ2
+        DN1['SJ3'] = SJ3
+        DN1['C'] = C
+        SJ5 = IFAND3(DN1.SJ1, DN1.SJ2, DN1.SJ3, True, False)
+        SJ6 = CROSS(0.5, SJ5)
+        JS1 = CROSS(SJ6, 0.5)
+        JS2 = BARSLAST(JS1==1)
+        JS3 = IFAND(JS2 <= 5, DN1.C < REF(DN1.C, JS2), True, False)
+        TJ = IFOR(SJ6, JS3, True, False)
+        耍无赖XG = IFAND(TJ == 0,   REF(TJ==1, 1), 1, 0)
+    
     return 耍无赖XG, -1, False
 
 def tdx_func1(data):
@@ -330,7 +363,7 @@ def tdx_func1(data):
     VAR1 = (2 * CLOSE + HIGH + LOW) / 4
     VAR2 = LLV(LOW, 5)
     VAR3 = HHV(HIGH, 5)
-    VAR4 = EMA((VAR1 - VAR2) / (VAR3 - VAR2) * 100, 5)
+    VAR4 = EMA(((VAR1 - VAR2) / (VAR3 - VAR2)).fillna(0) * 100, 5)
     MA1 = MA(VAR4, 2)
     XG1 = IFOR(CROSS(22.50, MA1), CROSS(24.5, MA1), True, False)
     XG2 = IFAND5(XG1, COUNT(CROSS(0, DEA), 6) == 1 , AA > BB ,  BB > REF(BB, 1) , C / REF(C, 1) < 1.016, True, False)
@@ -574,12 +607,14 @@ def tdx_yaoguqidong(data):
     C = data.close
     H = data.high
     L = data.low
+    if len(data) < 125:
+        return IF(data.close < 0, 0, 0), -1, False
 
-    VAR1 = (C - REF(C, 1)) / REF(C, 1)
-    VAR2 = (INDEXC(data) - REF(INDEXC(data), 1)) / REF(INDEXC(data), 1)
-    个股 = EMA(SUM(VAR1, 20), 5)
-    大盘 = EMA(SUM(VAR2, 20), 5)
-    领涨 = (个股 - 大盘) >= 0
+#     VAR1 = (C - REF(C, 1)) / REF(C, 1)
+#     VAR2 = (INDEXC(data) - REF(INDEXC(data), 1)) / REF(INDEXC(data), 1)
+#     个股 = EMA(SUM(VAR1, 20), 5)
+#     大盘 = EMA(SUM(VAR2, 20), 5)
+#     领涨 = (个股 - 大盘) >= 0
     VAR3 = (C - LLV(L, 125)) / (HHV(H, 125) - LLV(L, 125)) * 100
     VAR4 = SMA(VAR3, 72, 1)
     VAR5 = SMA(VAR4, 34, 1)
@@ -587,7 +622,7 @@ def tdx_yaoguqidong(data):
     中线趋势升 = (中线趋势 - REF(中线趋势, 1)) >= 0
     均五升 = (MA(C, 5) - REF(MA(C, 5), 1)) >= 0
     均十升 = (MA(C, 10) - REF(MA(C, 10), 1)) >= 0
-    强势 = IFAND4(均五升 , 均十升 , 中线趋势升 , 领涨, 10, 0)
+#     强势 = IFAND4(均五升 , 均十升 , 中线趋势升 , 领涨, 10, 0)
     VAR6 = (2 * C + H + L) / 4
     VAR7 = LLV(L, 27)
     VAR8 = HHV(H, 27)
@@ -645,8 +680,8 @@ def tdx_ygqd_test(data):
     # STICKLINE(VAR1 < 20, VAR1, VAR1, 8, 1), COLORYELLOW
     ABV = MA(SUM(IF(CLOSE > REF(CLOSE, 1), VOL, IF(CLOSE < REF(CLOSE, 1), -VOL, 0)), 0) / 25000, 2)
     # M1 = EMA(ABV, 12)
-    M2 = EMA(ABV, 26)
-    MTM = CLOSE - REF(CLOSE, 1)
+    M2 = EMA(ABV.fillna(0), 26)
+    MTM = (CLOSE - REF(CLOSE, 1)).fillna(0)
     MMS = ((100) * (EMA(EMA(MTM, 6), 6))) / (EMA(EMA(ABS(MTM), 6), 6))
     MMM = ((100) * (EMA(EMA(MTM, 12), 12))) / (EMA(EMA(ABS(MTM), 12), 12))
     MML = ((100) * (EMA(EMA(MTM, 26), 26))) / (EMA(EMA(ABS(MTM), 26), 26))
@@ -735,7 +770,9 @@ def tdx_blftxg(data):
     X_22 = (CLOSE - REF(CLOSE, 89)) / REF(CLOSE, 89) * 100 < 80
     # X_23 = (CLOSE - REF(CLOSE, 1)) / REF(CLOSE, 1) * 100 >= 5, (CLOSE - OPEN) / (HIGH - CLOSE) > 3, VOL / MA(VOL, 5) > 1.3
 
-    X_25 = X_16, X_17, X_18, X_19, X_20, X_21, X_22
+    X_25_1 = IFAND5(X_16, X_17, X_18, X_19, X_20, True, False)
+    X_25_2 = IFAND(X_21, X_22, True, False)
+    X_25 = IFAND(X_25_1, X_25_2, True, False)
     # 暴利 = IFAND(FILTER(X_25, 15), 主力买卖, 1, 0)
     暴利 = IF(FILTER(X_25, 15), True, False)
 
@@ -1732,6 +1769,7 @@ def tdx_cci_xg(data):
     XG = IFAND((AAN + BBN + CCN) > 1, PPCT, 1, 0)
     return XG, -1, False
 
+##NG
 def tdx_macd_sykt(data):
     CLOSE = data.close
     C = data.close
@@ -1780,6 +1818,19 @@ def tdx_macd_shjd(data):
     
     return 0
 
+def tjS1(data):
+    C = data.close
+    C1 = C < REF(C,1)
+    C2 = C < REF(C,2)
+#     C3 = C < REF(C,3)
+    ma5=MA(C,3)
+    C4 = C < ma5
+#     J=KDJ(data, N = 19)['KDJ_J'] < 80
+    J=KDJ(data, N = 55, M1=13, M2 = 8)['KDJ_J'] < 80
+    TJ = IFAND5(C1,C2,C3,C4,J, 1, 0)
+#     return TJ
+    return IF(REF(TJ,1)==0, TJ, 0)
+
 def tjS(data):
     C = data.close
     C1 = C < REF(C,1)
@@ -1787,9 +1838,14 @@ def tjS(data):
     C3 = C < REF(C,3)
     ma5=MA(C,3)
     C4 = C < ma5
-    J=KDJ(data, N = 19)['KDJ_J'] < 80
+#     J=KDJ(data, N = 19)['KDJ_J'] < 80
+    J=KDJ(data, N = 55, M1=13, M2 = 8)['KDJ_J'] < 80
     TJ = IFAND5(C1,C2,C3,C4,J, 1, 0)
-    return TJ
+#     return TJ
+    return IF(REF(TJ,1)==0, TJ, 0)
+
+def tjB_FH(data):
+    return (tjB(data) & tdx_SHYM_func(data))
 
 def tjB(data):
     CLOSE = data.close
@@ -1798,10 +1854,14 @@ def tjB(data):
     # LOW = data.low
     # OPEN = data.open
     # VOL = data.volume
-    DIF=EMA(CLOSE,8)-EMA(CLOSE,21)
-    DEA=EMA(DIF,5)
+#     DIF=EMA(CLOSE,8)-EMA(CLOSE,21)
+#     DEA=EMA(DIF,5)
+#     MACD=(DIF-DEA)*2
+    ## WW
+    DIF=EMA(CLOSE,21)-EMA(CLOSE,89)
+    DEA=EMA(DIF,13)
     MACD=(DIF-DEA)*2
-
+    
     TJ11 = IFAND5( C >= MA(C,5),  C >= MA(C,10) , C >= MA(C,20),  C >= MA(C,30), C >= MA(C,60), True, False)
     # TJ12 = IFAND3(DIF>=0 , DEA>=0,  MACD>=0, True, False)
     TJ1 = TJ11 #IFAND(TJ11, TJ12, True, False)
@@ -1811,14 +1871,17 @@ def tjB(data):
     #     XG:TJ1 AND TJ2 AND TJ3 AND TJ4;
     #     XG1:TJ1 AND TJ2 AND TJ3;
     #     XG2:TJ1 AND TJ2;
-    C1 = C > REF(C,1)
+#     C1 = C > REF(C,1) 
+    C1 = (C > REF(C,1)) & ((C -  REF(C,1)) / REF(C,1) < 0.05)
     C2 = C > REF(C,2)
     C3 = C > REF(C,3)
-    J = KDJ(data, N = 19)['KDJ_J'] > 50
+#     J = KDJ(data, N = 19)['KDJ_J'] > 50
+    J = KDJ(data, N = 55, M1=13, M2 = 8)['KDJ_J'] > 50
     TJ5 = IFAND4(C1,C2,C3, J, True, False)
 
     TJ6 = IFAND4(TJ1, TJ2, MACD >= 0, TJ5, 1, 0)
-    return TJ6
+#     return TJ6
+    return IF(REF(TJ6,1)==0, TJ6, 0)
 
 def tdx_WYZBUY(data, refFlg = False):
 #     CLOSE = data.close
@@ -1865,6 +1928,7 @@ def tdx_wyzbs(data):
     MG = tjS(data)
     return XG, MG, False
 
+##波段纵横
 def tdx_bdzh(data):
     L = data.low
     C = data.close
@@ -2182,7 +2246,7 @@ def tdx_lyqd(data, refFlg = False):
         return VAR15, -1, False
     #return XG, -1, False
 
-
+##森林5560
 def tdx_sl5560(data, refFlg = False):
     VOL = data.volume
     CLOSE = data.close
@@ -2200,9 +2264,15 @@ def tdx_sl5560(data, refFlg = False):
     X_7= IFAND3(X_4,  X_5,   X_6, True, False)
     X_8= IFAND5(OPEN<EMA(CLOSE,5), CLOSE==HIGH , CLOSE/OPEN >=1.105 , VOL/CAPITAL(data)>=0.019 , VOL/CAPITAL(data)<=0.2, True, False)
     X_9= IFAND(X_8 ,COUNT(X_8,5)==1, True, False)
-    X_10_1 = IFAND6(MA(CLOSE,3)>REF(MA(CLOSE,3),1) , MA(CLOSE,5)>REF(MA(CLOSE,5),1) , MA(CLOSE,10)>REF(MA(CLOSE,10),1) , VOL/240>REF(VOL,30)*1.2/240*1.5 , CLOSE>LOW*1.059 , CLOSE>REF(MA(CLOSE,3),1) ,True, False)
-    X_10_2 = IFAND6(REF(CLOSE,1) , MA(CLOSE,5)>REF(MA(CLOSE,5),1) , MA(CLOSE,10)>REF(MA(CLOSE,10),1) , MA(CLOSE,20)>REF(MA(CLOSE,20),1) , MA(VOL,5)>REF(MA(VOL,5),1) , MA(CLOSE,5)-MA(CLOSE,10)<=0.579, True, False)
-    X_10 = IFAND(X_10_1, X_10_2, True, False)
+#     X_10_1 = IFAND6(MA(CLOSE,3)>REF(MA(CLOSE,3),1) , MA(CLOSE,5)>REF(MA(CLOSE,5),1) , MA(CLOSE,10)>REF(MA(CLOSE,10),1) , VOL/240>REF(VOL,30)*1.2/240*1.5 , CLOSE>LOW*1.059 , CLOSE>REF(MA(CLOSE,3),1) ,True, False)
+#     X_10_2 = IFAND6(REF(CLOSE,1) , MA(CLOSE,5)>REF(MA(CLOSE,5),1) , MA(CLOSE,10)>REF(MA(CLOSE,10),1) , MA(CLOSE,20)>REF(MA(CLOSE,20),1) , MA(VOL,5)>REF(MA(VOL,5),1) , MA(CLOSE,5)-MA(CLOSE,10)<=0.579, True, False)
+#     X_10 = IFAND(X_10_1, X_10_2, True, False)
+    ## X_10 = IFAND6(REF(CLOSE,1), MA(CLOSE,5)>REF(MA(CLOSE,5),1), MA(CLOSE,10)>REF(MA(CLOSE,10),1), MA(CLOSE,20)>REF(MA(CLOSE,20),1), MA(VOL,5)>REF(MA(VOL,5),1), MA(CLOSE,5)-MA(CLOSE,10)<=0.579
+    X_10_1 = IFAND3(MA(CLOSE,3)>REF(MA(CLOSE,3),1), MA(CLOSE,5)>REF(MA(CLOSE,5),1), MA(CLOSE,10)>REF(MA(CLOSE,10),1), True, False)
+    X_10_2 = IFAND3(VOL/240>REF(VOL,30)*1.2/240*1.5, CLOSE>LOW*1.059, CLOSE>REF(MA(CLOSE,3),1), True, False)
+    X_10_3 = IFAND3(REF(CLOSE,1) > 0, MA(CLOSE,5)>REF(MA(CLOSE,5),1), MA(CLOSE,10)>REF(MA(CLOSE,10),1), True, False)
+    X_10_4 = IFAND3(MA(CLOSE,20)>REF(MA(CLOSE,20),1), MA(VOL,5)>REF(MA(VOL,5),1), MA(CLOSE,5)-MA(CLOSE,10)<=0.579, True, False)
+    X_10 = IFAND4(X_10_1, X_10_2, X_10_3, X_10_4, True, False)
     X_11 = FILTER(X_10,5)
     XG = IFAND(IFOR(X_7, X_8, True, False) , X_11, 1, 0)
     if refFlg:
@@ -2247,8 +2317,9 @@ def tdx_lbqs(data):
     突破密集=IFAND4(A30, A50, A70, A90, True, False)
     XG2 = IFAND4(突破密集, REF(XG0,1), REF(XG1,1), C/REF(C,1) < 1.05, True, False)
 #     XG2=突破密集 * 90 AND REF(XG0,1) AND REF(XG1,1) AND C/REF(C,1) < 1.05
-    return XG2
+    return IF(XG2, 1, 0), -1, False
 
+## 涨停突击
 def tdx_zttj(data):
     CLOSE = data.close
     C = data.close
@@ -2268,7 +2339,7 @@ def tdx_zttj(data):
     买入 = IFAND(VAR27, COUNT(VAR27,30)==1,1,0)
     XG = COUNT(买入>0,21) == 1
     return REF(XG,1), -1, False
-
+## 涨停突击
 def tdx_zttj1(data):
     CLOSE = data.close
     C = data.close
@@ -2515,7 +2586,7 @@ def tdx_qszn(data, refFlg = False):
     else:
         return XG, -1, True
 
-# 趋势智能选股
+# CCI
 def tdx_cci(data, refFlg = False):
     H = data.high
     L = data.low
@@ -2532,7 +2603,7 @@ def tdx_cci(data, refFlg = False):
     else:
         return XG, -1, True
 
-# 趋势智能选股
+# 牛股启动
 def tdx_ngqd(data, refFlg = False):
     CLOSE = data.close
     C = data.close    
@@ -2620,7 +2691,7 @@ def tdx_bollxg_end(data, refFlg = False):
         return REF(XGN, 1), -1, False
     else:
         return XGN, -1, False
-    
+##boll选股    
 def tdx_bollxg_start(data, refFlg = False):
     TJ1, TJ2, TJ3, TJ4 = _tdx_boll_xg(data)
     XG = IFAND4(TJ1, TJ2, TJ3, TJ4, 1, 0)
@@ -2876,17 +2947,17 @@ def tdx_CDYTDXG(data, refFlg = False):
     DN4 = 0.65
     DN5 = 1.3
     DN6 = 0.68
-    VAR1=MA(HHV(HIGH,N3),N2) 
-    VAR2=MA(HHV(HIGH,N4),N2) 
-    VAR3=MA(HHV(HIGH,N5),N2) 
-    VAR4=MA(LLV(LOW,N3),N2) 
-    VAR5=MA(LLV(LOW,N4),N2) 
-    VAR6=MA(LLV(LOW,N5),N2) 
-    VAR7=MA((VAR4*DN1 + VAR5*DN1 + VAR6*DN1 + VAR1*DN2 + VAR2*DN2 + VAR3*DN2)/6,N2) 
-    VAR81=MA((VAR4*DN3 + VAR5*1.23 + VAR6*1.2 + VAR1*0.55 + VAR2*0.55 + VAR3*0.65)/6,N2)
-    VAR8=MA((VAR4*DN3 + VAR5*1.23 + VAR6*1.2 + VAR1*DN4 + VAR2*DN4 + VAR3*DN4)/6,N2)
-    VAR9=MA((VAR4*DN5 + VAR5*DN5 + VAR6*DN5 + VAR1*DN6 + VAR2*DN6 + VAR3*DN6)/6,N2) 
-    VARA=MA((VAR7*3 + VAR8*2 + VAR9)/6 * 1.738, N2) 
+    VAR1=MA(HHV(HIGH,N3),N2).fillna(0) 
+    VAR2=MA(HHV(HIGH,N4),N2).fillna(0)  
+    VAR3=MA(HHV(HIGH,N5),N2).fillna(0)  
+    VAR4=MA(LLV(LOW,N3),N2).fillna(0)  
+    VAR5=MA(LLV(LOW,N4),N2).fillna(0)  
+    VAR6=MA(LLV(LOW,N5),N2).fillna(0)  
+    VAR7=MA((VAR4*DN1 + VAR5*DN1 + VAR6*DN1 + VAR1*DN2 + VAR2*DN2 + VAR3*DN2)/6,N2).fillna(0)  
+    VAR81=MA((VAR4*DN3 + VAR5*1.23 + VAR6*1.2 + VAR1*0.55 + VAR2*0.55 + VAR3*0.65)/6,N2).fillna(0) 
+    VAR8=MA((VAR4*DN3 + VAR5*1.23 + VAR6*1.2 + VAR1*DN4 + VAR2*DN4 + VAR3*DN4)/6,N2).fillna(0) 
+    VAR9=MA((VAR4*DN5 + VAR5*DN5 + VAR6*DN5 + VAR1*DN6 + VAR2*DN6 + VAR3*DN6)/6,N2).fillna(0)  
+    VARA=MA((VAR7*3 + VAR8*2 + VAR9)/6 * 1.738, N2).fillna(0)  
     VARC=LOW 
     VARD=REF(LOW,1) 
     VARE_1 = SMA(MAX(VARC-VARD,0),3,1)
@@ -2908,6 +2979,9 @@ def tdx_CDYTDXG(data, refFlg = False):
 ## 理论顶底雪
 def tdx_LLDDX(data, refFlg = False):
     N = 3
+    CLOSE = data.close
+    HIGH = data.high
+    LOW = data.low
     VEMA1 = EMA(CLOSE,3)
     X_14 = IFAND(COUNT(REF(VEMA1,1) < REF(VEMA1,2), 5) == 5, VEMA1 > REF(VEMA1,1), True, False)
 #     TJ1 = IFOR2(REF(X_14,1), REF(X_14,2), REF(X_14,3), True, False)
@@ -2996,9 +3070,10 @@ def tdx_BOLL_EMA(data, refFlg = False):
     else:
         return XG, -1, False
 
-    
+## 黄金眼
 def tdx_hjy(data, refFlg = False):
     OPEN = data.open
+    CLOSE = data.close
     C = data.close
     O = data.open
     HIGH = data.high
@@ -3087,6 +3162,7 @@ def tdx_hjy(data, refFlg = False):
     else:
         return XG, -1, False
 
+## 无为楼楼选股神器
 def tdx_LLXGSQ(data, refFlg = False):
     CLOSE = data.close
     HIGH = data.high
@@ -3193,8 +3269,8 @@ def tdx_WWXGSQ(data, refFlg = False):
     PL1=(((CLOSE-MA54)/MA54)<0.1)
     PL2=(((CLOSE-MA10)/MA10)<0.3)
     #偏离率:=(((PL1=1) AND (PL2=1))*0.2);
+    偏离率=IFAND(PL1, PL2, 0.2, 0)
     #平台突破:=((((偏离率=0) AND (REF(偏离率,1)=0.2)) AND (REF((COUNT((偏离率=0.2),10)=10),1)=1))*-0.1);
-    偏离率=IFAND((PL1==1), (PL2==1), 0.2, 0)
     平台突破=IFAND(IFAND((偏离率==0), (REF(偏离率,1)==0.2), True, False), REF((COUNT((偏离率==0.2),10)==10),1)==1, -0.1, 0)
     妖股突破=平台突破==-0.1
     XDF=IFOR(暴利, 妖股突破, True, False)
@@ -3203,9 +3279,547 @@ def tdx_WWXGSQ(data, refFlg = False):
     VARAA=IFAND(CLOSE/(REF(CLOSE,1))>1.05, (CLOSE/OPEN>1.05), True, False)
     FLIGA_1=IFAND(VOL/REF(VOL,1)>1.2, COUNT(CLOSE>OPEN,1), True, False) 
     FLIGA_2=IFAND3(LOW>REF(HIGH,1), COUNT(OPEN>CLOSE,1), VOL/REF(VOL,1)>1.2, True, False)
-    XG = IFAND3(XDF, CLOSE/REF(CLOSE,1)>1.095, IFOR(FLIGA_1, FLIGA_2, True, False), 1, 0) #AND VARAA
+    # XG:XDF AND C/REF(C,1)>1.095 AND FLIGA AND VARAA,COLORRED
+    XG = IFAND4(XDF, CLOSE/REF(CLOSE,1)>1.095, IFOR(FLIGA_1, FLIGA_2, True, False), VARAA, 1, 0) #AND VARAA
     if refFlg:
         return REF(XG, 1), -1, False
     else:
         return XG, -1, False
     
+##无为一泓选股
+def tdx_WWYHXG(data, refFlg = False):
+    CLOSE = data.close
+    # LOW = data.low
+    HIGH = data.high
+    # C = data.close
+    M1=3
+    M2=6
+    M3=12
+    M4=24
+    BBI=(MA(CLOSE,M1)+MA(CLOSE,M2)+MA(CLOSE,M3)+MA(CLOSE,M4))/4
+    MA60=MA(CLOSE,60)
+    PXJC= IFAND(BBI > MA60, ABS(REF(BBI,1) - REF(MA60,1)) < 0.005, True, False)
+    XG1 = PXJC
+    XG2 = CROSS(BBI,MA60)
+    XG = IFOR(XG1, XG2, 1, 0)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+##无为MACDJC
+def tdx_WWMACDJC(data, refFlg = False):
+    CLOSE = data.close
+    # LOW = data.low
+    # HIGH = data.high
+
+    SHORT9=21
+    LONG9=89
+    MID9=13
+    DIF9=EMA(CLOSE,SHORT9)-EMA(CLOSE,LONG9)
+    DEA9=EMA(DIF9,MID9)
+
+    XGM2 = CROSS(DIF9,DEA9)
+    XGN = IF(XGM2, 1, 0)
+    if refFlg:
+        return REF(XGN, 1), -1, False
+    else:
+        return XGN, -1, False
+    
+def tdx_SHYM_func(data):
+    if len(data) < 520:
+        return IF(data.close < 0, 0, 0)
+    
+    CLOSE = data.close
+    # LOW = data.low
+    # HIGH = data.high
+    # 	{三花源码}
+    YDIF=EMA(CLOSE,240)-EMA(CLOSE,520)
+    YDEA=EMA(YDIF,180)
+    YMACD=YDIF*2-YDEA
+    Y平滑=SMA(YMACD,3,1)
+
+    SHORT=60
+    LONG=130
+    MID=45
+    DIF=EMA(CLOSE,SHORT)-EMA(CLOSE,LONG)
+    DEA=EMA(DIF,MID)
+    Y2MACD=DIF*2-DEA
+
+    平滑=SMA(Y2MACD,3,1)
+    ZDIF=EMA(CLOSE,12)-EMA(CLOSE,26)
+    ZDEA=EMA(ZDIF,9)
+    MACD1=ZDIF*2-ZDEA
+    平滑1=SMA(MACD1,3,1)
+
+    JQXG= CLOSE >= HHV(CLOSE,60)
+
+    MCDXG = IFAND(CROSS(平滑1,平滑), Y2MACD>平滑, True, False)
+
+    XG1= CROSS(平滑,Y平滑)
+
+    XG= IFOR(XG1, MCDXG, True, False)
+
+#     SHORT9=21
+#     LONG9=89
+#     MID9=13
+#     DIF9=EMA(CLOSE,SHORT9)-EMA(CLOSE,LONG9)
+#     DEA9=EMA(DIF9,MID9)
+
+#     XGM2 = CROSS(DIF9,DEA9)
+    XGN = IFOR(XG, CROSS(平滑1,Y平滑), 1, 0)
+    return XGN
+    
+def tdx_SHYM(data, refFlg = False):
+    XGN = tdx_SHYM_func(data)
+#     XGN = IFAND(JQXG, XGM3, 1, 0)
+    if refFlg:
+        return REF(XGN, 1), -1, False
+    else:
+        return XGN, -1, False
+
+# 大趋势选股
+def tdx_ALL_TEST(data, refFlg = False):
+    CLOSE = data.close
+    
+    TJ1 = IF(CLOSE > REF(CLOSE,1), 1, 0)
+    if refFlg:
+        return REF(TJ1,1), -1, True
+    else:
+        return TJ1, -1, True
+    
+def tdx_BTXPOW(data, refFlg = False):
+    CLOSE = data.close
+    VAR1 = IFAND(CLOSE > REF(CLOSE, 1), CLOSE > REF(CLOSE, 2), True, False)
+    VAR0A = IFAND(CLOSE <= REF(CLOSE, 1), CLOSE >= REF(CLOSE, 2), True, False)
+    VAR0B = IFAND(CLOSE >= REF(CLOSE, 1), CLOSE <= REF(CLOSE, 2), True, False)
+    VAR2 = IFAND(REF(VAR1, 1), VAR0A, True, False)
+    VAR3 = IFAND(REF(VAR2, 1),  VAR0B, True, False)
+    VAR4 = IFAND(REF(VAR3, 1), VAR0A, True, False)
+    VAR5 = IFAND(REF(VAR4, 1),  VAR0B, True, False)
+    VAR6 = IFAND(REF(VAR5, 1),  VAR0A, True, False)
+    VAR7 = IFAND(REF(VAR6, 1),  VAR0B, True, False)
+    VAR8 = IFAND(REF(VAR7, 1),  VAR0A, True, False)
+    VAR9 = IFAND(REF(VAR8, 1),  VAR0B, True, False)
+    VARA = IFAND(REF(VAR9, 1),  VAR0A, True, False)
+    VARB = IFAND(REF(VARA, 1),  VAR0B, True, False)
+    VARC = IFAND(REF(VARB, 1),  VAR0A, True, False)
+    ##STICKLINE(VAR1 OR VAR2 OR VAR3 OR VAR4 OR VAR5 OR VAR6 OR VAR7 OR VAR8 OR VAR9 OR VARA OR VARB OR VARC, CLOSE, REF(CLOSE, 1), 3, 1), COLORRED{红1}
+    VARD = IFAND(CLOSE < REF(CLOSE, 1), CLOSE < REF(CLOSE, 2), True, False)
+    VARE = IFAND(REF(VARD, 1), VAR0B, True, False)
+    VARF = IFAND(REF(VARE, 1), VAR0A, True, False)
+    VAR10 = IFAND(REF(VARF, 1), VAR0B, True, False)
+    VAR11 = IFAND(REF(VAR10, 1), VAR0A, True, False)
+    VAR12 = IFAND(REF(VAR11, 1), VAR0B, True, False)
+    VAR13 = IFAND(REF(VAR12, 1), VAR0A, True, False)
+    VAR14 = IFAND(REF(VAR13, 1), VAR0B, True, False)
+    VAR15 = IFAND(REF(VAR14, 1), VAR0A, True, False)
+    VAR16 = IFAND(REF(VAR15, 1), VAR0B, True, False)
+    VAR17 = IFAND(REF(VAR16, 1), VAR0A, True, False)
+    VAR18 = IFAND(REF(VAR17, 1), VAR0B, True, False)
+    ## STICKLINE(VARD OR VARE OR VARF OR VAR10 OR VAR11 OR VAR12 OR VAR13 OR VAR14 OR VAR15 OR VAR16 OR VAR17 OR VAR18, CLOSE, REF(CLOSE, 1), 3, 0), COLORGREEN{绿色}
+    VAR19_OR1 = IFOR4(VARD, VARE, VARF, VAR10, True, False)
+    VAR19_OR2 = IFOR4(VAR11, VAR12, VAR13, VAR14, True, False)
+    VAR19_OR3 = IFOR4(VAR15, VAR16, VAR17, VAR18, True, False)
+    VAR19_OR = IFOR3(VAR19_OR1, VAR19_OR2, VAR19_OR3, True, False)
+    VAR19 = IFAND(REF(VAR19_OR, 1), VAR1, True, False)
+    ## STICKLINE(VAR19, REF(CLOSE, 1), REF(CLOSE, 2), 3, 1), COLORYELLOW{绿色}
+    VAR1A_OR1 = IFOR4(VAR1, VAR2, VAR3, VAR4, True, False)
+    VAR1A_OR2 = IFOR4(VAR5, VAR6, VAR7, VAR8, True, False)
+    VAR1A_OR3 = IFOR4(VAR9, VARA, VARB, VARC, True, False)
+    VAR1A_OR = IFOR3(VAR1A_OR1, VAR1A_OR2, VAR1A_OR3, True, False)
+    VAR1A = IFAND(REF(VAR1A_OR, 1), VARD, True, False)
+    ## STICKLINE(VAR1A, REF(CLOSE, 1), REF(CLOSE, 2), 3, 1), COLOR00FF00
+    ## STICKLINE(VAR19, REF(CLOSE, 1), REF(CLOSE, 2), 2, 0), COLOR00FFFF
+    ## STICKLINE(VAR1A, REF(CLOSE, 1), REF(CLOSE, 2), 2, 0), COLOR00FFFF
+    ## DRAWTEXT(VAR19, L, ‘←买’), COLOR33FFCC
+    ## DRAWTEXT(VAR1A, H+0.1, ‘←卖’), COLORFF99FF
+    ## 五日线 = EMA(C, 5), COLORMAGENTA, LINETHICK2
+    ## DD = 五日线《REF(五日线, 1)
+    ## IF(DD, 五日线, DRAWNULL), COLORBLUE, LINETHICK2
+    return VAR19, VAR1A
+
+## 潜伏
+def tdx_QIANFU(data, refFlg = False):
+    C = data.close
+    H = data.high
+    VOL = data.volume
+    VOL = data.volume
+
+    AA = MA(C,5)>MA(C,10)
+    BB = MA(C,5)>MA(C,25)
+    CC = IFAND(MA(C,25) > MA(C,60), MA(C,60) > MA(C,120), True, False)
+    ZT = IFAND(C/REF(C,1)>1.095, H == C, True, False)
+    DD = IFAND4(AA, BB, CC, ZT, True, False)
+    ## SM = EMA(COST(88),160),COLORYELLOW,LINETHICK2
+    LT = REF(H,BARSLAST(VOL == HHV(VOL,100))) #,COLORRED,LINETHICK2
+    QS = CROSS(C,LT)
+    ## QD = DRAWTEXT(QS AND ZT,L,'RR'),COLORRED
+    QD = IFAND(QS, ZT, True, False)
+    RD = IFAND(QD, DD, True, False)
+    XGN = IF(RD,1,0) ##马上拉升
+    if refFlg:
+        return REF(XGN, 1), -1, False
+    else:
+        return XGN, -1, False
+
+def tdx_21PPQTP(data, refFlg = False):
+    ## 21PP强突破
+    # def tdx_21PPQTP(data, refFlg = False):
+    VOL = data.volume
+    CLOSE = data.close
+    HIGH = data.high
+    LOW = data.low
+    OPEN = data.open
+    AMOUNT = data.amount
+
+    XA_1 = MA(CLOSE,2)
+    XA_2 = SMA(CLOSE,8.5,1)
+    XA_3 = SMA(CLOSE,13.5,1)
+    XA_4 = SMA(CLOSE,3,1)
+    XA_5 = SMA(CLOSE,8,1)
+    XA_6 = IFAND4(XA_1>REF(XA_1,1), XA_4>REF(XA_4,1), XA_2>REF(XA_2,1), XA_3>REF(XA_3,1), True, False)
+    XA_7 = IFAND3(XA_1>XA_4, XA_4>XA_2, XA_2>XA_3, True, False)
+    XA_8 = IFAND(XA_7, XA_6, True, False)
+    XA_9 = 20
+    XA_10 = 30
+    XA_11 = 100*((HHV(HIGH,XA_9)-LLV(LOW,XA_9))/LLV(LOW,XA_9))<XA_10
+    XA_12 = VOL>MA(VOL,20)
+    XA_13 = (COST(data, 85)+COST(data, 15))/2
+    XA_14 = (COST(data, 75)+COST(data, 25))/2
+    XA_15 = (COST(data, 65)+COST(data, 35))/2
+    XA_16 = (COST(data, 55)+COST(data, 45))/2
+    XA_17 = (COST(data, 95)+COST(data, 5))/2
+    XA_18 = (XA_13+XA_14+XA_15+XA_16+XA_17)/5
+    XA_19 = (COST(data, 90)+COST(data, 10))/2
+    XA_20 = (COST(data, 80)+COST(data, 20))/2
+    XA_21 = (COST(data, 70)+COST(data, 30))/2
+    XA_22 = (COST(data, 60)+COST(data, 40))/2
+    XA_23 = COST(data, 50)
+    XA_24 = (XA_19+XA_20+XA_21+XA_22+XA_23)/5
+    XA_25 = (XA_18+XA_24)/2
+    XA_26 = SMA(XA_25,2,1)
+    XA_27 = (XA_25/REF(XA_25,1)-1)*1000
+    XA_28 = EMA(XA_27,10)
+    XA_29 = (HIGH+LOW+CLOSE)/3
+    XA_30 = (XA_29-MA(XA_29,30))/(0.015*AVEDEV(XA_29,30))
+    XA_31 = IFAND5(XA_8, XA_11, XA_12, XA_28>0, XA_30>170, True, False)
+    XA_32 = (3*CLOSE+HIGH+LOW+OPEN)/6
+    XA_33 = (8*XA_32+7*REF(XA_32,1)+6*REF(XA_32,2)+5*REF(XA_32,3)+4*REF(XA_32,4)+3*REF(XA_32,5)+2*REF(XA_32,6)+REF(XA_32,8))/36
+    XA_34 = IFAND3(VOL==HHV(VOL,10), VOL>2*REF(VOL,1), CLOSE>XA_33, True, False)
+    XA_35 = FILTER(XA_34,5)
+    XA_36 = IF(IFAND(BARSLAST(XA_35)==1, CLOSE>REF(HIGH,1), True, False), 1, IF(IFAND(BARSLAST(XA_35)==2, CLOSE>REF(HIGH,2), True, False),1, IF( IFAND(BARSLAST(XA_35)==3, CLOSE>REF(HIGH,3), True, False), 1, 0)))
+    XA_37 = XA_36==1
+    # XA_38 = IF(BARSLAST(XA_35)=1 AND CLOSE>REF(LOW,1), 1, IF(BARSLAST(XA_35)=2 AND CLOSE>REF(LOW,2), 1, IF(BARSLAST(XA_35)=3 AND CLOSE>REF(LOW,3), 1, 0)))
+    XA_38 = IF(IFAND(BARSLAST(XA_35)==1, CLOSE>REF(LOW,1), True, False), 1, IF(IFAND(BARSLAST(XA_35)==2, CLOSE>REF(LOW,2), True, False),1, IF( IFAND(BARSLAST(XA_35)==3, CLOSE>REF(LOW,3), True, False), 1, 0)))
+    XA_39 = XA_38==1
+    XA_40 = IFAND(XA_39, XA_37, True, False)
+    XA_41 = FILTER(XA_40,3)
+    XA_42 = EMA(WINNER(data, CLOSE)*70,3)
+    XA_43 = EMA((WINNER(data, CLOSE*1.1)-WINNER(data, CLOSE*0.9))*80,3)
+    XA_44 = XA_43/(XA_42+XA_43)*100
+    XA_45 = XA_42/(XA_42+XA_43)*100
+    XA_46 = MA(XA_42+XA_43,13)
+    XA_47 = BARSLAST(IFAND(XA_44<90, REF(XA_44,1)>90, True, False))
+    XA_48 = EMA(XA_44,89)
+    XA_49 = EMA(XA_45,89)
+    XA_50 = (XA_45-XA_49).astype(int) #INTPART
+    XA_51 = EMA(XA_44,8)
+    XA_52 = IF(XA_45-REF(XA_45,1)>XA_44-REF(XA_44,1),1,0)
+    XA_53 = (XA_44).astype(int) #INTPART
+    XA_54 = (XA_45).astype(int) #INTPART
+    XA_55 = 2
+    XA_56 = 5
+    XA_57 = 34
+    XA_58 = 100*(CLOSE-LLV(LOW,XA_57))/(HHV(CLOSE,XA_57)-LLV(LOW,XA_57))
+    XA_59 = AMOUNT/CLOSE/(HHV(AMOUNT,XA_57)/HHV(CLOSE,XA_57))
+    XA_60 = IF(XA_59>1,1,XA_59)*100
+    XA_61 = 3*SMA((CLOSE-LLV(LOW,27))/(HHV(HIGH,27)-LLV(LOW,27))*100,5,1)-2*SMA(SMA((CLOSE-LLV(LOW,27))/(HHV(HIGH,27)-LLV(LOW,27))*100,5,1),3,1)
+    XA_62 = LLV(XA_61,3)
+    XA_63 = MA(XA_61,12)
+    XA_64 = 1
+    XA_65 = LLV(LOW,10)
+    XA_66 = HHV(HIGH,25)
+    XA_67 = EMA((CLOSE-XA_65)/(XA_66-XA_65)*4,4)*XA_64*30
+    XA_68 = IFAND3(XA_60>=90, XA_58>80, XA_63<90, True, False)
+    XA_69 = BARSLAST(CROSS(XA_67,XA_63))<40
+    XA_70 = CLOSE/REF(CLOSE,1)>1+0.01*XA_55
+    XA_71 = IFAND4(XA_68, XA_69, IFOR(CLOSE>OPEN, CLOSE/REF(CLOSE,1)>1.05, True, False), XA_70, True, False)
+    XA_72 = IF(CROSS(XA_54,XA_53),120,0)
+    XA_73 = IFAND4(MA(CLOSE,5)>REF(MA(CLOSE,5),1), MA(CLOSE,10)>REF(MA(CLOSE,10),1), MA(CLOSE,35)>REF(MA(CLOSE,35),1), MA(CLOSE,60)>REF(MA(CLOSE,60),1), True, False)
+    XA_74 = IFAND6(XA_72, XA_71, XA_73, MA(CLOSE,5)>MA(CLOSE,10), MA(CLOSE,10)>MA(CLOSE,35), MA(CLOSE,35)>MA(CLOSE,60), True, False)
+    XA_75 = IFOR(XA_41, XA_74, True, False)
+    XA_76 = IFAND(XA_31, XA_75, True, False)
+    XA_77 = IFAND3(XA_31, CROSS(XA_28,0), COUNT(XA_75,5)>0, True, False)
+    XA_78 = (HIGH+LOW+OPEN+CLOSE+REF(HIGH,1)+REF(LOW,1)+REF(OPEN,1)+REF(CLOSE,1)+REF(HIGH,2)+REF(LOW,2)+REF(OPEN,2)+REF(CLOSE,2)+REF(HIGH,3)+REF(LOW,3)+REF(OPEN,3)+REF(CLOSE,3)+REF(HIGH,4)+REF(LOW,4)+REF(OPEN,4)+REF(CLOSE,4)+REF(HIGH,5)+REF(LOW,5)+REF(OPEN,5)+REF(CLOSE,5)+REF(HIGH,6)+REF(LOW,6)+REF(OPEN,6)+REF(CLOSE,6)+REF(HIGH,7)+REF(LOW,7)+REF(OPEN,7)+REF(CLOSE,7)+REF(HIGH,8)+REF(LOW,8)+REF(OPEN,8)+REF(CLOSE,8)+REF(HIGH,9)+REF(LOW,9)+REF(OPEN,9)+REF(CLOSE,9)+REF(HIGH,10)+REF(LOW,10)+REF(OPEN,10)+REF(CLOSE,10))/46
+    XA_79 = MA(XA_78,60)
+    XA_80 = XA_79+2*STD(XA_78,60)
+    XA_81 = XA_79+1.7*STD(XA_78,60)
+    XA_82 = MIN(XA_80,XA_81)
+    XA_83 = (((HIGH+LOW)/2+(CLOSE+OPEN))/3+5*HIGH)/6
+    XA_84 = EMA(XA_83,270)+(1+180/270)*STD(XA_83,180)
+    XA_85 = EMA(XA_83,270)-(1+180/270)*STD(XA_83,180)
+    XA_86 = (XA_84/XA_85-1)*100
+    XA_87 = IFAND(XA_86<56, IFOR3(COUNT(CLOSE>XA_82,10)>=7, COUNT(CROSS(CLOSE,XA_82),5)>=1, COUNT(CROSS(CLOSE,XA_85),15)>=1, True, False), True, False)
+    XG = IFAND(XA_87, IFOR(XA_76, XA_77, True, False), 1, 0)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+
+def tdx_HW168QS(data, refFlg = False):
+    # 皓文168趋势
+    VOL = data.volume
+    CLOSE = data.close
+    HIGH = data.high
+    LOW = data.low
+    OPEN = data.open
+    AMOUNT = data.amount
+
+    QW1 = (HIGH+LOW+CLOSE*2)/4
+    QW3 = EMA(QW1,10)
+    QW4 = STD(QW1,10)
+    QW5 = (QW1-QW3)*100/QW4
+    QW6 = EMA(QW5,5)
+    RK7 = EMA(QW6,10)
+    涨 = EMA(QW6,10)+100/2-5
+    跌 = EMA(涨,4)
+    多线 = IFAND(CROSS(涨,跌), 跌<-10,30,0)
+
+    # STICKLINE(涨> REF(涨,1),涨,EMA(涨,3),3,0) ,COLOR0099FF
+    # STICKLINE(涨> REF(涨,1),涨,EMA(涨,3),2,0) ,COLOR00AAFF
+    # STICKLINE(涨> REF(涨,1),涨,EMA(涨,3),1,0) ,COLOR00BBFF
+    BUY = 多线
+    # DRAWICON(多线,30,1),COLORFF00FF
+    # DRAWICON(CROSS(跌,80),70,2),COLORGREEN
+    SEL = CROSS(跌,80)
+    # DRAWTEXT(多线>0,-20,'看涨'),COLOR0000FF
+    XG = IFAND(多线>0, 涨 > REF(涨,1), 1, 0)
+    # {涨> REF(涨,1)}
+
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+
+
+def tdx_YXQK(data, refFlg = False):
+    # 一线乾坤
+    VOL = data.volume
+    CLOSE = data.close
+    HIGH = data.high
+    LOW = data.low
+    OPEN = data.open
+    AMOUNT = data.amount
+    
+    X_1 = IFAND(REF(CLOSE,1)*1.1-CLOSE<0.01, HIGH==CLOSE, True, False)
+    X_2 = MA((2*CLOSE+HIGH+LOW)/4,5)
+    X_3 = X_2*102/100
+    X_4 = X_2*(200-102)/100
+    X_5 = ABS((2*CLOSE+HIGH+LOW)/4-MA(CLOSE,20))/MA(CLOSE,20)
+    X_6 = DMA(CLOSE,X_5)
+    X_7 = (1+7/100)*X_6
+    # X_8 = (1-7/100)*X_6
+    # X_9 = (X_7+X_8)/2
+    一线乾坤 = EMA(X_7,181) #,DOTLINE,COLORYELLOW
+    # X_10 = EMA(X_8,181)
+    # X_11 = EMA(X_9,181)
+    # STICKLINE(X_7>=一线乾坤,X_7,一线乾坤,0,1),COLORGRAY
+    # DRAWKLINE(HIGH,OPEN,LOW,CLOSE)
+    X_12 = (1+14/100)*X_6
+    X_13 = (1-14/100)*X_6
+    X_14 = IFAND(REF(LOW,1)<X_13, X_1, True, False)
+    # DRAWTEXT(X_14,LOW,146),COLORCYAN
+    # STICKLINE(X_14,CLOSE,OPEN,3,1),COLORYELLOW
+    # STICKLINE(X_14,CLOSE,OPEN,1,0),COLORRED
+    # X_15 = DRAWTEXT(X_14,LOW,146)
+    X_16 = (CLOSE-REF(CLOSE,1))/REF(CLOSE,1)*100<(-5)
+    X_17 = (CLOSE-OPEN)/OPEN*100<(-4)
+    X_18 = BARSLAST(X_16)
+    X_19 = IFAND3(HIGH>X_7, X_1, CROSS(CLOSE,X_7), True, False)
+    # DRAWTEXT(X_19,LOW,151),COLORFF9988
+    # STICKLINE(X_19,CLOSE,OPEN,3,1),COLORYELLOW
+    X_20 = IFAND(OPEN>X_7, X_1, True, False)
+    # STICKLINE(X_20,CLOSE,OPEN,3,1),COLORCYAN
+    # DRAWTEXT(X_20,LOW,162),COLORYELLOW
+
+def tdx_ZJSH(data, refFlg = False):
+    # {庄家散户}
+    VOL = data.volume
+    CLOSE = data.close
+    C = data.close
+    HIGH = data.high
+    H = data.high
+    LOW = data.low
+    L = data.low
+    OPEN = data.open
+    O = data.open
+    AMOUNT = data.amount
+
+    VAR2 = REF(LOW,1)
+    VAR3 = SMA(ABS(LOW-VAR2),13,1)/SMA(MAX(LOW-VAR2,0),13,1)*100
+    VAR4 = EMA(IF(CLOSE*1.2,VAR3*13,VAR3/13),13)
+    VAR5 = LLV(LOW,34)
+    VAR6 = HHV(VAR4,34)
+    VAR7 = IF(LLV(LOW,55),1,0)
+    VAR8 = EMA(IF(LOW<=VAR5,(VAR4+VAR6*2)/2,0),3)/618*VAR7
+    VAR9 = EMA(CLOSE,5)
+    VAR10 = (CLOSE-MA(CLOSE,34))/MA(CLOSE,34)*(-10)
+    VAR11 = EMA(IF(LOW<=VAR5,(VAR4+VAR6*2)/2,0),3)/618*VAR7*(-1)
+    VAR12 = EMA(CLOSE,5)*(-1)
+    备钱 = IF(VAR8>REF(VAR8,1),0,VAR8) #,COLOR0FFFFF,NODRAW
+    界 = 0 #,COLORFFFFFF
+    XL1 = MA(LOW,2)*0.96
+    XL2 = MA(LOW,26)*0.85
+    XL3 = IFAND3(REF(XL1,1)<XL2, REF(XL1,1)<XL1, REF(XL1,1)<REF(XL1,2), True, False)
+    启动 = IF(XL3,0,VAR8*3) #,COLORRED,NODRAW
+    # DRAWBAND(启动,RGB(180,80,200),0,DRAWNULL)
+    #STICKLINE(XL3,0,VAR8*3,4,0),COLORRED
+    #STICKLINE(VAR8>REF(VAR8,1),0,VAR8,2,0),COLOR10FFFF
+    #STICKLINE(VAR11>REF(VAR11,1),0,VAR11,4,1),COLORFFF810
+    #   DRAWICON(VAR11>REF(VAR11,1) AND CROSS(VAR11,VAR12),VAR11,11)
+
+    # 40,POINTDOT
+    VA = (C+2*H+L)/4
+    VB = LLV(L,8)
+    VC = HHV(H,8)
+    VD = EMA(((VA-VB)/(VC-VB)-VC/VB)*81,5)*-1
+    # 红线上穿买 = REVERSE(VD)+100 #,COLORRED
+    # 红线下穿卖 = EMA(红线上穿买,3) #,COLORFFFF00
+    # DRAWBAND(红线上穿买,RGB(150,030,030),红线下穿卖,RGB(20,150,20))
+    # IF(红线上穿买>=红线下穿卖,红线上穿买,DRAWNULL),COLORLIMAGENTA,LINETHICK2
+    # IF(红线上穿买<红线下穿卖,红线上穿买,DRAWNULL),COLORGREEN,LINETHICK2
+    散户 =  EMA(((2*CLOSE+HIGH+LOW)/4-LLV(LOW,5))/(HHV(HIGH,4)-LLV(LOW,5))*100,4)
+    庄家 =  EMA(0.667*REF(散户,1)+0.333*散户,2)
+    #DRAWICON(CROSS(散户,庄家) AND 散户<30,红线上穿买*0.98,1)
+    # DRAWICON(CROSS(庄家,散户) AND 散户>70,红线上穿买*1.02,2)
+    极品底 = IFAND((MA(C,5)-C)/C>0.04, (MA(C,10)-MA(C,5))/MA(C,5)>0.04, 23, 0) #,COLORFF00FF,NODRAW
+    # DRAWICON((MA(C,5)-C)/C>0.04 AND (MA(C,10)-MA(C,5))/MA(C,5)>0.04,-3,25)
+    RSV = (((CLOSE - LLV(LOW,9)) / (HHV(HIGH,9) - LLV(LOW,9))) * 100)
+    K = SMA(RSV,3,1)
+    D = SMA(K,3,1)
+    J = 3*K-2*D
+    X = LLV(J,2)==LLV(J,8)
+    # DRAWTEXT(CROSS(J,REF(J+0.01,1)) AND X AND J<19,红线上穿买*0.9,'短'),COLORLIRED
+    # DRAWICON(CROSS(J,REF(J+0.01,1)) AND X AND J<16,红线上穿买,7)
+    QVAR1A = ((HHV(HIGH,21)-CLOSE)/(HHV(HIGH,21)-LLV(LOW,21)))*(100)-10
+    QVAR1B = ((CLOSE-LLV(LOW,21))/(HHV(HIGH,21)-LLV(LOW,21)))*(100)
+    QVAR1C = SMA(QVAR1B,13,8)
+    QVAR1D = SMA(QVAR1A,21,8)
+    机会来临 = SMA(QVAR1C,13,1) #,COLORCCCC00,LINETHICK2
+    # STICKLINE(机会来临>90,90,机会来临,2,0),COLORCYAN
+    # IF(机会来临>=REF(机会来临,1),机会来临,DRAWNULL) #,COLORCC33CC,LINETHICK2
+    中线 = EMA(机会来临,50) #,COLOR9933FF,LINETHICK2
+    # IF(中线<REF(中线,1),中线,DRAWNULL) # ,COLOR66FF66,LINETHICK2
+    AAS = FILTER((COUNT((机会来临-QVAR1D<(-65)),3)==3),34)
+    波段买点 = IF(AAS,15,0) #,COLORFFFFFF,NODRAW
+    # DRAWTEXT(AAS,32,'波段买') #,COLORFFFFFF
+    # STICKLINE(AAS,0,31,0.3,0),COLORMAGENTA
+    # DRAWICON(CROSS(机会来临,QVAR1D),机会来临,23)
+    # {DDX预警}
+    # JJ = (HIGH+LOW+CLOSE)/3
+    # QJ0 = VOL/IF(HIGH==LOW,4,HIGH-LOW)
+    # QJ1 = IF(CAPITAL=0,QJ0*(JJ-MIN(CLOSE,OPEN)),QJ0*IF(HIGH=LOW,1,(MIN(OPEN,CLOSE)-LOW)))
+    # QJ2 = IF(CAPITAL=0,QJ0*(MIN(OPEN,CLOSE)-LOW),QJ0*IF(HIGH=LOW,1,(JJ-MIN(CLOSE,OPEN))))
+    # QJ3 = IF(CAPITAL=0,QJ0*(HIGH-MAX(OPEN,CLOSE)),QJ0*IF(HIGH=LOW,1,(HIGH-MAX(OPEN,CLOSE))))
+    # QJ4 = IF(CAPITAL=0,QJ0*(MAX(CLOSE,OPEN)-JJ),QJ0*IF(HIGH=LOW,1,(MAX(CLOSE,OPEN)-JJ)))
+    # DDX = ((QJ1+QJ2)-(QJ3+QJ4))/IF(CAPITAL=0,1000000,10000)
+    # DX = MA(DDX,5)*20
+    # DDX1 = SMA(DX,3,1)
+    # DDX2 = SMA(DDX1,3,1)
+    # DDX3 = EMA(DDX2,5)
+    # 预警 = IFAND(DDX>0, MA(V,5)>MA(MA(V,5),5), CROSS(DDX1,DDX2), True, False)
+
+    ## STICKLINE(预警,40,50,1,0) #,COLORLIRED
+    ### {密码1号}
+    GJTJ1 = 100*(C-LLV(L,5))/(HHV(C,5)-LLV(L,5))
+    GJTJ2 = 100*(C-LLV(L,10))/(HHV(C,10)-LLV(L,10))
+    GJTJ3 = 100*(C-LLV(L,20))/(HHV(C,20)-LLV(L,20))
+    GJTJ4 = 100*(C-LLV(L,30))/(HHV(C,30)-LLV(L,30))
+    # A = BARSLAST(CROSS(30,GJTJ1))<2 AND BARSLAST(CROSS(GJTJ1,50))<2
+    # B = BARSLAST(CROSS(GJTJ4,GJTJ1))<2 AND GJTJ1>GJTJ4
+    ## STICKLINE(A AND B ,40,47,2,0) #,COLORRED
+    ### {横盘突破}
+    O1 = (SUM(EMA((CLOSE+LOW)/2,1)/3,3))
+    CP1 = HHV(O1,20)
+    CP2 = O1 ## HHV(O1,1)
+    AV = CROSS(CP2,CP1)
+    # STICKLINE(AV,40,45,4,0) #,COLORLIMAGENTA
+
+
+
+    DIF = EMA(EMA(EMA(CLOSE,5),5),5)
+    DEA = EMA(EMA(EMA(CLOSE,7),7),7)
+
+    峰谷1线 = (DIF-REF(DIF,1))/REF(DIF,1)*1000 #,COLORFF00FF,LINETHICK2
+    峰谷2线 = (DEA-REF(DEA,1))/REF(DEA,1)*1050 #,COLORGREEN,LINETHICK2
+
+
+    # DRAWICON(CROSS(峰谷1线,峰谷2线) AND 峰谷1线<=0.2,LLV(峰谷1线,1),29)
+    XG = IFAND(CROSS(峰谷1线,峰谷2线), 峰谷1线<=0.2, 1, 0)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+
+def tdx_JGCM(data, refFlg = False):
+    # {机构筹码}
+    VOL = data.volume
+    CLOSE = data.close
+    C = data.close
+    HIGH = data.high
+    H = data.high
+    LOW = data.low
+    L = data.low
+    OPEN = data.open
+    O = data.open
+    AMOUNT = data.amount
+
+    XA_1 = REF(LOW,1)
+    XA_2 = SMA(ABS(LOW-XA_1),3,1)/SMA(MAX(LOW-XA_1,0),3,1)*100
+    XA_3 = EMA(IF(CLOSE*1.2,XA_2*10,XA_2/10),3)
+    XA_4 = LLV(LOW,38)
+    XA_5 = HHV(XA_3,38)
+    XA_6 = IF(LLV(LOW,90),1,0)
+    XA_7 = EMA(IF(LOW<=XA_4,(XA_3+XA_5*2)/2,0),3)/618*XA_6
+    # 机构筹码 = STICKLINE(XA_7,0,XA_7,6,1),COLORRED
+    # DRAWTEXT(XA_7,50,18),COLORRED
+    超大户筹码 = EMA(IF(LOW<=LLV(LOW,30),SMA(ABS(LOW-REF(LOW,1)),30,1)/SMA(MAX(LOW-REF(LOW,1),0),30,1),0),3)*10 #,STICK,COLORYELLOW,LINETHICK2
+    XA_8 = MA(CLOSE,5)
+    XA_9 = MA(CLOSE,10)
+    XA_10 = MA(CLOSE,30)
+    XA_11 = MA(CLOSE,60)
+    XA_12 = SUM(CLOSE*VOL*100,4)/SUM(VOL*100,4)
+    # XA_13 = INTPART(XA_12*100)/100
+    XA_14 = SUM(CLOSE*VOL*100,7)/SUM(VOL*100,7)
+    # XA_15 = INTPART(XA_14*100)/100
+    XA_16 = SUM(CLOSE*VOL*100,28)/SUM(VOL*100,28)
+    XA_17 = XA_16 # INTPART(XA_16*100)/100
+    XA_18 = EMA(CLOSE,5)-EMA(CLOSE,10)
+    XA_19 = EMA(XA_18,9)
+    XA_20 = 0-100*(HHV(CLOSE,5)-CLOSE)/(HHV(CLOSE,5)-LLV(LOW,5))+100
+    XA_21 = 0-100*(HHV(CLOSE,10)-CLOSE)/(HHV(CLOSE,10)-LLV(LOW,10))+100
+    XA_22 = 0-100*(HHV(CLOSE,20)-CLOSE)/(HHV(CLOSE,20)-LLV(LOW,20))+100
+    XA_23 = 0-100*(HHV(CLOSE,30)-CLOSE)/(HHV(CLOSE,30)-LLV(LOW,30))+100
+    XA_24 = REF(XA_19,1)
+    XA_25 = XA_19
+    XA_26 = XA_25-XA_24
+    XA_27 = REF(XA_18,1)
+    XA_28 = XA_18
+    XA_29 = XA_28-XA_27
+    XA_30 = OPEN
+    XA_31 = CLOSE
+    # 发现私募入场 = IF(XA_30<=XA_8 AND XA_30<=XA_9 AND XA_30<=XA_10 AND XA_31>=XA_8 AND XA_31>=XA_17 AND XA_26>0 AND XA_29>0,(-10),0) #,COLORGREEN,LINETHICK2
+    # 短线指标 = IF(CROSS(XA_18,XA_19) AND XA_18<0 AND XA_19<0-0.2 AND XA_21>45 AND XA_26>0,(-10),0) #,COLORWHITE
+    XA_32 = (CLOSE-LLV(LOW,27))/(HHV(HIGH,27)-LLV(LOW,27))*100
+    # XA_33 = REVERSE(XA_32)
+    XA_34 = SMA(XA_32,3,1)
+    趋势 = SMA(XA_34,3,1) #,COLORRED,LINETHICK2
+    人气 = SMA(趋势,3,1) #,COLORYELLOW,LINETHICK2
+    出击 = IFAND(CROSS(趋势,人气), 趋势<30,20,0) #,COLORWHITE,LINETHICK2
+    短卖 = IFAND(CROSS(人气,趋势), 人气>75,85,100) #,COLOR008000,LINETHICK2
+    XGL = IF(CROSS(趋势,人气),1,0)
+    if refFlg:
+        return REF(XGL, 1), -1, False
+    else:
+        return XGL, -1, False
+        

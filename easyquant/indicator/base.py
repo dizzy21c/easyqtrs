@@ -83,13 +83,23 @@ def __REALTIME_DATA(code, dateStr):
         # print("__REALTIME_DATA", code, dateStr, e)
         return pd.DataFrame()
 
-def EMA(Series, N):
+def EMA_TA(Series, N):
     # return pd.Series.ewm(Series, span=N, min_periods=N - 1, adjust=True).mean()
     if N == 1:
         return Series
 #     Series = Series.fillna(0)
     return talib.EMA(Series, N)
 #     return pd.Series(res, index=Series.index)
+
+def EMA(Series, N):
+    ncount = len(Series)
+    Series = Series.fillna(0)
+    tf_p = c_float * ncount
+    np_OUT = tf_p(0)
+    na_Series = np.asarray(Series).astype(np.float32)
+    np_S = cast(na_Series.ctypes.data, POINTER(c_float))
+    lib.ema(ncount, np_OUT, np_S, N)
+    return pd.Series(np.asarray(np_OUT), index=Series.index)
 
 def EXPMA(Series, N):
     # return pd.Series.ewm(Series, span=N, min_periods=N - 1, adjust=True).mean()
