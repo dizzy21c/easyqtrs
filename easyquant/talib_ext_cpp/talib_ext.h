@@ -54,9 +54,9 @@ extern "C" {
 
   DLL_PUBLIC void dma(int nCount, float *pfOut, float *pfIn, float *pfWeight);
 
-  DLL_PUBLIC void cost(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, int percent, float capital);
+  DLL_PUBLIC void cost(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, int percent, float *pfTurnover);
 
-  DLL_PUBLIC void winner(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float capital);
+  DLL_PUBLIC void winner(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float *pfTurnover);
     
   DLL_PUBLIC void filter(int nCount, int *piOut, int *piIn, int iIn);
     

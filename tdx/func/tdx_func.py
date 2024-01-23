@@ -1729,6 +1729,8 @@ def tdx_blft(data):
 
 # 改CCI选股
 def tdx_cci_xg(data):
+    if not func_check_data(data, 120):
+        return IF(data.close < 0, 0, 0), -1, False
     CLOSE = data.close
     C = data.close
     HIGH = data.high
@@ -2034,23 +2036,28 @@ def tdx_dqe_xqc_A1(data, sort=False):
 
     return 刀, -1, False
 
-def tdx_sxzsl(data):
+def tdx_sxzsl(data, refFlg = False):
+    ## 锁芯主升浪
     CLOSE = data.close
     VOL = data.volume
     OPEN = data.open
     
-    # # X_1=((COST(85)+COST(15))/2+COST(50))/1.985
-    # # X_2=SMA(COST(87),2,1)
-    # X_3=MA(CLOSE,26)
-    # # X_4=CLOSE>X_1 AND CLOSE>X_3 AND CROSS(CLOSE,X_2) AND CLOSE>X_2 AND (CLOSE-REF(CLOSE,1))/REF(CLOSE,1)*100>5
-    # # X_41 = CLOSE > X_1
-    # X_42 = CLOSE>X_3
-    # # X_43 = CLOSE > X_2
-    # X_44 = (CLOSE - REF(CLOSE, 1)) / REF(CLOSE, 1) * 100 > 5
-    # X_5=MA(VOL,135)
-    # X_6=VOL=HHV(VOL,10) AND VOL>1.9*REF(VOL,1) AND CLOSE>=REF(CLOSE,1) AND CLOSE>=OPEN AND VOL<=X_5*3.5
-    # XG=CROSS(SMA(MAX(CLOSE-REF(CLOSE,1),0),4,1)/SMA(ABS(CLOSE-REF(CLOSE,1)),4,1)*100,80) OR FILTER(X_6,3) AND X_4
-
+    X_1=((COST(data, 85)+COST(data, 15))/2+COST(data, 50))/1.985
+    X_2=SMA(COST(data, 87),2,1)
+    X_3=MA(CLOSE,26)
+    X_4= IFAND5(CLOSE>X_1 , CLOSE>X_3 , CROSS(CLOSE,X_2) , CLOSE>X_2 , (CLOSE-REF(CLOSE,1))/REF(CLOSE,1)*100>5, True, False)
+    # X_41 = CLOSE > X_1
+#     X_42 = CLOSE>X_3
+    # X_43 = CLOSE > X_2
+#     X_44 = (CLOSE - REF(CLOSE, 1)) / REF(CLOSE, 1) * 100 > 5
+    X_5=MA(VOL,135)
+    X_6=VOL=IFAND5(HHV(VOL,10) , VOL>1.9*REF(VOL,1) , CLOSE>=REF(CLOSE,1) , CLOSE>=OPEN , VOL<=X_5*3.5, True, False)
+    XG = IFAND(IFOR(CROSS(SMA(MAX(CLOSE-REF(CLOSE,1),0),4,1)/SMA(ABS(CLOSE-REF(CLOSE,1)),4,1)*100,80) , FILTER(X_6,3), True, False) , X_4, 1, 0)
+    if refFlg:
+        return REF(XG,1), -1, False
+    else:
+        return XG, -1, False
+    
 def tdx_dqe_test_A01(data):
     CLOSE = data.close
     VOL = data.volume
@@ -3497,7 +3504,7 @@ def tdx_21PPQTP(data, refFlg = False):
     XA_23 = COST(data, 50)
     XA_24 = (XA_19+XA_20+XA_21+XA_22+XA_23)/5
     XA_25 = (XA_18+XA_24)/2
-    XA_26 = SMA(XA_25,2,1)
+#     XA_26 = SMA(XA_25,2,1)
     XA_27 = (XA_25/REF(XA_25,1)-1)*1000
     XA_28 = EMA(XA_27,10)
     XA_29 = (HIGH+LOW+CLOSE)/3

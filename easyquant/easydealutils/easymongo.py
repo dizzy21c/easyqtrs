@@ -8,7 +8,7 @@ import numpy as np
 from datetime import date, datetime
 import time
 from time import strftime, localtime
-from QUANTAXIS.QAFetch import QATdx as tdx
+# from QUANTAXIS.QAFetch import QATdx as tdx
 from easyquant.easydealutils.easytime import EasyTime
 import re
 class MongoIo(object):
@@ -45,7 +45,7 @@ class MongoIo(object):
         res = pd.DataFrame([item for item in cursor])
         return res
         
-    def _get_data_day(self, code, table, st_start, st_end):
+    def _get_data_day(self, code, table, st_start, st_end, qfq = 0):
         cursor = self.db[table].find(
             {
                 'code': {
@@ -62,25 +62,47 @@ class MongoIo(object):
         )
         res = pd.DataFrame([item for item in cursor])
         try:
-            res = res.assign(
-                volume=res.vol,
-                date=pd.to_datetime(res.date)
-            ).drop_duplicates((['date',
-                                'code'])).query('volume>1').set_index(
-                'date',
-                drop=False
-            )
-            res = res.loc[:,
-                  [
-                      'code',
-                      'open',
-                      'high',
-                      'low',
-                      'close',
-                      'volume',
-                      'amount',
-                      'date'
-                  ]]
+            if qfq == 0:
+                res = res.assign(
+                    volume=res.vol,
+                    date=pd.to_datetime(res.date)
+                ).drop_duplicates((['date',
+                                    'code'])).query('volume>1').set_index(
+                    'date',
+                    drop=False
+                )
+                res = res.loc[:,
+                      [
+                          'code',
+                          'open',
+                          'high',
+                          'low',
+                          'close',
+                          'volume',
+                          'amount',
+                          'date'
+                      ]]
+            else:
+                res = res.assign(
+                    volume=round(res.volume / 100),
+                    date=pd.to_datetime(res.date)
+                ).drop_duplicates((['date',
+                                    'code'])).query('volume>1').set_index(
+                    'date',
+                    drop=False
+                )
+                res = res.loc[:,
+                      [
+                          'code',
+                          'open',
+                          'high',
+                          'low',
+                          'close',
+                          'volume',
+                          'amount',
+                          'turn','pctChg','peTTM','pbMRQ','psTTM','pcfNcfTTM',
+                          'date'
+                      ]]
         except:
             res = None
         # if format in ['P', 'p', 'pandas', 'pd']:
@@ -100,48 +122,47 @@ class MongoIo(object):
         #     return None
 
 
-    def _get_data_min(self, code, table, st_start, st_end, type):
-        cursor = self.db[table].find(
-            {
-                'code': {
-                    '$in': code
-                }
-                , "time_stamp":
-                    {
-                        "$lte": self.dateStr2stamp(st_end),
-                        "$gte": self.dateStr2stamp(st_start)
-                    }
-                , 'type': type
-            },
-            {"_id": 0},
-            batch_size=10000
-        )
-        res = pd.DataFrame([item for item in cursor])
-        try:
-            res = res.assign(
-                volume=res.vol,
-                date=pd.to_datetime(res.date)
-            ).drop_duplicates((['datetime',
-                                'code'])).query('volume>1').set_index(
-                'datetime',
-                drop=False
-            )
-            res = res.loc[:,
-                  [
-                      'code',
-                      'open',
-                      'high',
-                      'low',
-                      'close',
-                      'volume',
-                      'amount',
-                      'datetime'
-                  ]]
-        except:
-            res = None
-        # if format in ['P', 'p', 'pandas', 'pd']:
-        return res
-        # elif format in ['json', 'dict']:
+#         cursor = self.db[table].find(
+#             {
+#                 'code': {
+#                     '$in': code
+#                 }
+#                 , "time_stamp":
+#                     {
+#                         "$lte": self.dateStr2stamp(st_end),
+#                         "$gte": self.dateStr2stamp(st_start)
+#                     }
+#                 , 'type': type
+#             },
+#             {"_id": 0},
+#             batch_size=10000
+#         )
+#         res = pd.DataFrame([item for item in cursor])
+#         try:
+#             res = res.assign(
+#                 volume=res.vol,
+#                 date=pd.to_datetime(res.date)
+#             ).drop_duplicates((['datetime',
+#                                 'code'])).query('volume>1').set_index(
+#                 'datetime',
+#                 drop=False
+#             )
+#             res = res.loc[:,
+#                   [
+#                       'code',
+#                       'open',
+#                       'high',
+#                       'low',
+#                       'close',
+#                       'volume',
+#                       'amount',
+#                       'datetime'
+#                   ]]
+#         except:
+#             res = None
+#         # if format in ['P', 'p', 'pandas', 'pd']:
+#         return res
+#         # elif format in ['json', 'dict']:
         #     return QA_util_to_json_from_pandas(res)
         # # 多种数据格式
         # elif format in ['n', 'N', 'numpy']:
@@ -199,13 +220,13 @@ class MongoIo(object):
         # ptd.rename(columns={"vol":"volume"}, inplace=True)
         return ptd
 
-    def _get_data(self, code, table, st_start, st_end, type='D'):
+    def _get_data(self, code, table, st_start, st_end, type='D', qfq = 0):
         if st_end is None:
             # st_end = "2030-12-31"
             st_end = "2030-12-31 23:59:59"
         # st_start = self.dateStr2stamp(st_start)
         if type == 'D':
-            data = self._get_data_day(code, table, st_start, st_end)
+            data = self._get_data_day(code, table, st_start, st_end, qfq)
         else:
             data = self._get_data_min(code, table, st_start, st_end, type)
             # if isinstance(code, list):
@@ -229,12 +250,15 @@ class MongoIo(object):
         # ptd.rename(columns={"vol":"volume"}, inplace=True)
         return data
     
-    def get_stock_day(self, code, st_start=None, st_end=None):
+    def get_stock_day(self, code, st_start=None, st_end=None, qfq = 0):
         if st_start is None:
             st_start = self.st_start
         if isinstance(code, str):
             code = [code]
-        return self._get_data(code, 'stock_day', st_start, st_end)
+        if qfq == 0:
+            return self._get_data(code, 'stock_day', st_start, st_end, qfq=qfq)
+        else:
+            return self._get_data(code, 'stock_day_qfq', st_start, st_end, qfq=qfq)
   
     def get_stock_min(self, code, st_start=None, st_end=None, freq=5):
         if st_start is None:
@@ -243,27 +267,27 @@ class MongoIo(object):
             code = [code]
         return self._get_data(code, 'stock_min', st_start, st_end, "%dmin"%freq)
 
-    def get_stock_min_realtime(self, code, st_start=None, st_end=None, freq=5):
-        if st_start is None:
-            st_start = self.st_start_5min
-        if st_end is None:
-            st_end = "2030-12-31 23:59:59"
+#     def get_stock_min_realtime(self, code, st_start=None, st_end=None, freq=5):
+#         if st_start is None:
+#             st_start = self.st_start_5min
+#         if st_end is None:
+#             st_end = "2030-12-31 23:59:59"
 
-        data_min = self.get_stock_min(code=code, freq=freq)
-        if len(data_min) > 0:
-            if freq < (time.time() - data_min.index[-1][0].timestamp()) / 60:
-                start = data_min.index[-1][0].strftime('%Y-%m-%d %H:%M:01')  ## %S=>01
-                add_df = tdx.QA_fetch_get_stock_min(code, start=start, end=st_end, frequence='%dmin' % freq)
-                if len(add_df) > 0:
-                    add_df.drop(['date_stamp', 'datetime'], axis=1, inplace=True)
-                    data_min = data_min.append(add_df, sort=True)
-                    ## save to db
-        else:
-            data_min = tdx.QA_fetch_get_stock_min(code, start=st_start, end=st_end, frequence='%dmin' % freq)
-            if len(data_min) > 0:
-                data_min.drop(['date_stamp', 'datetime'], axis=1, inplace=True)
+#         data_min = self.get_stock_min(code=code, freq=freq)
+#         if len(data_min) > 0:
+#             if freq < (time.time() - data_min.index[-1][0].timestamp()) / 60:
+#                 start = data_min.index[-1][0].strftime('%Y-%m-%d %H:%M:01')  ## %S=>01
+#                 add_df = tdx.QA_fetch_get_stock_min(code, start=start, end=st_end, frequence='%dmin' % freq)
+#                 if len(add_df) > 0:
+#                     add_df.drop(['date_stamp', 'datetime'], axis=1, inplace=True)
+#                     data_min = data_min.append(add_df, sort=True)
+#                     ## save to db
+#         else:
+#             data_min = tdx.QA_fetch_get_stock_min(code, start=st_start, end=st_end, frequence='%dmin' % freq)
+#             if len(data_min) > 0:
+#                 data_min.drop(['date_stamp', 'datetime'], axis=1, inplace=True)
 
-        return data_min
+#         return data_min
 
     def get_index_day(self, code, st_start=None, st_end=None):
         if st_start is None:
@@ -280,26 +304,26 @@ class MongoIo(object):
             
         return self._get_data(code, 'index_min', st_start, st_end, "%dmin"%freq)
 
-    def get_index_min_realtime(self, code, st_start=None, st_end=None, freq=5):
-        if st_start is None:
-            st_start = self.st_start_5min
-        if st_end is None:
-            st_end = "2030-12-31 23:59:59"
+#     def get_index_min_realtime(self, code, st_start=None, st_end=None, freq=5):
+#         if st_start is None:
+#             st_start = self.st_start_5min
+#         if st_end is None:
+#             st_end = "2030-12-31 23:59:59"
         
-        data_min = self.get_index_min(code=code, freq=freq)
-        if len(data_min) > 0:
-            if freq < (time.time() - data_min.index[-1][0].timestamp()) / 60:
-                start=data_min.index[-1][0].strftime('%Y-%m-%d %H:%M:01') ## %S=>01
-                add_df=tdx.QA_fetch_get_index_min(code,start=start,end=st_end, frequence='%dmin' % freq)
-                if len(add_df) > 0:
-                    add_df.drop(['date_stamp','datetime'],axis=1,inplace=True)
-                    data_min=data_min.append(add_df, sort=True)
-        else:
-            data_min=tdx.QA_fetch_get_index_min(code,start=st_start,end=st_end, frequence='%dmin' % freq)
-            if len(data_min) > 0:
-                data_min.drop(['date_stamp','datetime'],axis=1,inplace=True)
+#         data_min = self.get_index_min(code=code, freq=freq)
+#         if len(data_min) > 0:
+#             if freq < (time.time() - data_min.index[-1][0].timestamp()) / 60:
+#                 start=data_min.index[-1][0].strftime('%Y-%m-%d %H:%M:01') ## %S=>01
+#                 add_df=tdx.QA_fetch_get_index_min(code,start=start,end=st_end, frequence='%dmin' % freq)
+#                 if len(add_df) > 0:
+#                     add_df.drop(['date_stamp','datetime'],axis=1,inplace=True)
+#                     data_min=data_min.append(add_df, sort=True)
+#         else:
+#             data_min=tdx.QA_fetch_get_index_min(code,start=st_start,end=st_end, frequence='%dmin' % freq)
+#             if len(data_min) > 0:
+#                 data_min.drop(['date_stamp','datetime'],axis=1,inplace=True)
         
-        return data_min
+#         return data_min
 
     def file2dict(self, path):
         #读取配置文件
@@ -663,7 +687,9 @@ class MongoIo(object):
 
 def main():
     md = MongoIo()
-    md.get_stock_day('000001')
+    df = md.get_stock_day('000025', qfq=1)
+#     print(df.index[-1][0].strftime("%Y-%m-%d"))
+    print(df.tail(5))
     # d.head
 
 if __name__ == '__main__':

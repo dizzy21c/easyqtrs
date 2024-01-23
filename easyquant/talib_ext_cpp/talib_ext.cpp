@@ -395,13 +395,13 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
             float y1 = h /(avgT - lowT) * (x1 - lowT);
             float y2 = h /(avgT - lowT) * (x2 - lowT);
             s = minD *(y1 + y2) / 2;
-            s = s * volT;
+            s = s * eachV;
         } else {
             float y1 = h /(highT - avgT) *(highT - x1);
             float y2 = h /(highT - avgT) *(highT - x2);
 
             s = minD *(y1 + y2) /2;
-            s = s * volT;
+            s = s * eachV;
         }
         Dict dict = {int(round(x1 * 100)), s};
         tmpChip[i] = dict;
@@ -449,7 +449,7 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
     dpOutChipList[nCount] = dictNode;
 }
 
-void calcuChip(Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float capital, float minD) {
+void calcuChip(Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float* pfTurnover, float minD) {
     if (minD < 0) {
         minD = 0.01;
     }
@@ -459,8 +459,7 @@ void calcuChip(Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float *pfHi
 //    int iChip = 0, iChipList = 0;
     for (int i = 0; i < nCount; i++) {
         float avgT = pfAmount[i] / pfVol[i];
-        float TurnoverRateT = pfVol[i] / capital;
-        calcuSin(&npChip, dpOutChip, dpOutChipList, i, pfHigh[i], pfLow[i], avgT, pfVol[i], TurnoverRateT, minD, AC);
+        calcuSin(&npChip, dpOutChip, dpOutChipList, i, pfHigh[i], pfLow[i], avgT, pfVol[i], pfTurnover[i], minD, AC);
 //        calcuJUN(fpOutChip, fpOutChipList, i, pfHigh[i], pfLow[i], pfVol[i], TurnoverRateT, minD, AC);
     }
 }
@@ -563,16 +562,16 @@ void cost_calc(int nCount, float *pfOut, int percent, DictNode *dpOutChipList) {
                 out = dict.key;
             }
         }
-        pfOut[i] = out;
+        pfOut[i] = out / 100;
     }
 
 }
 
-void cost_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, int percent, float minD, float capital) {
+void cost_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, int percent, float minD, float* pfTurnover) {
     Dict *dpOutChip = (Dict *) malloc(100000 * sizeof(Dict));
     DictNode *dpOutChipList = (DictNode *) malloc(nCount * sizeof(DictNode));
 
-    calcuChip(dpOutChip, dpOutChipList, nCount, pfHigh, pfLow, pfVol, pfAmount, capital, minD);
+    calcuChip(dpOutChip, dpOutChipList, nCount, pfHigh, pfLow, pfVol, pfAmount, pfTurnover, minD);
     cost_calc(nCount, pfOut, percent, dpOutChipList);
 
     free(dpOutChip);
@@ -582,11 +581,11 @@ void cost_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfV
     free(dpOutChipList);
 }
 
-void winner_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float minD, float capital) {
+void winner_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float minD, float* pfTurnover) {
     Dict *dpOutChip = (Dict *) malloc(100000 * sizeof(Dict));
     DictNode *dpOutChipList = (DictNode *) malloc(nCount * sizeof(DictNode));
 
-    calcuChip(dpOutChip, dpOutChipList, nCount, pfHigh, pfLow, pfVol, pfAmount, capital, minD);
+    calcuChip(dpOutChip, dpOutChipList, nCount, pfHigh, pfLow, pfVol, pfAmount, pfTurnover, minD);
     winner_calc(nCount, pfOut, pfClose, pfVol, pfAmount, dpOutChipList);
 
     free(dpOutChip);
@@ -640,15 +639,15 @@ void dma(int nCount, float *pfOut, float *pfIn, float *pfWeight)
   dma_list(nCount, pfOut, pfIn, pfWeight);
 }
 
-void cost(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, int percent, float capital) {
+void cost(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, int percent, float *pfTurnover) {
     float minD = 0.01;
-    cost_list(nCount, pfOut, pfHigh, pfLow, pfVol, pfAmount, percent, minD, capital);
+    cost_list(nCount, pfOut, pfHigh, pfLow, pfVol, pfAmount, percent, minD, pfTurnover);
 }
 
-void winner(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float capital) {
+void winner(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float *pfTurnover) {
     float minD = 0.01;
-//    printf("hello, %f", capital);
-    winner_list(nCount, pfOut, pfHigh, pfLow, pfVol, pfAmount, pfClose, minD, capital);
+//    printf("hello, %f", pfTurnover);
+    winner_list(nCount, pfOut, pfHigh, pfLow, pfVol, pfAmount, pfClose, minD, pfTurnover);
 }
 
 void ema(int nCount, float *piOut, float *pfIn, int iIn)

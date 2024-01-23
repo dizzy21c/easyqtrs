@@ -34,7 +34,7 @@ from tdx.func.func_sys import *
 from easyquant import MongoIo
 from multiprocessing import Process, Pool, cpu_count, Manager
 # from easyquant.indicator.base import *
-from concurrent.futures import ProcessPoolExecutor,ThreadPoolExecutor,as_completed
+# from concurrent.futures import ProcessPoolExecutor,ThreadPoolExecutor,as_completed
 #from pyalgotrade.strategy import position
 # from custom.sinadataengine import SinaEngine
 import easyquotation
@@ -50,7 +50,7 @@ databuf_mongo = Manager().dict()
 # data_buf_5min_0 = Manager().dict()
 
 pool_size = cpu_count()
-executor = ThreadPoolExecutor(max_workers=pool_size)
+# executor = ThreadPoolExecutor(max_workers=pool_size)
 codeDatas = []
 # class DataSinaEngine(SinaEngine):
 #     EventType = 'data-sina'
@@ -83,7 +83,7 @@ def do_get_data_mp(key, codelist, st_start, st_end):
 #     func_sell = func_nameA[1]
 #     databuf_mongo = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end)
 #     print("code-list", codelist[:100])
-    databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end)
+    databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end, qfq=1)
 
 def get_data(codelist, st_start, st_end):
     start_t = datetime.datetime.now()
@@ -133,7 +133,8 @@ def day_select(codelist, back_time, func_names):
     code_dict = codelist2dict(codelist, pool_size)
     # print("get-data", code_dict)
     pool = Pool(cpu_count())
-    for i in code_dict.keys():
+    for i in [0,1,2,3,5,6,7]:
+#     for i in code_dict.keys():
         # if i < pool_size - 1:
             # code_dict[str(i)] = codelist[i* subcode_len : (i+1) * subcode_len]
         # else:
@@ -153,7 +154,6 @@ def day_select(codelist, back_time, func_names):
 def do_day_select(key, codelist, backDates, func_nameA):
     today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
     mongo_mp = MongoIo()
-    ins_datas = []
     for code in codelist:
         all_calc_data = {}
         tempData = databuf_mongo[key].query("code=='%s'" % code)
@@ -161,6 +161,7 @@ def do_day_select(key, codelist, backDates, func_nameA):
             continue
         if not func_check_data(tempData):
             continue
+        print("begin-calc-data: code = ", code, key)
         for func_calc in func_nameA:
             try:
                 result1 = eval(func_calc)(tempData)[0]
@@ -185,17 +186,18 @@ def do_day_select(key, codelist, backDates, func_nameA):
 #                 print(func_calc, result1.head(1))
             
 #     slip  = 1
+        ins_datas = []
         if len(all_calc_data) > 0:
             for x in all_calc_data:
                 if all_calc_data[x]['score'] > 1:
                     ins_datas.append(all_calc_data[x])
 #             print(all_calc_data)
-        if len(ins_datas) >= 500:
-            mongo_mp.save('day-select-%s' % today, ins_datas)
-            ins_datas = []
-    if len(ins_datas) > 0:
-        mongo_mp.save('day-select-%s' % today, ins_datas)
-        print("do_day_select-end")
+            if len(ins_datas) > 0:
+                try:
+                    mongo_mp.save('day-select-%s' % today, ins_datas)
+                except:
+                    print("ins mongo error, code:", code)
+    print("do_day_select-end", key)
     # start_t = datetime.datetime.now()
     # print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
 #     if len(func_nameA) < 1:
@@ -265,6 +267,7 @@ if __name__ == '__main__':
     func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX', 'tdx_LDX', 'tdx_TLBXXF']
     func5 = ['tdx_WYZ17MA', 'tdx_qszn', 'tdx_cci', 'tdx_ngqd', 'tdx_bollxg_start', 'tdx_DQS', 'tdx_JZZCJSD', 'tdx_CDYTDXG', 'tdx_BOLL_EMA', 'tdx_hjy']
     func6 = ['tdx_LLXGSQ', 'tdx_WWDGWY', 'tdx_WWXGSQ', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_SHYM', 'tdx_QIANFU', 'tdx_HW168QS']
+#     func7 = ['tdx_sxzsl']
 
 #     func = 'tdx_czhs, tdx_hm, tdx_dhmcl, tdx_sxp, tdx_hmdr, tdx_tpcqpz, tdx_jmmm, tdx_nmddl, tdx_swl, tdx_yaogu \
 #     , tdx_niugu, tdx_buerfameng, tdx_yaoguqidong, tdx_ygqd_test, tdx_blftxg, tdx_cptlzt, tdx_yhzc, tdx_yhzc_macd, tdx_yhzc_kdj, tdx_sxp_yhzc \
@@ -273,7 +276,7 @@ if __name__ == '__main__':
 #     , tdx_WYZ17MA, tdx_qszn, tdx_cci, tdx_ngqd, tdx_bollxg_start, tdx_DQS, tdx_JZZCJSD, tdx_CDYTDXG, tdx_BOLL_EMA, tdx_hjy \
 #     , tdx_LLXGSQ, tdx_WWDGWY, tdx_WWXGSQ, tdx_WWYHXG, tdx_WWMACDJC, tdx_SHYM, tdx_QIANFU, tdx_HW168QS \
 #     '
-    func = func1 + func2 + func3 + func4 + func5 + func6
+    func = func1 + func2 + func3 + func4 + func5 + func6 # + func7
 #     get_data(codelist, st_start, st_end)
     day_select(codelist, back_time, func)
     end_t = datetime.datetime.now()

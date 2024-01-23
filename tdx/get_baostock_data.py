@@ -7,6 +7,7 @@ import pandas as pd
 from func.tdx_func import *
 from func.func_sys import *
 from easyquant  import MongoIo
+from multiprocessing import Process, Pool, cpu_count, Manager
 
 import baostock as bs
 import pandas as pd
@@ -20,6 +21,17 @@ MONTH = 'm'
 QFQ = '2'
 HFQ = '1'
 BFQ = '3'
+
+databuf_mongo = Manager().dict()
+
+def get_next_date(calcDate):
+    cDate = datetime.datetime.strptime(calcDate, '%Y-%m-%d')
+    cDate = cDate + datetime.timedelta(1)
+    if cDate.weekday() < 5:
+        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
+    else: # if calcDate.weekday() == 5:
+        cDate = cDate + datetime.timedelta(2)
+        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
 
 def fetch_k_day(code="sh.600606", p_begin_day: str = '2023-01-01', p_end_day: str = None):
     # 详细指标参数，参见“历史行情指标参数”章节；“分钟线”参数与“日线”参数不同。“分钟线”不包含指数。
@@ -36,12 +48,6 @@ def fetch_k_day(code="sh.600606", p_begin_day: str = '2023-01-01', p_end_day: st
     # adjustflag：复权类型，默认不复权：3；1：后复权；2：前复权。已支持分钟线、日线、周线、月线前后复权
     if p_end_day is None:
         p_end_day = time.strftime('%Y-%m-%d')
-    if p_begin_day is None:
-        p_begin_day = '2023-01-01'
-    else:
-        temp = p_begin_day
-        p_begin_day = '%s-01-01' % temp
-        p_end_day = '%s-12-31' % temp
 #     print(p_begin_day, p_end_day)
     rs = bs.query_history_k_data_plus(code,
                                       day_field,
@@ -58,77 +64,270 @@ def fetch_k_day(code="sh.600606", p_begin_day: str = '2023-01-01', p_end_day: st
     # result.to_csv(p_file, index=False, mode='a+', header=True)
     return result
 
+def update_data(codelist):
+    start_t = datetime.datetime.now()
+    print("begin-update_data:", start_t)
+    mongo_mpd = MongoIo()
+    tblName = 'stock_day_qfq'
+    pool_size = cpu_count()
+    code_dict = codelist2dict(codelist, pool_size)
+    j = 0
+#     for i in range(4,5): #code_dict.keys():
+    for i in code_dict.keys():
+#         pool.apply_async(do_update_data_mp, args=(i, code_dict[i]))
+        for xcode in code_dict[i]:
+            j += 1
+            print("do update data for ", xcode, "... ...", j, len(codelist))
+            do_update_data_mp(tblName, mongo_mpd, xcode, i)
+    end_t = datetime.datetime.now()
+    # print("data-total-len:", len(dataR))
+    print(end_t, 'update_data spent:{}'.format((end_t - start_t)))
+
+def ins_mongo_data(mongo_mpd, tdata, code):
+    if len(tdata) > 0:
+        akey = tdata.columns.values
+        ins_data = []
+        for index, row in tdata.iterrows():
+            if row['volume'] == '':
+                continue
+            monv = {}
+            for x in akey:
+                if x == 'code':
+                    monv[x] = row[x][3:]
+                elif x == 'date':
+                    monv[x] = row[x]
+                else:
+                    try:
+                        monv[x] = float(row[x])
+                    except:
+                        monv[x] = 0.0
+    # print("conv error", code, row)
+
+            monv['_id'] = '%s-%s' % (row['code'], row['date'])
+            monv['date_stamp'] = mongo_mpd.dateStr2stamp(row['date'])
+    # print(monv)
+            ins_data.append(monv)
+        #     print(row.tolist())
+        if len(ins_data) > 0:
+            try:
+                mongo_mpd.save(tblName, ins_data)
+            except:
+                print("ins error", code)
+    
+def do_update_data_mp(tblName, mongo_mpd, xcode, key):
+    tblName = 'stock_day_qfq'
+    if '0' == xcode[:1] or '3' == xcode[:1]:
+        code = "sz.%s" % xcode
+#             print("sz.%s" % x)
+    else:
+        code = "sh.%s" % xcode
+    if len(databuf_mongo[key]) == 0:
+        codeData = []
+    else:
+        codeData = databuf_mongo[key].query(" code == '%s'" % xcode)
+    ##debug
+#     if xcode == '300088':
+#         print(key, xcode, len(codeData), len(databuf_mongo[key]))
+        
+    if len(codeData) > 0:
+        today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
+        p_begin_day = codeData.index[-1][0].strftime("%Y-%m-%d")
+        p_begin_day = get_next_date(p_begin_day)
+        p_begin_year = int(p_begin_day[:4])
+        p_end_day = '%s-12-31' % p_begin_year
+#         if p_begin_day > p_end_day:
+#             p_end_day = '%s-12-31' % p_begin_year
+        if p_begin_day > today:
+            ##last data
+            return
+        year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
+        for ldate in range(p_begin_year,int(year)+1):
+            if ldate > p_begin_year:
+                p_begin_day = '%s-01-01' % ldate
+                p_end_day = '%s-12-31' % ldate
+            tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
+            ins_mongo_data(mongo_mpd, tdata, xcode)
+#         if len(tdata) > 0:
+#             akey = tdata.columns.values
+#             ins_data = []
+#             for index, row in tdata.iterrows():
+#                 monv = {}
+#                 for x in akey:
+#                     if x == 'code':
+#                         monv[x] = row[x][3:]
+#                     elif x == 'date':
+#                         monv[x] = row[x]
+#                     else:
+#                         try:
+#                             monv[x] = float(row[x])
+#                         except:
+#                             monv[x] = 0.0
+# #                                 print("conv error", code, row)
+
+#                 monv['_id'] = '%s-%s' % (row['code'], row['date'])
+#                 monv['date_stamp'] = mongo_mpd.dateStr2stamp(row['date'])
+# #                     print(monv)
+#                 ins_data.append(monv)
+#             #     print(row.tolist())
+#             if len(ins_data) > 0:
+#                 mongo_mpd.save(tblName, ins_data)
+    else:
+        year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
+        for ldate in range(1990,int(year)+1):
+            p_begin_day = '%s-01-01' % ldate
+            p_end_day = '%s-12-31' % ldate
+            tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
+            ins_mongo_data(mongo_mpd, tdata, xcode)
+#             if len(tdata) > 0:
+#                 akey = tdata.columns.values
+#                 ins_data = []
+#                 for index, row in tdata.iterrows():
+#                     monv = {}
+#                     for x in akey:
+#                         if x == 'code':
+#                             monv[x] = row[x][3:]
+#                         elif x == 'date':
+#                             monv[x] = row[x]
+#                         else:
+#                             try:
+#                                 monv[x] = float(row[x])
+#                             except:
+#                                 monv[x] = 0.0
+# #                                 print("conv error", code, row)
+
+#                     monv['_id'] = '%s-%s' % (row['code'], row['date'])
+#                     monv['date_stamp'] = mongo_mpd.dateStr2stamp(row['date'])
+# #                     print(monv)
+#                     ins_data.append(monv)
+#                 #     print(row.tolist())
+#                 if len(ins_data) > 0:
+#                     mongo_mpd.save(tblName, ins_data)
+            
+
+#     slip  = 1
+    # start_t = datetime.datetime.now()
+    # print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
+#     if len(func_nameA) < 1:
+#         return
+        # 取得当前数据
+#     func_buy = func_nameA[0]
+#     func_sell = func_nameA[1]
+#     databuf_mongo = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end)
+#     print("code-list", codelist[:100])
+#     databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end, qfq=1)
+
+def get_data(codelist):
+    start_t = datetime.datetime.now()
+    year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
+    print("begin-get_data:", start_t)
+    pool_size = cpu_count()
+    code_dict = codelist2dict(codelist, pool_size)
+    # print("get-data", code_dict)
+    pool = Pool(cpu_count())
+    for i in code_dict.keys():
+        pool.apply_async(do_get_data_mp, args=(i, code_dict[i], '%s-01-01' % year, '%s-12-31' % year))
+
+    pool.close()
+    pool.join()
+
+    end_t = datetime.datetime.now()
+    # print("data-total-len:", len(dataR))
+    print(end_t, 'get_data spent:{}'.format((end_t - start_t)))
+    # return data_day
+def do_get_data_mp(key, codelist, st_start, st_end):
+#     print("do_get_data_mp", key)
+    mongo_mp = MongoIo()
+#     slip  = 1
+    # start_t = datetime.datetime.now()
+    # print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
+#     if len(func_nameA) < 1:
+#         return
+        # 取得当前数据
+#     func_buy = func_nameA[0]
+#     func_sell = func_nameA[1]
+#     databuf_mongo = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end)
+#     print("code-list", codelist[:100])
+    try:
+        databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end, qfq=1)
+        print('data-get', key, len(databuf_mongo[key]), st_start, st_end)
+    except Error:
+        print("do_get_data_mp error", key, Error)
+        
+    
 if __name__ == '__main__':
     # 登陆系统
     tblName = 'stock_day_qfq'
     lg = bs.login()
-    mongo = MongoIo()
     # 显示登陆返回信息
     if lg.error_code != '0':
         print('login respond error_code:' + lg.error_code)
         print('login respond  error_msg:' + lg.error_msg)
         sys.exit()
-    testData = mongo.get_table_data(tblName)
+    
     codelist = getCodeList('all')
-    for x in codelist:
-        if '0' == x[:1]:
-            code = "sz.%s" % x
-#             print("sz.%s" % x)
-        else:
-            code = "sz.%s" % x
-        codeData = testData.query(" code == '%s'" % x)
-        if len(codeData) == 0:
-            for ldate in range(1990,2025):
-                tdata = fetch_k_day(code, p_begin_day = ldate)
-                if len(tdata) > 0:
-                    akey = tdata.columns.values
-                    ins_data = []
-                    for index, row in tdata.iterrows():
-                        monv = {}
-                        for x in akey:
-                            if x == 'code':
-                                monv[x] = row[x][3:]
-                            elif x == 'date':
-                                monv[x] = row[x]
-                            else:
-                                try:
-                                    monv[x] = float(row[x])
-                                except:
-                                    monv[x] = 0.0
-    #                                 print("conv error", code, row)
+    get_data(codelist)
+    update_data(codelist)
+#     for x in codelist:
+#         if '0' == x[:1]:
+#             code = "sz.%s" % x
+# #             print("sz.%s" % x)
+#         else:
+#             code = "sz.%s" % x
+#         codeData = testData.query(" code == '%s'" % x)
+#         if len(codeData) == 0:
+#             for ldate in range(1990,2025):
+#                 p_begin_day = '%s-01-01' % ldate
+#                 p_end_day = '%s-12-31' % ldate
+#                 tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
+#                 if len(tdata) > 0:
+#                     akey = tdata.columns.values
+#                     ins_data = []
+#                     for index, row in tdata.iterrows():
+#                         monv = {}
+#                         for x in akey:
+#                             if x == 'code':
+#                                 monv[x] = row[x][3:]
+#                             elif x == 'date':
+#                                 monv[x] = row[x]
+#                             else:
+#                                 try:
+#                                     monv[x] = float(row[x])
+#                                 except:
+#                                     monv[x] = 0.0
+#     #                                 print("conv error", code, row)
 
-                        monv['_id'] = '%s-%s' % (row['code'], row['date'])
-                        monv['date_stamp'] = mongo.dateStr2stamp('2022-12-12')
-    #                     print(monv)
-                        ins_data.append(monv)
-                    #     print(row.tolist())
-                    mongo.save(tblName, ins_data)
-        else:
-            for ldate in range(1990,2025):
-                tdata = fetch_k_day(code, p_begin_day = ldate)
-                if len(tdata) > 0:
-                    akey = tdata.columns.values
-                    ins_data = []
-                    for index, row in tdata.iterrows():
-                        monv = {}
-                        for x in akey:
-                            if x == 'code':
-                                monv[x] = row[x][3:]
-                            elif x == 'date':
-                                monv[x] = row[x]
-                            else:
-                                try:
-                                    monv[x] = float(row[x])
-                                except:
-                                    monv[x] = 0.0
-    #                                 print("conv error", code, row)
+#                         monv['_id'] = '%s-%s' % (row['code'], row['date'])
+#                         monv['date_stamp'] = mongo.dateStr2stamp(row['date'])
+#     #                     print(monv)
+#                         ins_data.append(monv)
+#                     #     print(row.tolist())
+#                     mongo.save(tblName, ins_data)
+#         else:
+#             for ldate in range(1990,2025):
+#                 tdata = fetch_k_day(code, p_begin_day = ldate)
+#                 if len(tdata) > 0:
+#                     akey = tdata.columns.values
+#                     ins_data = []
+#                     for index, row in tdata.iterrows():
+#                         monv = {}
+#                         for x in akey:
+#                             if x == 'code':
+#                                 monv[x] = row[x][3:]
+#                             elif x == 'date':
+#                                 monv[x] = row[x]
+#                             else:
+#                                 try:
+#                                     monv[x] = float(row[x])
+#                                 except:
+#                                     monv[x] = 0.0
+#     #                                 print("conv error", code, row)
 
-                        monv['_id'] = '%s-%s' % (row['code'], row['date'])
-                        monv['date_stamp'] = mongo.dateStr2stamp('2022-12-12')
-    #                     print(monv)
-                        ins_data.append(monv)
-                    #     print(row.tolist())
-                    mongo.save(tblName, ins_data)
+#                         monv['_id'] = '%s-%s' % (row['code'], row['date'])
+#                         monv['date_stamp'] = mongo.dateStr2stamp('2022-12-12')
+#     #                     print(monv)
+#                         ins_data.append(monv)
+#                     #     print(row.tolist())
+#                     mongo.save(tblName, ins_data)
             
 
 #                 print("ok", len(tdata))
