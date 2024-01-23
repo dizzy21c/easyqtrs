@@ -2,6 +2,32 @@
 #include "talib_ext.h"
 
 //=============================================================================
+// 私有方法部分
+//=============================================================================
+float get_minD(int nCount, float *pHigh, float *pLow)
+{
+  float t_max = 0.0;
+  for (int i = 0; i < nCount; i++)
+  {
+      float diff = pHigh[i] - pLow[i];
+      if (diff > t_max) {
+          t_max = diff;
+      }
+  }
+  //return t_max;
+  float chk = t_max / 100;
+  if (chk >= 1.0 ) {
+      return 1.0;
+  } else if (chk < 1.0 && chk >= 0.38) {
+      return 0.1;
+//  } else if (chk < 1 && chk > 0.3) {
+//      return 0.1;
+  } else {
+      return 0.01;
+  }
+}
+
+//=============================================================================
 // 数学函数部分
 //=============================================================================
 void sum_list(int nCount, float *pOut, float *pData, int *pNum)
@@ -450,9 +476,9 @@ void calcuSin(int *npChip, Dict *dpOutChip, DictNode *dpOutChipList, int nCount,
 }
 
 void calcuChip(Dict *dpOutChip, DictNode *dpOutChipList, int nCount, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float* pfTurnover, float minD) {
-    if (minD < 0) {
-        minD = 0.01;
-    }
+//     if (minD < 0) {
+//         minD = 0.01;
+//     }
     int npChip = 0;
     int flag = 1;
     int AC = 1;
@@ -640,12 +666,12 @@ void dma(int nCount, float *pfOut, float *pfIn, float *pfWeight)
 }
 
 void cost(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, int percent, float *pfTurnover) {
-    float minD = 0.01;
+    float minD = get_minD(nCount, pfHigh, pfLow);
     cost_list(nCount, pfOut, pfHigh, pfLow, pfVol, pfAmount, percent, minD, pfTurnover);
 }
 
 void winner(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *pfVol, float *pfAmount, float *pfClose, float *pfTurnover) {
-    float minD = 0.01;
+    float minD = get_minD(nCount, pfHigh, pfLow);
 //    printf("hello, %f", pfTurnover);
     winner_list(nCount, pfOut, pfHigh, pfLow, pfVol, pfAmount, pfClose, minD, pfTurnover);
 }
