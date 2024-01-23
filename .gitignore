@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.xls
+*.swp
 
 # C extensions
 *.so
@@ -9,9 +11,12 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+ta-lib/
+vipdoc/
 develop-eggs/
 dist/
 downloads/
+logs/
 eggs/
 .eggs/
 lib/
