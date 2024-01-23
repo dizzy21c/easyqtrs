@@ -66,18 +66,6 @@ codeDatas = []
 #     EventType = 'data-sina'
 #     PushInterval = 10
 #     config = "stock_list"
-def get_next_date(calcDate):
-    cDate = datetime.datetime.strptime(calcDate, '%Y-%m-%d')
-    cDate = cDate + datetime.timedelta(1)
-    if cDate.weekday() < 5:
-        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
-    else: # if calcDate.weekday() == 5:
-        cDate = cDate + datetime.timedelta(2)
-        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
-#     else: # calcDate.weekday() == 6:
-#         cDate = cDate + datetime.timedelta(2)
-#         return datetime.datetime.strftime(cDate,'%Y-%m-%d')
-
 def tdx_func_mp_all(func_names, sort_types, codelist, calcType='', backTime=''):
 #     构造backTimeList
     calcDate = backTime

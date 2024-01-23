@@ -279,17 +279,6 @@ def get_data(codelist, st_start, st_end, type):
     print(end_t, 'get_data spent:{}'.format((end_t - start_t)))
 
     # return data_day
-def get_next_date(calcDate):
-    cDate = datetime.datetime.strptime(calcDate, '%Y-%m-%d')
-    cDate = cDate + datetime.timedelta(1)
-    if cDate.weekday() < 5:
-        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
-    else: # if calcDate.weekday() == 5:
-        cDate = cDate + datetime.timedelta(2)
-        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
-#     else: # calcDate.weekday() == 6:
-#         cDate = cDate + datetime.timedelta(2)
-#         return datetime.datetime.strftime(cDate,'%Y-%m-%d')
 
 def tdx_func_mp_all(func_names, sort_types, codelist, calc_type='', backTime=''):
 #     构造backTimeList

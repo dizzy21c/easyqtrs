@@ -24,15 +24,6 @@ BFQ = '3'
 
 databuf_mongo = Manager().dict()
 
-def get_next_date(calcDate):
-    cDate = datetime.datetime.strptime(calcDate, '%Y-%m-%d')
-    cDate = cDate + datetime.timedelta(1)
-    if cDate.weekday() < 5:
-        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
-    else: # if calcDate.weekday() == 5:
-        cDate = cDate + datetime.timedelta(2)
-        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
-
 def fetch_k_day(code="sh.600606", p_begin_day: str = '2023-01-01', p_end_day: str = None):
     # 详细指标参数，参见“历史行情指标参数”章节；“分钟线”参数与“日线”参数不同。“分钟线”不包含指数。
     # 分钟线指标：date,time,code,open,high,low,close,volume,amount,adjustflag,turn,pctChg,

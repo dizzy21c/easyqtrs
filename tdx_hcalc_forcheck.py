@@ -66,18 +66,6 @@ codeDatas = []
 #     EventType = 'data-sina'
 #     PushInterval = 10
 #     config = "stock_list"
-def get_next_date(calcDate):
-    cDate = datetime.datetime.strptime(calcDate, '%Y-%m-%d')
-    cDate = cDate + datetime.timedelta(1)
-    if cDate.weekday() < 5:
-        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
-    else: # if calcDate.weekday() == 5:
-        cDate = cDate + datetime.timedelta(2)
-        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
-#     else: # calcDate.weekday() == 6:
-#         cDate = cDate + datetime.timedelta(2)
-#         return datetime.datetime.strftime(cDate,'%Y-%m-%d')
-
 def get_stock_codes(config="stock_list"):
     if 1 in data_codes:
         return data_codes[1]

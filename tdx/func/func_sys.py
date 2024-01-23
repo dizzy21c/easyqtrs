@@ -3,6 +3,17 @@ import math
 import pandas as pd
 from easyquant import MongoIo
 # from multiprocessing import Process, Pool, cpu_count, Manager
+def get_next_date(calcDate):
+    cDate = datetime.datetime.strptime(calcDate, '%Y-%m-%d')
+    cDate = cDate + datetime.timedelta(1)
+    if cDate.weekday() < 5:
+        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
+    elif cDate.weekday() == 5:
+        cDate = cDate + datetime.timedelta(2)
+        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
+    elif cDate.weekday() == 6:
+        cDate = cDate + datetime.timedelta(1)
+        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
 
 def getCodeList(dataType = 'position'):
     if dataType == 'all':
