@@ -114,7 +114,7 @@ def day_select(codelist, back_time, func_names):
     while calcDate <= endDate:
         backDates.append(calcDate)
         calcDate = get_next_date(calcDate)
-#     print('calc-date = %s' % backDates)
+    print('calc-date = %s' % backDates)
 
     func_nameA = func_names #func_names.split(',')
     pool_size = cpu_count()
@@ -150,11 +150,12 @@ def do_day_select(key, codelist, backDates, func_nameA):
             continue
         if not func_check_data(tempData):
             continue
-        print("begin-calc-data: code = ", code, key)
+#         print("begin-calc-data: code = ", code, key)
         for func_calc in func_nameA:
             try:
                 result1 = eval(func_calc)(tempData)[0]
                 result1 = result1[result1==1]
+#                 print("result1=", result1)
                 for x in result1.index:
                     out_t = datetime.datetime.strftime(x[0],'%Y-%m-%d')
                     outKey = '%s-%s' % (code, out_t)
@@ -178,14 +179,18 @@ def do_day_select(key, codelist, backDates, func_nameA):
         ins_datas = []
         if len(all_calc_data) > 0:
             for x in all_calc_data:
-                if all_calc_data[x]['score'] > 1:
+                if all_calc_data[x]['score'] > 1: ###### for test one
                     ins_datas.append(all_calc_data[x])
-#             print(all_calc_data)
+#             print("today", today, len(ins_datas))
             if len(ins_datas) > 0:
                 try:
                     mongo_mp.save('day-select-%s' % today, ins_datas)
                 except:
-                    print("ins mongo error, code:", code)
+                    try:
+                        for sing_data in ins_datas:
+                            mongo_mp.save('day-select-%s' % today, sing_data)
+                    except:
+                        print("ins mongo error, code:", code)
     print("do_day_select-end", key)
     # start_t = datetime.datetime.now()
     # print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
@@ -232,7 +237,7 @@ def main_param(argv):
     return st_begin, st_end, func, sort, calcType, back_time, all_data
 
 if __name__ == '__main__':
-    print('example: python tdx_hcalc_day_select.py -b 2020-01-01 -e 2024-01-20 -r 2024-01-02')
+    print('example: python tdx_hcalc_day_select.py -b 2019-01-01 -e 2024-12-31 -r 2024-01-02')
     start_t = datetime.datetime.now()
     print("begin-time:", start_t)
     
@@ -256,7 +261,7 @@ if __name__ == '__main__':
     func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX', 'tdx_LDX', 'tdx_TLBXXF']
     func5 = ['tdx_WYZ17MA', 'tdx_qszn', 'tdx_cci', 'tdx_ngqd', 'tdx_bollxg_start', 'tdx_DQS', 'tdx_JZZCJSD', 'tdx_CDYTDXG', 'tdx_BOLL_EMA', 'tdx_hjy']
     func6 = ['tdx_LLXGSQ', 'tdx_WWDGWY', 'tdx_WWXGSQ', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_SHYM', 'tdx_QIANFU', 'tdx_HW168QS']
-#     func7 = ['tdx_sxzsl']
+    func7 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM'] ##
 
 #     func = 'tdx_czhs, tdx_hm, tdx_dhmcl, tdx_sxp, tdx_hmdr, tdx_tpcqpz, tdx_jmmm, tdx_nmddl, tdx_swl, tdx_yaogu \
 #     , tdx_niugu, tdx_buerfameng, tdx_yaoguqidong, tdx_ygqd_test, tdx_blftxg, tdx_cptlzt, tdx_yhzc, tdx_yhzc_macd, tdx_yhzc_kdj, tdx_sxp_yhzc \
@@ -265,7 +270,8 @@ if __name__ == '__main__':
 #     , tdx_WYZ17MA, tdx_qszn, tdx_cci, tdx_ngqd, tdx_bollxg_start, tdx_DQS, tdx_JZZCJSD, tdx_CDYTDXG, tdx_BOLL_EMA, tdx_hjy \
 #     , tdx_LLXGSQ, tdx_WWDGWY, tdx_WWXGSQ, tdx_WWYHXG, tdx_WWMACDJC, tdx_SHYM, tdx_QIANFU, tdx_HW168QS \
 #     '
-    func = func1 + func2 + func3 + func4 + func5 + func6 # + func7
+    func = func1 + func2 + func3 + func4 + func5 + func6 + func7
+#     func = ['tdx_DQS']
 #     get_data(codelist, st_start, st_end)
     day_select(codelist, back_time, func)
     end_t = datetime.datetime.now()
