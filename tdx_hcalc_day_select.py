@@ -278,7 +278,9 @@ if __name__ == '__main__':
 #     st_start = '1990-01-01'
     all_data = 'all'
     codelist = getCodeList(all_data)
-    codelist = codelist[:40] ## for test
+    if calcType == 'T':
+        codelist = codelist[:40] ## for test
+        calcType = 'S'
     # func = "test"
     # 1, 读取数据（多进程，读入缓冲）
     # 开始日期
