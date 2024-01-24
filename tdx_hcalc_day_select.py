@@ -73,7 +73,8 @@ def do_get_data_mp(key, codelist, st_start, st_end):
 #     databuf_mongo = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end)
 #     print("code-list", codelist[:100])
     databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end, qfq=1)
-
+#     print("do_get_data_mp", key, len(databuf_mongo[key]))
+    
 def get_data(codelist, st_start, st_end):
     start_t = datetime.datetime.now()
     print("begin-get_data:", start_t)
@@ -101,7 +102,7 @@ def get_data(codelist, st_start, st_end):
     print(end_t, 'get_data spent:{}'.format((end_t - start_t)))
     # return data_day
 
-def day_select(codelist, back_time, func_names):
+def day_select(codelist, back_time, func_names, calcType):
     start_t = datetime.datetime.now()
     print("begin-day_select:", back_time)
     # ETF/股票代码，如果选股以后：我们假设有这些代码
@@ -110,11 +111,14 @@ def day_select(codelist, back_time, func_names):
     calcDate = back_time
     backDates = [calcDate]
     endDate = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
-    calcDate = get_next_date(calcDate)
-    while calcDate <= endDate:
-        backDates.append(calcDate)
+    if calcDate == 'all':
+        pass
+    else:
         calcDate = get_next_date(calcDate)
-    print('calc-date = %s' % backDates)
+        while calcDate <= endDate:
+            backDates.append(calcDate)
+            calcDate = get_next_date(calcDate)
+    #     print('calc-date = %s' % backDates)
 
     func_nameA = func_names #func_names.split(',')
     pool_size = cpu_count()
@@ -124,13 +128,7 @@ def day_select(codelist, back_time, func_names):
     pool = Pool(cpu_count())
 #     for i in [0,1,2,3,5,6,7]:
     for i in code_dict.keys():
-        # if i < pool_size - 1:
-            # code_dict[str(i)] = codelist[i* subcode_len : (i+1) * subcode_len]
-        # else:
-            # code_dict[str(i)] = codelist[i * subcode_len:]
-        pool.apply_async(do_day_select, args=(i, code_dict[i], backDates, func_nameA))
-#         for calcDate in backDates:
-#             print(i, calcDate, func_nameA)
+        pool.apply_async(do_day_select, args=(i, code_dict[i], backDates, func_nameA, calcType))
     pool.close()
     pool.join()
 
@@ -140,57 +138,75 @@ def day_select(codelist, back_time, func_names):
     print(end_t, 'day_select spent:{}'.format((end_t - start_t)))
     # return data_day
 
-def do_day_select(key, codelist, backDates, func_nameA):
+def do_day_select(key, codelist, backDates, func_nameA, calcType):
     today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
     mongo_mp = MongoIo()
     for code in codelist:
         all_calc_data = {}
         tempData = databuf_mongo[key].query("code=='%s'" % code)
         if len(tempData) <= 0:
+            print("data size is 0", code, key)
             continue
         if not func_check_data(tempData):
+            print("check data size is 0", code, key)
             continue
-#         print("begin-calc-data: code = ", code, key)
+        print("begin-calc-data: code = ", code, key)
         for func_calc in func_nameA:
+            result1 = pd.DataFrame()
             try:
                 result1 = eval(func_calc)(tempData)[0]
                 result1 = result1[result1==1]
-#                 print("result1=", result1)
-                for x in result1.index:
-                    out_t = datetime.datetime.strftime(x[0],'%Y-%m-%d')
-                    outKey = '%s-%s' % (code, out_t)
-                    if out_t in backDates:
-                        if outKey in all_calc_data:
-                            all_calc_data[outKey]['func'].append(func_calc)
-                            all_calc_data[outKey]['score'] += 1
-    #                         print("key1", outKey, all_calc_data[outKey])
-                        else:
-                            all_calc_data[outKey] = {'_id':outKey, 'code': code, 'date': out_t, 'price': tempData.loc[x].close, 'func': [func_calc], 'score': 1}
-            except:
-                print("calc-error, key=%s, code=%s, func=%s" % ( key, code, func_calc) )
+            except Exception as e:
+                print("calc-error, key=%s, code=%s, func=%s" % ( key, code, func_calc) ,e)
                 continue
-#                         print("key2", key, all_calc_data[key])
-
-#                     print("out", code, func_calc, out_t, tempData.loc[x].close)
-#             if len(result1) > 0:
-#                 print(func_calc, result1.head(1))
+#             print("result1=", result1)
+            for x in result1.index:
+                out_t = datetime.datetime.strftime(x[0],'%Y-%m-%d')
+                date_stamp = time.mktime(time.strptime(out_t, '%Y-%m-%d'))
+                if calcType == 'S':
+                    ins_func = func_calc
+                    outKey = '%s-%s-%s' % (code, out_t, func_calc)
+                else:
+                    ins_func = [func_calc]
+                    outKey = '%s-%s' % (code, out_t)
+#                 try:
+                close = 0
+                try:
+                    close = tempData.loc[x].close
+                except Exception as e:
+#                     print("calc2-error, key=%s, code=%s, func=%s" % ( key, code, func_calc) ,e)
+                    ## stop stock
+                    continue
+                if 'all' == backDates[0] or out_t in backDates:
+                    pass
+                else:
+                    continue
+                if outKey in all_calc_data:
+                    all_calc_data[outKey]['func'].append(func_calc)
+                    all_calc_data[outKey]['score'] += 1
+                else:
+                    all_calc_data[outKey] = {'_id':outKey, 'code': code, 'date': out_t, 'price': tempData.loc[x].close, 'func': ins_func, 'score':1, 'date_stamp':date_stamp}
             
-#     slip  = 1
         ins_datas = []
+        if calcType == 'S':
+            tblName = 'day-select-ff'
+        else:
+            tblName = 'day-select-%s' % today
         if len(all_calc_data) > 0:
             for x in all_calc_data:
-                if all_calc_data[x]['score'] > 1: ###### for test one
-                    ins_datas.append(all_calc_data[x])
+#                 if all_calc_data[x]['score'] > 1: ###### for test one
+                ins_datas.append(all_calc_data[x])
 #             print("today", today, len(ins_datas))
             if len(ins_datas) > 0:
                 try:
-                    mongo_mp.save('day-select-%s' % today, ins_datas)
-                except:
+                    mongo_mp.save(tblName, ins_datas)
+                except Exception as e:
+                    print("ins mongo error, code:", code, e)
                     try:
                         for sing_data in ins_datas:
-                            mongo_mp.save('day-select-%s' % today, sing_data)
-                    except:
-                        print("ins mongo error, code:", code)
+                            mongo_mp.save(tblName, sing_data)
+                    except Exception as e2:
+                        print("ins mongo error, code:", code, e2)
     print("do_day_select-end", key)
     # start_t = datetime.datetime.now()
     # print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
@@ -243,16 +259,31 @@ if __name__ == '__main__':
     
     # st_start, st_end, func = main_param(sys.argv)
     # print("input", st_start, st_end, func)
-    st_start, st_end, func, sort, calcType, back_time, all_data = main_param(sys.argv)
-            
+    st_start, st_end, funcInput, sort, calcType, back_time, all_data = main_param(sys.argv)
+    today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
+    if st_start == '':
+        st_start = "%s-01-01" % (int(today[:4]) - 3)
+    if st_end == '':
+        st_end =get_next_date(today)
+    if calcType == '':
+        calcType = 'S'
+        
+    if back_time == '': ## all = all-day
+        back_time = today
+    print("calc paras: st-start= %s, st-end= %s, back_time = %s, func = %s, calc = %s" % (st_start, st_end, back_time, funcInput, calcType))
+    
+#     print('date-stamp', time.mktime(time.strptime(back_time, '%Y-%m-%d')))
+#     exit(0)
+    
 #     st_start = '1990-01-01'
     all_data = 'all'
     codelist = getCodeList(all_data)
+    codelist = codelist[:40] ## for test
     # func = "test"
-    print("input st-start= %s, st-end= %s, back_time = %s" % (st_start, st_end, back_time))
     # 1, 读取数据（多进程，读入缓冲）
     # 开始日期
-    data_day = get_data(codelist, st_start, st_end)
+    # data_day = 
+    get_data(codelist, st_start, st_end)
     # print(data_day)
     # indices_rsrsT = tdx_func(data_day)
     func1 = ['tdx_czhs', 'tdx_hm', 'tdx_dhmcl', 'tdx_sxp', 'tdx_hmdr', 'tdx_tpcqpz', 'tdx_jmmm', 'tdx_nmddl', 'tdx_swl', 'tdx_yaogu']
@@ -261,7 +292,7 @@ if __name__ == '__main__':
     func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX', 'tdx_LDX', 'tdx_TLBXXF']
     func5 = ['tdx_WYZ17MA', 'tdx_qszn', 'tdx_cci', 'tdx_ngqd', 'tdx_bollxg_start', 'tdx_DQS', 'tdx_JZZCJSD', 'tdx_CDYTDXG', 'tdx_BOLL_EMA', 'tdx_hjy']
     func6 = ['tdx_LLXGSQ', 'tdx_WWDGWY', 'tdx_WWXGSQ', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_SHYM', 'tdx_QIANFU', 'tdx_HW168QS']
-    func7 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM'] ##
+    func7 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM', 'tdx_21PPQTP'] ##
 
 #     func = 'tdx_czhs, tdx_hm, tdx_dhmcl, tdx_sxp, tdx_hmdr, tdx_tpcqpz, tdx_jmmm, tdx_nmddl, tdx_swl, tdx_yaogu \
 #     , tdx_niugu, tdx_buerfameng, tdx_yaoguqidong, tdx_ygqd_test, tdx_blftxg, tdx_cptlzt, tdx_yhzc, tdx_yhzc_macd, tdx_yhzc_kdj, tdx_sxp_yhzc \
@@ -270,10 +301,13 @@ if __name__ == '__main__':
 #     , tdx_WYZ17MA, tdx_qszn, tdx_cci, tdx_ngqd, tdx_bollxg_start, tdx_DQS, tdx_JZZCJSD, tdx_CDYTDXG, tdx_BOLL_EMA, tdx_hjy \
 #     , tdx_LLXGSQ, tdx_WWDGWY, tdx_WWXGSQ, tdx_WWYHXG, tdx_WWMACDJC, tdx_SHYM, tdx_QIANFU, tdx_HW168QS \
 #     '
-    func = func1 + func2 + func3 + func4 + func5 + func6 + func7
-#     func = ['tdx_DQS']
-#     get_data(codelist, st_start, st_end)
-    day_select(codelist, back_time, func)
+    if funcInput == '':
+        func = func1 + func2 + func3 + func4 + func5 + func6 + func7
+    else:
+        func = funcInput.split(',')
+    
+#     func = func[:2] ## for test
+    day_select(codelist, back_time, func, calcType)
     end_t = datetime.datetime.now()
     print(end_t, '__name__ spent:{}'.format((end_t - start_t)))
 #     print("__name__", len(dataR))

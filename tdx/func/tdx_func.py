@@ -28,7 +28,23 @@ def pytdx_last_data(data, now_price = None):
     if now_price is None:
         now_price = realdata['now']
     return new_df(data, realdata, now_price)
-    
+
+def check_now_positino(codeA, dataA):
+    for code in codeA:
+        data = dataA.query(" code == '%s'" % code)
+        if len(data) == 0:
+            continue
+        data = pytdx_last_data(data)
+        close = data.close.iloc[-1]
+        lastPct = (data.close.iloc[-2] - data.close.iloc[-3]) /data.close.iloc[-3] * 100
+        nowPct = (close - data.close.iloc[-2]) /data.close.iloc[-2] * 100
+        volPct = (data.volume.iloc[-1] - data.volume.iloc[-2]) /data.volume.iloc[-2]
+        high = data.high.iloc[-1]
+        low = data.low.iloc[-1]
+#         print(code, nowPct)
+        print("{}-nowP:{:+.2f}, lastP:{:+.2f}, now:{:.2f}, high:{:.2f}, low:{:.2f}, volP:{:+.2f}".format(code, nowPct, lastPct, close, high, low, volPct))
+#         print("%s-nowP:%6.2f, lastP:%6.2f, volP:%6.2, now:%6.2, high:%6.2, low:%6.2" % (code, nowPct, lastPct, volPct, close, high, low))
+
 def func_check_data(data, N = 40):
     ## 不是新股
     if len(data) < N:
@@ -3470,110 +3486,6 @@ def tdx_QIANFU(data, refFlg = False):
     else:
         return XGN, -1, False
 
-def tdx_21PPQTP(data, refFlg = False):
-    ## 21PP强突破
-    # def tdx_21PPQTP(data, refFlg = False):
-    VOL = data.volume
-    CLOSE = data.close
-    HIGH = data.high
-    LOW = data.low
-    OPEN = data.open
-    AMOUNT = data.amount
-
-    XA_1 = MA(CLOSE,2)
-    XA_2 = SMA(CLOSE,8.5,1)
-    XA_3 = SMA(CLOSE,13.5,1)
-    XA_4 = SMA(CLOSE,3,1)
-    XA_5 = SMA(CLOSE,8,1)
-    XA_6 = IFAND4(XA_1>REF(XA_1,1), XA_4>REF(XA_4,1), XA_2>REF(XA_2,1), XA_3>REF(XA_3,1), True, False)
-    XA_7 = IFAND3(XA_1>XA_4, XA_4>XA_2, XA_2>XA_3, True, False)
-    XA_8 = IFAND(XA_7, XA_6, True, False)
-    XA_9 = 20
-    XA_10 = 30
-    XA_11 = 100*((HHV(HIGH,XA_9)-LLV(LOW,XA_9))/LLV(LOW,XA_9))<XA_10
-    XA_12 = VOL>MA(VOL,20)
-    XA_13 = (COST(data, 85)+COST(data, 15))/2
-    XA_14 = (COST(data, 75)+COST(data, 25))/2
-    XA_15 = (COST(data, 65)+COST(data, 35))/2
-    XA_16 = (COST(data, 55)+COST(data, 45))/2
-    XA_17 = (COST(data, 95)+COST(data, 5))/2
-    XA_18 = (XA_13+XA_14+XA_15+XA_16+XA_17)/5
-    XA_19 = (COST(data, 90)+COST(data, 10))/2
-    XA_20 = (COST(data, 80)+COST(data, 20))/2
-    XA_21 = (COST(data, 70)+COST(data, 30))/2
-    XA_22 = (COST(data, 60)+COST(data, 40))/2
-    XA_23 = COST(data, 50)
-    XA_24 = (XA_19+XA_20+XA_21+XA_22+XA_23)/5
-    XA_25 = (XA_18+XA_24)/2
-#     XA_26 = SMA(XA_25,2,1)
-    XA_27 = (XA_25/REF(XA_25,1)-1)*1000
-    XA_28 = EMA(XA_27,10)
-    XA_29 = (HIGH+LOW+CLOSE)/3
-    XA_30 = (XA_29-MA(XA_29,30))/(0.015*AVEDEV(XA_29,30))
-    XA_31 = IFAND5(XA_8, XA_11, XA_12, XA_28>0, XA_30>170, True, False)
-    XA_32 = (3*CLOSE+HIGH+LOW+OPEN)/6
-    XA_33 = (8*XA_32+7*REF(XA_32,1)+6*REF(XA_32,2)+5*REF(XA_32,3)+4*REF(XA_32,4)+3*REF(XA_32,5)+2*REF(XA_32,6)+REF(XA_32,8))/36
-    XA_34 = IFAND3(VOL==HHV(VOL,10), VOL>2*REF(VOL,1), CLOSE>XA_33, True, False)
-    XA_35 = FILTER(XA_34,5)
-    XA_36 = IF(IFAND(BARSLAST(XA_35)==1, CLOSE>REF(HIGH,1), True, False), 1, IF(IFAND(BARSLAST(XA_35)==2, CLOSE>REF(HIGH,2), True, False),1, IF( IFAND(BARSLAST(XA_35)==3, CLOSE>REF(HIGH,3), True, False), 1, 0)))
-    XA_37 = XA_36==1
-    # XA_38 = IF(BARSLAST(XA_35)=1 AND CLOSE>REF(LOW,1), 1, IF(BARSLAST(XA_35)=2 AND CLOSE>REF(LOW,2), 1, IF(BARSLAST(XA_35)=3 AND CLOSE>REF(LOW,3), 1, 0)))
-    XA_38 = IF(IFAND(BARSLAST(XA_35)==1, CLOSE>REF(LOW,1), True, False), 1, IF(IFAND(BARSLAST(XA_35)==2, CLOSE>REF(LOW,2), True, False),1, IF( IFAND(BARSLAST(XA_35)==3, CLOSE>REF(LOW,3), True, False), 1, 0)))
-    XA_39 = XA_38==1
-    XA_40 = IFAND(XA_39, XA_37, True, False)
-    XA_41 = FILTER(XA_40,3)
-    XA_42 = EMA(WINNER(data, CLOSE)*70,3)
-    XA_43 = EMA((WINNER(data, CLOSE*1.1)-WINNER(data, CLOSE*0.9))*80,3)
-    XA_44 = XA_43/(XA_42+XA_43)*100
-    XA_45 = XA_42/(XA_42+XA_43)*100
-    XA_46 = MA(XA_42+XA_43,13)
-    XA_47 = BARSLAST(IFAND(XA_44<90, REF(XA_44,1)>90, True, False))
-    XA_48 = EMA(XA_44,89)
-    XA_49 = EMA(XA_45,89)
-    XA_50 = (XA_45-XA_49).astype(int) #INTPART
-    XA_51 = EMA(XA_44,8)
-    XA_52 = IF(XA_45-REF(XA_45,1)>XA_44-REF(XA_44,1),1,0)
-    XA_53 = (XA_44).astype(int) #INTPART
-    XA_54 = (XA_45).astype(int) #INTPART
-    XA_55 = 2
-    XA_56 = 5
-    XA_57 = 34
-    XA_58 = 100*(CLOSE-LLV(LOW,XA_57))/(HHV(CLOSE,XA_57)-LLV(LOW,XA_57))
-    XA_59 = AMOUNT/CLOSE/(HHV(AMOUNT,XA_57)/HHV(CLOSE,XA_57))
-    XA_60 = IF(XA_59>1,1,XA_59)*100
-    XA_61 = 3*SMA((CLOSE-LLV(LOW,27))/(HHV(HIGH,27)-LLV(LOW,27))*100,5,1)-2*SMA(SMA((CLOSE-LLV(LOW,27))/(HHV(HIGH,27)-LLV(LOW,27))*100,5,1),3,1)
-    XA_62 = LLV(XA_61,3)
-    XA_63 = MA(XA_61,12)
-    XA_64 = 1
-    XA_65 = LLV(LOW,10)
-    XA_66 = HHV(HIGH,25)
-    XA_67 = EMA((CLOSE-XA_65)/(XA_66-XA_65)*4,4)*XA_64*30
-    XA_68 = IFAND3(XA_60>=90, XA_58>80, XA_63<90, True, False)
-    XA_69 = BARSLAST(CROSS(XA_67,XA_63))<40
-    XA_70 = CLOSE/REF(CLOSE,1)>1+0.01*XA_55
-    XA_71 = IFAND4(XA_68, XA_69, IFOR(CLOSE>OPEN, CLOSE/REF(CLOSE,1)>1.05, True, False), XA_70, True, False)
-    XA_72 = IF(CROSS(XA_54,XA_53),120,0)
-    XA_73 = IFAND4(MA(CLOSE,5)>REF(MA(CLOSE,5),1), MA(CLOSE,10)>REF(MA(CLOSE,10),1), MA(CLOSE,35)>REF(MA(CLOSE,35),1), MA(CLOSE,60)>REF(MA(CLOSE,60),1), True, False)
-    XA_74 = IFAND6(XA_72, XA_71, XA_73, MA(CLOSE,5)>MA(CLOSE,10), MA(CLOSE,10)>MA(CLOSE,35), MA(CLOSE,35)>MA(CLOSE,60), True, False)
-    XA_75 = IFOR(XA_41, XA_74, True, False)
-    XA_76 = IFAND(XA_31, XA_75, True, False)
-    XA_77 = IFAND3(XA_31, CROSS(XA_28,0), COUNT(XA_75,5)>0, True, False)
-    XA_78 = (HIGH+LOW+OPEN+CLOSE+REF(HIGH,1)+REF(LOW,1)+REF(OPEN,1)+REF(CLOSE,1)+REF(HIGH,2)+REF(LOW,2)+REF(OPEN,2)+REF(CLOSE,2)+REF(HIGH,3)+REF(LOW,3)+REF(OPEN,3)+REF(CLOSE,3)+REF(HIGH,4)+REF(LOW,4)+REF(OPEN,4)+REF(CLOSE,4)+REF(HIGH,5)+REF(LOW,5)+REF(OPEN,5)+REF(CLOSE,5)+REF(HIGH,6)+REF(LOW,6)+REF(OPEN,6)+REF(CLOSE,6)+REF(HIGH,7)+REF(LOW,7)+REF(OPEN,7)+REF(CLOSE,7)+REF(HIGH,8)+REF(LOW,8)+REF(OPEN,8)+REF(CLOSE,8)+REF(HIGH,9)+REF(LOW,9)+REF(OPEN,9)+REF(CLOSE,9)+REF(HIGH,10)+REF(LOW,10)+REF(OPEN,10)+REF(CLOSE,10))/46
-    XA_79 = MA(XA_78,60)
-    XA_80 = XA_79+2*STD(XA_78,60)
-    XA_81 = XA_79+1.7*STD(XA_78,60)
-    XA_82 = MIN(XA_80,XA_81)
-    XA_83 = (((HIGH+LOW)/2+(CLOSE+OPEN))/3+5*HIGH)/6
-    XA_84 = EMA(XA_83,270)+(1+180/270)*STD(XA_83,180)
-    XA_85 = EMA(XA_83,270)-(1+180/270)*STD(XA_83,180)
-    XA_86 = (XA_84/XA_85-1)*100
-    XA_87 = IFAND(XA_86<56, IFOR3(COUNT(CLOSE>XA_82,10)>=7, COUNT(CROSS(CLOSE,XA_82),5)>=1, COUNT(CROSS(CLOSE,XA_85),15)>=1, True, False), True, False)
-    XG = IFAND(XA_87, IFOR(XA_76, XA_77, True, False), 1, 0)
-    if refFlg:
-        return REF(XG, 1), -1, False
-    else:
-        return XG, -1, False
-
 def tdx_HW168QS(data, refFlg = False):
     # 皓文168趋势
     VOL = data.volume
@@ -3785,6 +3697,62 @@ def tdx_JGCM(data, refFlg = False):
     XA_1 = REF(LOW,1)
     XA_2 = SMA(ABS(LOW-XA_1),3,1)/SMA(MAX(LOW-XA_1,0),3,1)*100
     XA_3 = EMA(IF(CLOSE*1.2,XA_2*10,XA_2/10),3)
+    XA_3_1 = EMA(XA_2*10,3)
+    XA_4 = LLV(LOW,38)
+    XA_5 = HHV(XA_3,38)
+    XA_6 = IF(LLV(LOW,90),1,0)
+    XA_7 = EMA(IF(LOW<=XA_4,(XA_3+XA_5*2)/2,0),3)/618*XA_6
+    # 机构筹码:STICKLINE(XA_7,0,XA_7,6,1),COLORRED
+    # 超大户筹码 = EMA(IF(LOW<=LLV(LOW,30),SMA(ABS(LOW-REF(LOW,1)),30,1)/SMA(MAX(LOW-REF(LOW,1),0),30,1),0),3)*10#,STICK
+    XA_8 = MA(CLOSE,5)
+    XA_9 = MA(CLOSE,10)
+    XA_10 = MA(CLOSE,30)
+    XA_11 = MA(CLOSE,60)
+    XA_12 = SUM(CLOSE*VOL*100,4)/SUM(VOL*100,4)
+    # XA_13 = INTPART(XA_12*100)/100
+    # XA_14 = SUM(CLOSE*VOL*100,7)/SUM(VOL*100,7)
+    # XA_15 = INTPART(XA_14*100)/100
+    XA_16 = SUM(CLOSE*VOL*100,28)/SUM(VOL*100,28)
+    XA_17 = (XA_16.fillna(0)*100).astype(int)/100 #INTPART(XA_16*100)/100
+    XA_18 = EMA(CLOSE,5)-EMA(CLOSE,10)
+    XA_19 = EMA(XA_18,9)
+    XA_20 = 0-100*(HHV(CLOSE,5)-CLOSE)/(HHV(CLOSE,5)-LLV(LOW,5))+100
+    XA_21 = 0-100*(HHV(CLOSE,10)-CLOSE)/(HHV(CLOSE,10)-LLV(LOW,10))+100
+    XA_22 = 0-100*(HHV(CLOSE,20)-CLOSE)/(HHV(CLOSE,20)-LLV(LOW,20))+100
+    XA_23 = 0-100*(HHV(CLOSE,30)-CLOSE)/(HHV(CLOSE,30)-LLV(LOW,30))+100
+    XA_24 = REF(XA_19,1)
+    XA_25 = XA_19
+    XA_26 = XA_25-XA_24
+    XA_27 = REF(XA_18,1)
+    XA_28 = XA_18
+    XA_29 = XA_28-XA_27
+    XA_30 = OPEN
+    XA_31 = CLOSE
+    FXSM1 = IFAND4(XA_30<=XA_8 , XA_30<=XA_9 , XA_30<=XA_10 , XA_31>=XA_8 , True, False)
+    FXSM2 = IFAND3(XA_31>=XA_17 , XA_26>0 , XA_29>0, True, False)
+#     发现私募入场 = IFAND(FXSM1, FXSM2,1,0) #,COLORGREEN,LINETHICK2
+    XG = IFAND(FXSM1, FXSM2,1,0) #,COLORGREEN,LINETHICK2
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+    
+def tdx_JGCM_QSRQ(data, refFlg = False):
+    # {机构筹码}
+    VOL = data.volume
+    CLOSE = data.close
+    C = data.close
+    HIGH = data.high
+    H = data.high
+    LOW = data.low
+    L = data.low
+    OPEN = data.open
+    O = data.open
+    AMOUNT = data.amount
+
+    XA_1 = REF(LOW,1)
+    XA_2 = SMA(ABS(LOW-XA_1),3,1)/SMA(MAX(LOW-XA_1,0),3,1)*100
+    XA_3 = EMA(IF(CLOSE*1.2,XA_2*10,XA_2/10),3)
     XA_4 = LLV(LOW,38)
     XA_5 = HHV(XA_3,38)
     XA_6 = IF(LLV(LOW,90),1,0)
@@ -3940,14 +3908,14 @@ def tdx_21PPQTP(data, refFlg = False):
     OPEN = data.open
     AMOUNT = data.amount
 
-    # XA_1 = MA(CLOSE,2)
-    # XA_2 = SMA(CLOSE,8.5,1)
-    # XA_3 = SMA(CLOSE,13.5,1)
-    # XA_4 = SMA(CLOSE,3,1)
-    # XA_5 = SMA(CLOSE,8,1)
-    # XA_6 = IFAND4(XA_1>REF(XA_1,1), XA_4>REF(XA_4,1), XA_2>REF(XA_2,1), XA_3>REF(XA_3,1), True, False)
-    # XA_7 = IFAND3(XA_1>XA_4, XA_4>XA_2, XA_2>XA_3, True, False)
-    #XA_8 = IFAND(XA_7, XA_6, True, False)
+    XA_1 = MA(CLOSE,2)
+    XA_2 = SMA(CLOSE,8.5,1)
+    XA_3 = SMA(CLOSE,13.5,1)
+    XA_4 = SMA(CLOSE,3,1)
+    XA_5 = SMA(CLOSE,8,1)
+    XA_6 = IFAND4(XA_1>REF(XA_1,1), XA_4>REF(XA_4,1), XA_2>REF(XA_2,1), XA_3>REF(XA_3,1), True, False)
+    XA_7 = IFAND3(XA_1>XA_4, XA_4>XA_2, XA_2>XA_3, True, False)
+    XA_8 = IFAND(XA_7, XA_6, True, False)
     XA_9 = 20
     XA_10 = 30
     XA_11 = 100*((HHV(HIGH,XA_9)-LLV(LOW,XA_9))/LLV(LOW,XA_9))<XA_10
