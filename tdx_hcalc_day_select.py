@@ -104,21 +104,23 @@ def get_data(codelist, st_start, st_end):
 
 def day_select(codelist, back_time, func_names):
     start_t = datetime.datetime.now()
-    print("begin-day_select:", back_time)
+#     print("begin-day_select:", back_time)
     # ETF/股票代码，如果选股以后：我们假设有这些代码
     # codelist = ['600380','600822']
 
-    calcDate = back_time
-    backDates = [calcDate]
-    endDate = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
-    if calcDate == 'all':
-        pass
-    else:
+    if back_time == 'all':
+        backDates = []
+    else: ## back_time = '2020-12-31'; back_time = '2020-12-31,2022-12-31'
+        calcDate = back_time[:10]
+        endDate = back_time[11:]
+        if len(endDate) == 0:
+            endDate = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
+        backDates = [calcDate]
         calcDate = get_next_date(calcDate)
         while calcDate <= endDate:
             backDates.append(calcDate)
             calcDate = get_next_date(calcDate)
-    #     print('calc-date = %s' % backDates)
+    print('calc-date = %s' % backDates)
 
     func_nameA = func_names #func_names.split(',')
     pool_size = cpu_count()
@@ -162,9 +164,20 @@ def do_day_select(key, codelist, backDates, func_nameA):
 #             print("result1=", result1)
             for x in result1.index:
                 out_t = datetime.datetime.strftime(x[0],'%Y-%m-%d')
+                if code == '000028':
+                    print('step1', out_t, valid_calc_date, backDates)
+                if out_t < valid_calc_date:
+#                     print("out-t:", out_t, len(backDates))
+                    continue
+                if len(backDates) > 0 and out_t not in backDates:
+                    continue
+                if code == '000028':
+                    print('step2', out_t, valid_calc_date)
                 date_stamp = time.mktime(time.strptime(out_t, '%Y-%m-%d'))
                 ins_func = func_calc
                 outKey = '%s-%s-%s' % (code, out_t, func_calc)
+                if code == '000028':
+                    print('step3', out_t, valid_calc_date, outKey)
 #                 try:
                 close = 0
                 pct = 0
@@ -178,14 +191,14 @@ def do_day_select(key, codelist, backDates, func_nameA):
                     high = tempData.loc[x].high
                     low = tempData.loc[x].low
                 except Exception as e:
-                    print("calc2-error, key=%s, code=%s, func=%s" % ( key, code, func_calc) ,e)
+#                     print("calc2-error, key=%s, code=%s, func=%s" % ( key, code, func_calc) ,e)
                     ## stop stock
                     continue
                 nClose = 0 ## next close
                 nOpen = 0
-                noPct = 99999
-                n2oPct = 99999 ## next next open Pct
-                n2cPct = 99999 ## next next close Pct
+                noPct = -99999
+                n2oPct = -99999 ## next next open Pct
+                n2cPct = -99999 ## next next close Pct
                 try:
                     tmpNext = tempData.loc[x:].head(3)
                     if len(tmpNext) > 1:
@@ -200,19 +213,18 @@ def do_day_select(key, codelist, backDates, func_nameA):
                             n2oPct = (tempO - nOpen) / nOpen * 100
                             n2cPct = (tempC - nOpen) / nOpen * 100
                 except Exception as e:
-#                     pass
-                    print("calc3-error, key=%s, code=%s, func=%s" % ( key, code, func_calc) ,e)
+#                     print("calc3-error, key=%s, code=%s, func=%s" % ( key, code, func_calc) ,e)
+                    pass
                     ## stop stock
 #                     continue
-                if 'all' == backDates[0] or out_t in backDates:
-                    pass
-                else:
-                    continue
 #                 if outKey in all_calc_data:
 #                     all_calc_data[outKey]['func'].append(func_calc)
 #                     all_calc_data[outKey]['score'] += 1
 #                 else:
                 all_calc_data[outKey] = {'_id':outKey, 'code': code, 'date': out_t, 'close': close, 'pct': pct, 'open': tOpen, 'high':high, 'low': low, 'nClose': nClose, 'nOpen': nOpen, 'noPct': noPct, 'n2oPct': n2oPct, 'n2cPct': n2cPct, 'func': ins_func, 'score':1, 'date_stamp':date_stamp}
+                if code == '000028':
+                    print('step3', out_t, valid_calc_date, all_calc_data[outKey])
+
         ins_datas = []
         tblName = 'day-select-ff'
         if len(all_calc_data) > 0:
@@ -224,12 +236,15 @@ def do_day_select(key, codelist, backDates, func_nameA):
                 try:
                     mongo_mp.save(tblName, ins_datas)
                 except Exception as e:
-#                     print("ins mongo error1, code:", code, e)
-                    try:
-                        for sing_data in ins_datas:
+#                     print("ins mongo batch data error, code:", code)
+                    for sing_data in ins_datas:
+                        try:
                             mongo_mp.save(tblName, sing_data)
-                    except Exception as e2:
-                        print("ins mongo error2, code:", code, e2)
+                        except Exception as e2:
+#                             if code == '000002':
+#                                 print("ins mongo sing data error, code:", code, sing_data['_id'])
+                            mongo_mp.remove(tblName, sing_data['_id'])
+                            mongo_mp.save(tblName, sing_data)
     print("do_day_select-end", key)
     # start_t = datetime.datetime.now()
     # print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
@@ -277,11 +292,15 @@ def main_param(argv):
 
 if __name__ == '__main__':
     print('example: \ndefault\tpython tdx_hcalc_day_select.py')
-    print('test\tpython tdx_hcalc_day_select.py -b 1990-01-01 -e 2010-12-31 -r all -t T/S -f tdx_swl')
-    print('single\tpython tdx_hcalc_day_select.py -b 2019-01-01 -e 2024-12-31 -r 2024-01-02')
+    print('test\tpython tdx_hcalc_day_select.py -b 1990-01-01 -e 2010-12-31 -r all -t T -f tdx_swl')
+    print('single\tpython tdx_hcalc_day_select.py -b 2019-01-01 -e 2024-12-31 -r 2020-12-12,2022-12-12')
+    print('single\tpython tdx_hcalc_day_select.py -b 2019-01-01 -e 2024-12-31 -r all-B2020-12-13')
     start_t = datetime.datetime.now()
     print("begin-time:", start_t)
     
+    ## hist1
+    ## tdx_hcalc_day_select.py -b 1990-01-01 -e 2012-12-31 -r all
+    ## python tdx_hcalc_day_select.py -b 2012-01-01 -e 2020-12-31 -r allV2012-12-28
     # st_start, st_end, func = main_param(sys.argv)
     # print("input", st_start, st_end, func)
     st_start, st_end, funcInput, sort, calcType, back_time, all_data = main_param(sys.argv)
@@ -290,19 +309,26 @@ if __name__ == '__main__':
         st_start = "%s-01-01" % (int(today[:4]) - 3)
     if st_end == '':
         st_end =get_next_date(today)
-        
+    else:
+        st_end =get_next_date(st_end, 2)
+    
+    valid_calc_date = '1990-01-01'
     if back_time == '': ## all = all-date
-        back_time = today
-    print("calc paras: st-start= %s, st-end= %s, back_time = %s, func = %s" % (st_start, st_end, back_time, funcInput))
+        back_time = get_prev_date(today, 3) # "%s,%s" % (get_prev_date(today,2), today)
+    elif back_time[:5] == 'all-B
+        valid_calc_date = back_time[5:]
+        back_time = 'all'
+#         back_time = get_prev_date(st_end,3) # "%s,%s" % (get_prev_date(today,2), today)
+    print("calc paras: st-start= %s, st-end= %s, back_time = %s, func = %s, valid-date=%s" % (st_start, st_end, back_time, funcInput, valid_calc_date))
     
 #     print('date-stamp', time.mktime(time.strptime(back_time, '%Y-%m-%d')))
-#     exit(0)
+    exit(0)
     
 #     st_start = '1990-01-01'
     all_data = 'all'
     codelist = getCodeList(all_data)
     if calcType == 'T':
-        codelist = codelist[:16] ## for test
+        codelist = codelist[:32] ## for test
     # func = "test"
     # 1, 读取数据（多进程，读入缓冲）
     # 开始日期
@@ -313,7 +339,7 @@ if __name__ == '__main__':
     func1 = ['tdx_czhs', 'tdx_hm', 'tdx_dhmcl', 'tdx_sxp', 'tdx_hmdr', 'tdx_tpcqpz', 'tdx_jmmm', 'tdx_nmddl', 'tdx_swl', 'tdx_yaogu']
     func2 = ['tdx_niugu', 'tdx_buerfameng', 'tdx_yaoguqidong', 'tdx_ygqd_test', 'tdx_blftxg', 'tdx_cptlzt', 'tdx_yhzc', 'tdx_yhzc_macd', 'tdx_yhzc_kdj']
     func3 = ['tdx_bjmm', 'tdx_bjmm_jzmd', 'tdx_bjmm_yhzc', 'tdx_bjmm_new', 'tdx_sxjm', 'tdx_ltt', 'tdx_blft', 'tdx_cci_xg', 'tdx_WYZBUY', 'tdx_bdzh']
-    func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX', 'tdx_LDX', 'tdx_TLBXXF']
+    func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX', 'tdx_TLBXXF'] ##, 'tdx_LDX'
     func5 = ['tdx_WYZ17MA', 'tdx_qszn', 'tdx_cci', 'tdx_ngqd', 'tdx_bollxg_start', 'tdx_DQS', 'tdx_JZZCJSD', 'tdx_CDYTDXG', 'tdx_BOLL_EMA', 'tdx_hjy']
     func6 = ['tdx_LLXGSQ', 'tdx_WWDGWY', 'tdx_WWXGSQ', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_SHYM', 'tdx_QIANFU', 'tdx_HW168QS']
     func7 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM', 'tdx_21PPQTP'] ##
@@ -335,3 +361,26 @@ if __name__ == '__main__':
     end_t = datetime.datetime.now()
     print(end_t, '__name__ spent:{}'.format((end_t - start_t)))
 #     print("__name__", len(dataR))
+
+
+
+
+
+# db.getCollection('day-select-ff').aggregate(
+# [
+#         {
+#             $match:{
+#                 'date_stamp':{$eq: 1706025600.0}
+#             }
+#         },
+#         {
+#             $group:{
+#                 _id: "$code",
+#                 sum_score: {$sum: '$score'}
+#             }
+#         }
+#         ,{
+#             $sort:{sum_score:-1}
+#         }
+# ]
+# )

@@ -35,14 +35,19 @@ def check_now_positino(codeA, dataA):
         if len(data) == 0:
             continue
         data = pytdx_last_data(data)
+        vma5 = REF(MA(data.volume, 5),1)
+        vma10 = REF(MA(data.volume, 10),1)
         close = data.close.iloc[-1]
         lastPct = (data.close.iloc[-2] - data.close.iloc[-3]) /data.close.iloc[-3] * 100
         nowPct = (close - data.close.iloc[-2]) /data.close.iloc[-2] * 100
-        volPct = (data.volume.iloc[-1] - data.volume.iloc[-2]) /data.volume.iloc[-2]
+        volPct = (data.volume.iloc[-1]) /data.volume.iloc[-2]
+        vol5Pct = (data.volume.iloc[-1]) /vma5.iloc[-2]
+        vol10Pct = (data.volume.iloc[-1]) /vma10.iloc[-2]
+        nopen = data.open.iloc[-1]
         high = data.high.iloc[-1]
         low = data.low.iloc[-1]
 #         print(code, nowPct)
-        print("{}-nowP:{:+.2f}, lastP:{:+.2f}, now:{:.2f}, high:{:.2f}, low:{:.2f}, volP:{:+.2f}".format(code, nowPct, lastPct, close, high, low, volPct))
+        print("{}-nowP:{:+.2f}, lastP:{:+.2f}, now:{:.2f}, open:{:.2f}, high:{:.2f}, low:{:.2f}, volP:{:+.2f}, volP5:{:+.2f}, volP10:{:+.2f}".format(code, nowPct, lastPct, close, nopen, high, low, volPct, vol5Pct,  vol10Pct))
 #         print("%s-nowP:%6.2f, lastP:%6.2f, volP:%6.2, now:%6.2, high:%6.2, low:%6.2" % (code, nowPct, lastPct, volPct, close, high, low))
 
 def func_check_data(data, N = 40):
@@ -733,7 +738,7 @@ def tdx_ygqd_test(data):
     底部构成1 = IFAND5(V8 >= 1, V9 >= 1, CLOSE > OPEN, REF(CLOSE, 1) > REF(OPEN, 1), VOL > REF(VOL, 1), True, False)
     # 底部构成 = IFAND3(底部构成1, ABV > M2, MMB > MMC, 1, 0)
     ROC = (CLOSE - REF(CLOSE, 12)) / REF(CLOSE, 12) * 100
-    HSL = 100 * TURNOVER
+    HSL = TURNOVER # *100
     冲击波 = IFAND(CROSS(ROC, 16), HSL > 3.5, 1, 0)
     macdV=MACD(data.close)
     CONF1 = IFOR(CROSS(macdV.DIFF, macdV.DEA), IFAND(macdV.MACD > 0, macdV.MACD < 0.5, True, False), True, False)
@@ -2277,7 +2282,7 @@ def tdx_sl5560(data, refFlg = False):
     LOW = data.low
     OPEN = data.open
     AMOUNT = data.amount
-    TURNOVER = data.turn
+    TURNOVER = data.turn/100
     # {森林55560}
     X_1 = SUM(IF(CLOSE>REF(CLOSE,1),VOL,IF(CLOSE<REF(CLOSE,1),0-VOL,0)),0)
     X_2 = SUMBARS(VOL,CAPITAL(data))
@@ -2424,14 +2429,16 @@ def tdx_TLBXX(data):
     return XG, -1, False
 
 def tdx_LDX(data):
-    #流动性
+    #流动性 ***** 意义不明
     CLOSE = data.close
     OPEN = data.open
     AM = data.amount
+    VOL = data.volume
+    TURNOVER = data.turn
     V1=ABS(np.log(CLOSE) - np.log(OPEN))
     V2=ABS(np.log(CLOSE) - np.log(REF(CLOSE,1)))
     #V3=MA(MAX(V1,V2)/AM * CAPITAL(data),10)
-    V3=MA(MAX(V1,V2)/AM * 10000000000,10)
+    V3=MA(MAX(V1,V2)/AM * (VOL * 100 / TURNOVER),10)
     V4=REF(V3,1)
     return V4, -1, False
 
@@ -3343,6 +3350,25 @@ def tdx_WWMACDJC(data, refFlg = False):
     DEA9=EMA(DIF9,MID9)
 
     XGM2 = CROSS(DIF9,DEA9)
+    XGN = IF(XGM2, 1, 0)
+    if refFlg:
+        return REF(XGN, 1), -1, False
+    else:
+        return XGN, -1, False
+##无为KDJJC
+def tdx_WWKDJJC(data, refFlg = False):
+    CLOSE = data.close
+    LOW = data.low
+    HIGH = data.high
+
+    N=55
+    M1=13
+    M2=8
+    RSV=(CLOSE-LLV(LOW,N))/(HHV(HIGH,N)-LLV(LOW,N))*100
+    K=SMA(RSV,M1,1)
+    D=SMA(K,M2,1);
+
+    XGM2 = CROSS(K,D)
     XGN = IF(XGM2, 1, 0)
     if refFlg:
         return REF(XGN, 1), -1, False

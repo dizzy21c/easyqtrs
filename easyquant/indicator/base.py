@@ -129,13 +129,13 @@ def SMA(Series, N, M=1):
     length = len(Series)
     # 跳过X中前面几个 nan 值
     while i < length:
-        if np.isnan(Series.iloc[i]):
+        if np.isnan(Series.iloc[i-1]):
             ret.append(0)
             i += 1
         else:
             break
     if i < length:
-        preY = Series.iloc[i]  # Y'
+        preY = Series.iloc[i-1]  # Y'
     else:
         preY = None
     ret.append(preY)
@@ -152,45 +152,82 @@ def DIFF(Series, N=1):
 
 
 def HHV(Series, NS):
-    if isinstance(NS, pd.Series):
-        ncount = len(NS)
-        tf_p = c_float * ncount
-        np_OUT = tf_p(0)
-        na_Series = np.asarray(Series).astype(np.float32)
-        na_NS = np.asarray(NS).astype(np.int32)
+    if isinstance(NS, int):
+        NS = [ NS for i in range(len(Series))]
+        for i in range(0,NS[0]):
+            NS[i] = i
+        NS = pd.Series(NS)
 
-        np_S = cast(na_Series.ctypes.data, POINTER(c_float))
-        np_N = cast(na_NS.ctypes.data, POINTER(c_int))
+    ncount = len(NS)
+    tf_p = c_float * ncount
+    np_OUT = tf_p(0)
+    na_Series = np.asarray(Series).astype(np.float32)
+    na_NS = np.asarray(NS).astype(np.int32)
 
-        lib.hhv(ncount, np_OUT, np_S, np_N)
+    np_S = cast(na_Series.ctypes.data, POINTER(c_float))
+    np_N = cast(na_NS.ctypes.data, POINTER(c_int))
 
-        return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Series.index)
+    lib.hhv(ncount, np_OUT, np_S, np_N)
 
-    if NS == 0:
-        return Series
+    return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Series.index)
 
-    return talib.MAX(Series, NS) #pd.Series(Series).rolling(NS).max()
+#     if isinstance(NS, pd.Series):
+#         ncount = len(NS)
+#         tf_p = c_float * ncount
+#         np_OUT = tf_p(0)
+#         na_Series = np.asarray(Series).astype(np.float32)
+#         na_NS = np.asarray(NS).astype(np.int32)
+
+#         np_S = cast(na_Series.ctypes.data, POINTER(c_float))
+#         np_N = cast(na_NS.ctypes.data, POINTER(c_int))
+
+#         lib.hhv(ncount, np_OUT, np_S, np_N)
+
+#         return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Series.index)
+
+#     if NS == 0:
+#         return Series
+
+#     return talib.MAX(Series, NS) #pd.Series(Series).rolling(NS).max()
 
 
 def LLV(Series, NS):
-    if isinstance(NS, pd.Series):
-        ncount = len(NS)
-        tf_p = c_float * ncount
-        np_OUT = tf_p(0)
-        na_Series = np.asarray(Series).astype(np.float32)
-        na_NS = np.asarray(NS).astype(np.int32)
+    if isinstance(NS, int):
+        NS = [ NS for i in range(len(Series))]
+        for i in range(0,NS[0]):
+            NS[i] = i
+        NS = pd.Series(NS)
+    ncount = len(NS)
+    tf_p = c_float * ncount
+    np_OUT = tf_p(0)
+    na_Series = np.asarray(Series).astype(np.float32)
+    na_NS = np.asarray(NS).astype(np.int32)
 
-        np_S = cast(na_Series.ctypes.data, POINTER(c_float))
-        np_N = cast(na_NS.ctypes.data, POINTER(c_int))
+    np_S = cast(na_Series.ctypes.data, POINTER(c_float))
+    np_N = cast(na_NS.ctypes.data, POINTER(c_int))
 
-        lib.llv(ncount, np_OUT, np_S, np_N)
+    lib.llv(ncount, np_OUT, np_S, np_N)
 
-        return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Series.index)
+    return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Series.index)
 
-    if NS == 0:
-        return Series
+#     if isinstance(NS, pd.Series):
+#         ncount = len(NS)
+#         tf_p = c_float * ncount
+#         np_OUT = tf_p(0)
+#         na_Series = np.asarray(Series).astype(np.float32)
+#         na_NS = np.asarray(NS).astype(np.int32)
 
-    return talib.MIN(Series, NS) #pd.Series(Series).rolling(NS).min()
+#         np_S = cast(na_Series.ctypes.data, POINTER(c_float))
+#         np_N = cast(na_NS.ctypes.data, POINTER(c_int))
+
+#         lib.llv(ncount, np_OUT, np_S, np_N)
+
+#         return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Series.index)
+
+#     if NS == 0:
+#         return Series
+
+#     return talib.MIN(Series, NS) #pd.Series(Series).rolling(NS).min()
 
 def SUMS(Series, NS):
     ncount = len(Series)

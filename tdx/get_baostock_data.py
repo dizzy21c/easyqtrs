@@ -24,6 +24,57 @@ BFQ = '3'
 
 databuf_mongo = Manager().dict()
 
+def save_from_tdx_file(strPathFileName, today):
+    mongo_mpd = MongoIo()
+    codeDf = pd.read_csv(strPathFileName, sep='\t')##, encoding='iso-8859-1')
+    ins_data = []
+#     today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
+    # print(today)
+    for idx in codeDf.index:
+        monv = {}
+        code = 'none'
+        try:
+            monv['date'] = today
+            tdf = codeDf.iloc[idx]
+    #         print(codeDf.iloc[idx])
+            code = tdf['代码'][2:8]
+            if code[:1] == '6':
+                monv['_id'] = 'sh.%s-%s' % (code, today)
+            else:
+                monv['_id'] = 'sz.%s-%s' % (code, today)
+            monv['code'] = code
+            monv['open'] = float(tdf['今开'])
+            monv['high'] = float(tdf['最高'])
+            monv['low'] = float(tdf['最低'])
+            monv['close'] = float(tdf['现价'])
+            monv['volume'] = float(tdf['总量'])*100
+            monv['amount'] = float(tdf['总金额'])*10000
+            monv['adjustflag'] = 2
+            monv['turn'] = float(tdf['换手%'])
+            monv['pctChg'] = float(tdf['涨幅%'])
+            try:
+                monv['peTTM'] = float(tdf['市盈(动)'])
+            except:
+                monv['peTTM'] = -1.0
+            monv['pbMRQ'] = 0
+            monv['psTTM'] = 0
+            monv['pcfNcfTTM'] = 0
+            monv['pcfNcfTTM'] = 0
+            monv['date_stamp'] = mongo_mpd.dateStr2stamp(today)
+    #         print(monv)
+            try:
+                mongo_mpd.save('stock_day_qfq', monv)
+            except:
+    #             print("save mongo error", code)
+                pass
+        except:
+            print("convert error", code)
+    #         pass
+    #         break
+    #     if idx == 1:
+    #     break
+
+
 def fetch_k_day(code="sh.600606", p_begin_day: str = '2023-01-01', p_end_day: str = None):
     # 详细指标参数，参见“历史行情指标参数”章节；“分钟线”参数与“日线”参数不同。“分钟线”不包含指数。
     # 分钟线指标：date,time,code,open,high,low,close,volume,amount,adjustflag,turn,pctChg,
@@ -246,82 +297,33 @@ def do_get_data_mp(key, codelist, st_start, st_end):
         
     
 if __name__ == '__main__':
+    print("python get_baostock_data.py tdx /root/全部Ａ股20240125.xls")
+    print("python get_baostock_data.py baosdk")
     # 登陆系统
     tblName = 'stock_day_qfq'
-    lg = bs.login()
-    # 显示登陆返回信息
-    if lg.error_code != '0':
-        print('login respond error_code:' + lg.error_code)
-        print('login respond  error_msg:' + lg.error_msg)
-        sys.exit()
-    
-    codelist = getCodeList('all')
-    get_data(codelist)
-    update_data(codelist)
-#     for x in codelist:
-#         if '0' == x[:1]:
-#             code = "sz.%s" % x
-# #             print("sz.%s" % x)
-#         else:
-#             code = "sz.%s" % x
-#         codeData = testData.query(" code == '%s'" % x)
-#         if len(codeData) == 0:
-#             for ldate in range(1990,2025):
-#                 p_begin_day = '%s-01-01' % ldate
-#                 p_end_day = '%s-12-31' % ldate
-#                 tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
-#                 if len(tdata) > 0:
-#                     akey = tdata.columns.values
-#                     ins_data = []
-#                     for index, row in tdata.iterrows():
-#                         monv = {}
-#                         for x in akey:
-#                             if x == 'code':
-#                                 monv[x] = row[x][3:]
-#                             elif x == 'date':
-#                                 monv[x] = row[x]
-#                             else:
-#                                 try:
-#                                     monv[x] = float(row[x])
-#                                 except:
-#                                     monv[x] = 0.0
-#     #                                 print("conv error", code, row)
+    print('argv', sys.argv)
+#     exit(0)
+    if sys.argv[1] == 'tdx':
+#     '/root/全部Ａ股20240125.xls'
+        fileName = sys.argv[2]
+#         print("chk", today, sys.argv[2])
+        today=fileName.split('/')[-1]
+        try:
+            today = datetime.datetime.strptime(fileName.split('/')[-1][4:12],'%Y%m%d')
+            today = datetime.datetime.strftime(today,'%Y-%m-%d')
+        except:
+            today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
+#         print('today', today)
+#         exit(0)
+        save_from_tdx_file(sys.argv[2], today) #'/root/全部Ａ股20240125.xls')##, encoding='iso-8859-1')
+    elif sys.argv[1] == 'baosdk':
+        lg = bs.login()
+        # 显示登陆返回信息
+        if lg.error_code != '0':
+            print('login respond error_code:' + lg.error_code)
+            print('login respond  error_msg:' + lg.error_msg)
+            sys.exit()
 
-#                         monv['_id'] = '%s-%s' % (row['code'], row['date'])
-#                         monv['date_stamp'] = mongo.dateStr2stamp(row['date'])
-#     #                     print(monv)
-#                         ins_data.append(monv)
-#                     #     print(row.tolist())
-#                     mongo.save(tblName, ins_data)
-#         else:
-#             for ldate in range(1990,2025):
-#                 tdata = fetch_k_day(code, p_begin_day = ldate)
-#                 if len(tdata) > 0:
-#                     akey = tdata.columns.values
-#                     ins_data = []
-#                     for index, row in tdata.iterrows():
-#                         monv = {}
-#                         for x in akey:
-#                             if x == 'code':
-#                                 monv[x] = row[x][3:]
-#                             elif x == 'date':
-#                                 monv[x] = row[x]
-#                             else:
-#                                 try:
-#                                     monv[x] = float(row[x])
-#                                 except:
-#                                     monv[x] = 0.0
-#     #                                 print("conv error", code, row)
-
-#                         monv['_id'] = '%s-%s' % (row['code'], row['date'])
-#                         monv['date_stamp'] = mongo.dateStr2stamp('2022-12-12')
-#     #                     print(monv)
-#                         ins_data.append(monv)
-#                     #     print(row.tolist())
-#                     mongo.save(tblName, ins_data)
-            
-
-#                 print("ok", len(tdata))
-#                 print(len(tdata))
-#                 break
-#     print(codelist[:10])
+        codelist = getCodeList('all')
+        get_data(codelist)
+        update_data(codelist)

@@ -338,6 +338,11 @@ class MongoIo(object):
                 [data]
             )
 
+    def remove(self, table, keyId):
+        dataChk = self.db[table].find_one({'_id': keyId})
+        if dataChk is not None and len(dataChk) > 0:
+            self.db[table].remove(dataChk)
+
     def save_data_min(self, data, idx=0):
         if idx == 0:
             pass

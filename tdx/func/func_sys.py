@@ -4,9 +4,9 @@ import pandas as pd
 from easyquant import MongoIo
 import datetime
 # from multiprocessing import Process, Pool, cpu_count, Manager
-def get_next_date(calcDate):
+def get_next_date(calcDate, step = 1):
     cDate = datetime.datetime.strptime(calcDate, '%Y-%m-%d')
-    cDate = cDate + datetime.timedelta(1)
+    cDate = cDate + datetime.timedelta(abs(step))
     if cDate.weekday() < 5:
         return datetime.datetime.strftime(cDate,'%Y-%m-%d')
     elif cDate.weekday() == 5:
@@ -14,6 +14,18 @@ def get_next_date(calcDate):
         return datetime.datetime.strftime(cDate,'%Y-%m-%d')
     elif cDate.weekday() == 6:
         cDate = cDate + datetime.timedelta(1)
+        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
+
+def get_prev_date(calcDate, step = 1):
+    cDate = datetime.datetime.strptime(calcDate, '%Y-%m-%d')
+    cDate = cDate + datetime.timedelta(-1 * abs(step))
+    if cDate.weekday() < 5:
+        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
+    elif cDate.weekday() == 5:
+        cDate = cDate + datetime.timedelta(-1)
+        return datetime.datetime.strftime(cDate,'%Y-%m-%d')
+    elif cDate.weekday() == 6:
+        cDate = cDate + datetime.timedelta(-2)
         return datetime.datetime.strftime(cDate,'%Y-%m-%d')
 
 def getCodeList(dataType = 'position'):
