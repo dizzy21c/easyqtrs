@@ -164,20 +164,20 @@ def do_day_select(key, codelist, backDates, func_nameA):
 #             print("result1=", result1)
             for x in result1.index:
                 out_t = datetime.datetime.strftime(x[0],'%Y-%m-%d')
-                if code == '000028':
-                    print('step1', out_t, valid_calc_date, backDates)
+#                 if code == '000028':
+#                     print('step1', out_t, valid_calc_date, backDates)
                 if out_t < valid_calc_date:
 #                     print("out-t:", out_t, len(backDates))
                     continue
                 if len(backDates) > 0 and out_t not in backDates:
                     continue
-                if code == '000028':
-                    print('step2', out_t, valid_calc_date)
+#                 if code == '000028':
+#                     print('step2', out_t, valid_calc_date)
                 date_stamp = time.mktime(time.strptime(out_t, '%Y-%m-%d'))
                 ins_func = func_calc
                 outKey = '%s-%s-%s' % (code, out_t, func_calc)
-                if code == '000028':
-                    print('step3', out_t, valid_calc_date, outKey)
+#                 if code == '000028':
+#                     print('step3', out_t, valid_calc_date, outKey)
 #                 try:
                 close = 0
                 pct = 0
@@ -300,7 +300,8 @@ if __name__ == '__main__':
     
     ## hist1
     ## tdx_hcalc_day_select.py -b 1990-01-01 -e 2012-12-31 -r all
-    ## python tdx_hcalc_day_select.py -b 2012-01-01 -e 2020-12-31 -r allV2012-12-28
+    ## python tdx_hcalc_day_select.py -b 2010-01-01 -e 2020-12-31 -r all-B2012-12-20
+    ## -f tdx_sl5560,tdx_ygqd_test
     # st_start, st_end, func = main_param(sys.argv)
     # print("input", st_start, st_end, func)
     st_start, st_end, funcInput, sort, calcType, back_time, all_data = main_param(sys.argv)
@@ -315,14 +316,14 @@ if __name__ == '__main__':
     valid_calc_date = '1990-01-01'
     if back_time == '': ## all = all-date
         back_time = get_prev_date(today, 3) # "%s,%s" % (get_prev_date(today,2), today)
-    elif back_time[:5] == 'all-B
+    elif back_time[:5] == 'all-B':
         valid_calc_date = back_time[5:]
         back_time = 'all'
 #         back_time = get_prev_date(st_end,3) # "%s,%s" % (get_prev_date(today,2), today)
     print("calc paras: st-start= %s, st-end= %s, back_time = %s, func = %s, valid-date=%s" % (st_start, st_end, back_time, funcInput, valid_calc_date))
     
 #     print('date-stamp', time.mktime(time.strptime(back_time, '%Y-%m-%d')))
-    exit(0)
+#     exit(0)
     
 #     st_start = '1990-01-01'
     all_data = 'all'
@@ -341,7 +342,7 @@ if __name__ == '__main__':
     func3 = ['tdx_bjmm', 'tdx_bjmm_jzmd', 'tdx_bjmm_yhzc', 'tdx_bjmm_new', 'tdx_sxjm', 'tdx_ltt', 'tdx_blft', 'tdx_cci_xg', 'tdx_WYZBUY', 'tdx_bdzh']
     func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX', 'tdx_TLBXXF'] ##, 'tdx_LDX'
     func5 = ['tdx_WYZ17MA', 'tdx_qszn', 'tdx_cci', 'tdx_ngqd', 'tdx_bollxg_start', 'tdx_DQS', 'tdx_JZZCJSD', 'tdx_CDYTDXG', 'tdx_BOLL_EMA', 'tdx_hjy']
-    func6 = ['tdx_LLXGSQ', 'tdx_WWDGWY', 'tdx_WWXGSQ', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_SHYM', 'tdx_QIANFU', 'tdx_HW168QS']
+    func6 = ['tdx_LLXGSQ', 'tdx_WWDGWY', 'tdx_WWXGSQ', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_WWKDJJC', 'tdx_SHYM', 'tdx_QIANFU', 'tdx_HW168QS']
     func7 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM', 'tdx_21PPQTP'] ##
 
 #     func = 'tdx_czhs, tdx_hm, tdx_dhmcl, tdx_sxp, tdx_hmdr, tdx_tpcqpz, tdx_jmmm, tdx_nmddl, tdx_swl, tdx_yaogu \
@@ -376,6 +377,7 @@ if __name__ == '__main__':
 #         {
 #             $group:{
 #                 _id: "$code",
+#                 date: {$first: '$date'},
 #                 sum_score: {$sum: '$score'}
 #             }
 #         }

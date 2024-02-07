@@ -88,7 +88,7 @@ void barslast_list(int nCount, int *pOut, float *pData, int pNum)
 
 void ema_list(int nCount, float *pOut, float *pData, int pNum)
 {
-  int factor = 0;
+//   int factor = 0;
   float yest = 0.0;
   
   for (int i = 0; i < nCount; i++)
@@ -97,12 +97,12 @@ void ema_list(int nCount, float *pOut, float *pData, int pNum)
         pOut[i] = pData[i];
     } else { //if (i >= 1) {
         yest = pOut[i - 1];
-        if ( i < pNum) {
-            factor = i + 1;
-        } else {
-            factor = pNum;
-        }
-        pOut[i] = 2.0 / ( factor + 1) * (pData[i] - yest) + yest;
+//         if ( i < pNum) {
+//             factor = i + 1;
+//         } else {
+//         factor = pNum;
+//         }
+        pOut[i] = 2.0 / ( pNum + 1) * (pData[i] - yest) + yest;
     }
   }
 }
