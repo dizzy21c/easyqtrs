@@ -690,6 +690,32 @@ class MongoIo(object):
             data['diff-oprice'] = (openPrice - data['buy-price'] * tax_comm) / data['buy-price'] * 100
             self.db[table].replace_one({'_id': data['_id']}, data, True)
 
+    def day_select_data(self, tblName, calcDate, calcNum = 5, calcFun = None):
+        if calcFun is None:
+            match_cond = { 'sum_score': { '$gte': calcNum } }
+        else:
+            if type(calcFun) is str:
+                calcFun = [calcFun]
+            match_cond = { 'sum_score': { '$gte': calcNum }, 'funcs': {'$in': calcFun }}
+
+        query_cond = [
+            { '$match':{                'date':{'$eq': calcDate}            }},
+            {            '$group':{
+                    '_id': "$code",
+                    'funcs': {'$push': '$func'},
+                    'sum_score': {'$sum': '$score'}
+            }}
+            ,{ '$match': match_cond }
+            ,{ '$sort':{'sum_score':-1} }
+        ]
+        cursor = self.db[tblName].aggregate(query_cond)
+        res = pd.DataFrame([item for item in cursor])
+        codes=[]
+        for idx, row in res.iterrows():
+        # #     print(x['_id'])
+            codes.append(row['_id'])
+        return codes
+
 def main():
     md = MongoIo()
     df = md.get_stock_day('000025', qfq=1)

@@ -44,6 +44,7 @@ data_codes = Manager().dict()
 data_buf_day = Manager().dict()
 data_buf_stockinfo = Manager().dict()
 databuf_mongo = Manager().dict()
+databuf_mongo_cond = Manager().dict()
 # databuf_mongo_r = Manager().dict()
 # databuf_mongo_rn = Manager().dict()
 # data_buf_5min = Manager().dict()
@@ -59,7 +60,7 @@ codeDatas = []
 
 # dataSrc = DataSinaEngine()
 
-def do_get_data_mp(key, codelist, st_start, st_end):
+def do_get_data_mp(key, codelist, st_start, st_end, pre_check_func):
 #     print("do_get_data_mp", key)
     mongo_mp = MongoIo()
 #     slip  = 1
@@ -74,8 +75,33 @@ def do_get_data_mp(key, codelist, st_start, st_end):
 #     print("code-list", codelist[:100])
     databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end, qfq=1)
 #     print("do_get_data_mp", key, len(databuf_mongo[key]))
+    result = pd.DataFrame()
+    if len(databuf_mongo[key]) > 0:
+        for code in codelist:
+            try:
+                tempData = databuf_mongo[key].query("code=='%s'" % code)
+                if len(tempData) == 0:
+                    continue
+                tdx_func_result, tdx_func_sell_result, next_buy = eval(pre_check_func)(tempData)
+#                 tdx_func_result, tdx_func_sell_result, next_buy = tdx_DQSZQ(tempData, True)
+                if len(result) == 0:
+                    result = pd.DataFrame(tdx_func_result)
+#                     result.columns = ['cond']
+                else:
+                    if len(tdx_func_result) > 0:
+                        result1 = pd.DataFrame(tdx_func_result)
+#                         result.columns = ['cond']
+                        result = result.append(result1)
+            # 斜率
+            except Exception as e:
+#                 tempData['cond'] = 0
+                print("code-result", code, len(result), e)
+#     databuf_mongo_cond[key] = result.fillna(0)
+    result = result.fillna(0)
+    result.columns = ['cond']
+    databuf_mongo_cond[key] = result
     
-def get_data(codelist, st_start, st_end):
+def get_data(codelist, st_start, st_end, pre_check_func):
     start_t = datetime.datetime.now()
     print("begin-get_data:", start_t)
     # ETF/股票代码，如果选股以后：我们假设有这些代码
@@ -91,7 +117,7 @@ def get_data(codelist, st_start, st_end):
             # code_dict[str(i)] = codelist[i* subcode_len : (i+1) * subcode_len]
         # else:
             # code_dict[str(i)] = codelist[i * subcode_len:]
-        pool.apply_async(do_get_data_mp, args=(i, code_dict[i], st_start, st_end))
+        pool.apply_async(do_get_data_mp, args=(i, code_dict[i], st_start, st_end, pre_check_func))
 
     pool.close()
     pool.join()
@@ -102,7 +128,7 @@ def get_data(codelist, st_start, st_end):
     print(end_t, 'get_data spent:{}'.format((end_t - start_t)))
     # return data_day
 
-def day_select(codelist, back_time, func_names):
+def day_select(codelist, back_time, func_names, calcType):
     start_t = datetime.datetime.now()
 #     print("begin-day_select:", back_time)
     # ETF/股票代码，如果选股以后：我们假设有这些代码
@@ -120,6 +146,8 @@ def day_select(codelist, back_time, func_names):
         while calcDate <= endDate:
             backDates.append(calcDate)
             calcDate = get_next_date(calcDate)
+    if calcType == 'N':
+        backDates = backDates[-1:]
     print('calc-date = %s' % backDates)
 
     func_nameA = func_names #func_names.split(',')
@@ -130,7 +158,7 @@ def day_select(codelist, back_time, func_names):
     pool = Pool(cpu_count())
 #     for i in [0,1,2,3,5,6,7]:
     for i in code_dict.keys():
-        pool.apply_async(do_day_select, args=(i, code_dict[i], backDates, func_nameA))
+        pool.apply_async(do_day_select, args=(i, code_dict[i], backDates, func_nameA, calcType))
     pool.close()
     pool.join()
 
@@ -140,7 +168,7 @@ def day_select(codelist, back_time, func_names):
     print(end_t, 'day_select spent:{}'.format((end_t - start_t)))
     # return data_day
 
-def do_day_select(key, codelist, backDates, func_nameA):
+def do_day_select(key, codelist, backDates, func_nameA, calcType):
     today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
     mongo_mp = MongoIo()
     for code in codelist:
@@ -149,10 +177,20 @@ def do_day_select(key, codelist, backDates, func_nameA):
         if len(tempData) <= 0:
             print("data size is 0", code, key)
             continue
+        if calcType == 'N':
+            if databuf_mongo_cond[key].query("code=='%s'" % code).iloc[-1].cond == 0:
+#                 print(code, "cond is 0")
+                continue
+            tempData = pytdx_last_data(tempData)
+#         print(tempData.tail(3))
+#         break
         if not func_check_data(tempData):
             print("check data size is 0", code, key)
             continue
-        print("begin-calc-data: code = ", code, key)
+        if calcType == 'N':
+            pass
+        else:
+            print("begin-calc-data: code = ", code, key)
         for func_calc in func_nameA:
             result1 = pd.DataFrame()
             try:
@@ -222,11 +260,13 @@ def do_day_select(key, codelist, backDates, func_nameA):
 #                     all_calc_data[outKey]['score'] += 1
 #                 else:
                 all_calc_data[outKey] = {'_id':outKey, 'code': code, 'date': out_t, 'close': close, 'pct': pct, 'open': tOpen, 'high':high, 'low': low, 'nClose': nClose, 'nOpen': nOpen, 'noPct': noPct, 'n2oPct': n2oPct, 'n2cPct': n2cPct, 'func': ins_func, 'score':1, 'date_stamp':date_stamp}
-                if code == '000028':
-                    print('step3', out_t, valid_calc_date, all_calc_data[outKey])
+#                 if code == '000028':
+#                     print('step3', out_t, valid_calc_date, all_calc_data[outKey])
 
         ins_datas = []
         tblName = 'day-select-ff'
+        if calcType == 'N':##NOW:
+            tblName = 'day-select-ff-%s' % tblFlg
         if len(all_calc_data) > 0:
             for x in all_calc_data:
 #                 if all_calc_data[x]['score'] > 1: ###### for test one
@@ -261,12 +301,13 @@ def main_param(argv):
     st_begin = ''
     st_end = ''
     func = ''
+    pchk = ''
     calcType = ''
     back_time = ''
     all_data = ''
     sort = ''
     try:
-        opts, args = getopt.getopt(argv[1:], "hb:e:f:t:r:a:s:", ["st-begin=", "st-end=", "func=", "calcType=", "realdata-date=", 'all-data=', 'sort-type='])
+        opts, args = getopt.getopt(argv[1:], "hb:e:f:t:r:a:s:p:", ["st-begin=", "st-end=", "func=", "calcType=", "realdata-date=", 'all-data=', 'sort-type=', 'pcheck='])
     except getopt.GetoptError:
         print(argv[0], ' -b <st-begin> [-e <st-end>] [-f <func-name:dhm> -t T -c <back-test-date>]')
         sys.exit(2)
@@ -282,17 +323,19 @@ def main_param(argv):
             func = arg
         elif opt in ("-s", "--sort"):
             sort = arg
+        elif opt in ("-p", "--pcheck"):
+            pchk = arg
         elif opt in ("-t", "--type"):
             calcType = arg
         elif opt in ("-r", "--realdata-date"):
             back_time = arg
         elif opt in ("-a", "--all-date"):
             all_data = arg
-    return st_begin, st_end, func, sort, calcType, back_time, all_data
+    return st_begin, st_end, func, sort, calcType, back_time, all_data, pchk
 
 if __name__ == '__main__':
     print('example: \ndefault\tpython tdx_hcalc_day_select.py')
-    print('test\tpython tdx_hcalc_day_select.py -b 1990-01-01 -e 2010-12-31 -r all -t T -f tdx_swl')
+    print('test\tpython tdx_hcalc_day_select.py -b 1990-01-01 -e 2010-12-31 -r all -t T/N -f tdx_swl')
     print('single\tpython tdx_hcalc_day_select.py -b 2019-01-01 -e 2024-12-31 -r 2020-12-12,2022-12-12')
     print('single\tpython tdx_hcalc_day_select.py -b 2019-01-01 -e 2024-12-31 -r all-B2020-12-13')
     start_t = datetime.datetime.now()
@@ -304,7 +347,7 @@ if __name__ == '__main__':
     ## -f tdx_sl5560,tdx_ygqd_test
     # st_start, st_end, func = main_param(sys.argv)
     # print("input", st_start, st_end, func)
-    st_start, st_end, funcInput, sort, calcType, back_time, all_data = main_param(sys.argv)
+    st_start, st_end, funcInput, sort, calcType, back_time, all_data, pchk = main_param(sys.argv)
     today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
     if st_start == '':
         st_start = "%s-01-01" % (int(today[:4]) - 3)
@@ -322,6 +365,8 @@ if __name__ == '__main__':
 #         back_time = get_prev_date(st_end,3) # "%s,%s" % (get_prev_date(today,2), today)
     print("calc paras: st-start= %s, st-end= %s, back_time = %s, func = %s, valid-date=%s" % (st_start, st_end, back_time, funcInput, valid_calc_date))
     
+    if pchk == '':
+        pchk = 'tdx_DQSZQ'
 #     print('date-stamp', time.mktime(time.strptime(back_time, '%Y-%m-%d')))
 #     exit(0)
     
@@ -334,7 +379,7 @@ if __name__ == '__main__':
     # 1, 读取数据（多进程，读入缓冲）
     # 开始日期
     # data_day = 
-    get_data(codelist, st_start, st_end)
+    get_data(codelist, st_start, st_end, pchk)
     # print(data_day)
     # indices_rsrsT = tdx_func(data_day)
     func1 = ['tdx_czhs', 'tdx_hm', 'tdx_dhmcl', 'tdx_sxp', 'tdx_hmdr', 'tdx_tpcqpz', 'tdx_jmmm', 'tdx_nmddl', 'tdx_swl', 'tdx_yaogu']
@@ -358,7 +403,22 @@ if __name__ == '__main__':
         func = funcInput.split(',')
     
 #     func = func[:2] ## for test
-    day_select(codelist, back_time, func)
+#     if calcType == 'N':
+    while True:
+        day_select(codelist, back_time, func, calcType)
+        if calcType != 'N':
+            break
+        else:
+            nowtime = datetime.datetime.now().time()
+            if nowtime > datetime.time(15, 32, 0):
+                print("end calcl")
+                break
+            if nowtime > datetime.time(11, 35, 0) and nowtime < datetime.time(13, 5, 0):
+                time.sleep(10)
+                print("log:sleep PM")
+                continue
+            tblFlg = datetime.datetime.strftime(datetime.datetime.now(),'%y-%m-%d-%H-%M')
+            time.sleep(10)
     end_t = datetime.datetime.now()
     print(end_t, '__name__ spent:{}'.format((end_t - start_t)))
 #     print("__name__", len(dataR))

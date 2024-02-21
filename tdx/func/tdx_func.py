@@ -2751,12 +2751,67 @@ def tdx_bollxg_start(data, refFlg = False):
 def _tdx_DQS_F1(Series, N, pct = 0.89):
     return Series > MA(Series, N) * pct
 
+# 大趋势选股增强
+def tdx_DQSZQ(data, refFlg = False):
+    CLOSE = data.close
+    C = data.close
+#     DETA = 0.892
+    N1 = 60
+    N2 = 125
+    N3 = 250
+#     N2 = 120
+#     N3 = 240
+    TJ1_1 = IFAND3(_tdx_DQS_F1(C, N1), _tdx_DQS_F1(C, N2, pct = 1), _tdx_DQS_F1(C, N3, pct = 1), True, False)
+#     TJ1 = IFAND3(_tdx_DQS_F1(C, N1), _tdx_DQS_F1(C, N2), _tdx_DQS_F1(C, N3,), True, False)
+    TJ1 = IFAND(TJ1_1, IFOR(EMA(C, N2) >= EMA(C, N3), EMA(C, N1) >= EMA(C, N3), True, False), 1, 0)
+    if refFlg:
+        return REF(TJ1,1), -1, True
+    else:
+        return TJ1, -1, True
+
 # 大趋势选股
 def tdx_DQS(data, refFlg = False):
     CLOSE = data.close
     C = data.close
-    DETA = 0.895
-    TJ1 = IFAND3(_tdx_DQS_F1(C, 60), _tdx_DQS_F1(C, 120), _tdx_DQS_F1(C, 240), 1, 0)
+#     DETA = 0.892
+    N1 = 60
+    N2 = 125
+    N3 = 250
+#     N2 = 120
+#     N3 = 240
+    TJ1 = IFAND3(_tdx_DQS_F1(C, N1), _tdx_DQS_F1(C, N2), _tdx_DQS_F1(C, N3), 1, 0)
+#     TJ1 = IFAND(TJ1_1, IFOR(EMA(C, N2) >= EMA(C, N3), MA(C,N1) >= EMA(C, N3), True, False), 1, 0)
+#     TJ11 = IFAND5( C >= MA(C,5),  C >= MA(C,10) , C >= MA(C,20),  C >= MA(C,30), C >= MA(C,60), True, False)
+    # TJ12 = IFAND3(DIF>=0 , DEA>=0,  MACD>=0, True, False)
+#     TJ1 = TJ11 #IFAND(TJ11, TJ12, True, False)
+#     TJ2 = IFAND6( C>MA(C,90), C>MA(C,120), C>MA(C,180), C>MA(C,240), C>MA(C,500), C>MA(C,360), True, False)
+#     TJ3 = IFAND3(C>MA(C,750), C>MA(C,1000), C>MA(C,1500), True, False)
+#     TJ4 = IFAND3(C>MA(C,2000), C>MA(C,3000), C>MA(C,5000), True, False)
+    #     XG:TJ1 AND TJ2 AND TJ3 AND TJ4;
+    #     XG1:TJ1 AND TJ2 AND TJ3;
+    #     XG2:TJ1 AND TJ2;
+#     C1 = C > REF(C,1)
+#     C2 = C > REF(C,2)
+#     C3 = C > REF(C,3)
+#     J = KDJ(data, N = 19)['KDJ_J'] > 50
+#     TJ5 = IFAND4(C1,C2,C3, J, True, False)
+
+#     TJ6 = IFAND4(TJ1, TJ2, MACD >= 0, TJ5, 1, 0)
+    if refFlg:
+        return REF(TJ1,1), -1, True
+    else:
+        return TJ1, -1, True
+
+# # 大趋势选股
+def tdx_DQSZQ2(data, refFlg = False):
+    CLOSE = data.close
+    C = data.close
+#     DETA = 0.892
+    N1 = 60
+    N2 = 125
+    N3 = 250
+    TJ1_1 = IFAND3(_tdx_DQS_F1(C, N1), _tdx_DQS_F1(C, N2), _tdx_DQS_F1(C, N3, pct = 1), True, False)
+    TJ1 = IFAND(TJ1_1, IFOR(EMA(C, N2) >= EMA(C, N3), MA(C,N1) >= EMA(C, N3), True, False), 1, 0)
 #     TJ11 = IFAND5( C >= MA(C,5),  C >= MA(C,10) , C >= MA(C,20),  C >= MA(C,30), C >= MA(C,60), True, False)
     # TJ12 = IFAND3(DIF>=0 , DEA>=0,  MACD>=0, True, False)
 #     TJ1 = TJ11 #IFAND(TJ11, TJ12, True, False)
