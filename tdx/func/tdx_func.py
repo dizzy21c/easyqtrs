@@ -29,10 +29,13 @@ def pytdx_last_data(data, now_price = None):
         now_price = realdata['now']
     return new_df(data, realdata, now_price)
 
-def check_now_positino(codeA, dataA):
+def check_now_positino(codeA, dataA, loss = True):
     for code in codeA:
         data = dataA.query(" code == '%s'" % code)
         if len(data) == 0:
+            continue
+        syl = data.pcfNcfTTM
+        if syl.iloc[-2] < 0 and loss == False:
             continue
         data = pytdx_last_data(data)
         vma5 = REF(MA(data.volume, 5),1)
@@ -2442,8 +2445,8 @@ def tdx_LDX(data):
     V4=REF(V3,1)
     return V4, -1, False
 
-def tdx_TLBXXF(data):
-    #天冷不下雪
+def tdx_TLBXX_REAL(data):
+    #天冷不下雪:实时计算
     CLOSE = data.close
     V1=COUNT(REF(EMA(CLOSE,3),1)<REF(EMA(CLOSE,3),2),5)==5
     V2=EMA(CLOSE,3)>REF(EMA(CLOSE,3),1)

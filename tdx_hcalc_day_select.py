@@ -296,7 +296,53 @@ def do_day_select(key, codelist, backDates, func_nameA, calcType):
 #     databuf_mongo = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end)
 #     databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end)
 
-    
+
+def get_avg_data(data):
+    l_idx = []
+    l_v = []
+    max1 = 10
+    max2 = 30
+    delta = 3
+    i = 0
+    tempLv = 99999
+    tempLi = None
+
+    tempHv = 0
+
+    loopL1 = -1
+    loopL2 = -1
+
+    lowB = False
+    for idx, row in data.iterrows():
+        if lowB:
+            loopL1 += 1
+            if row.low < tempLv and loopL2 <= delta:
+    #             print('calc1', loopL1, loopL2, tempLi, tempLv, idx, row.low)
+                tempLv = row.low
+                tempLi = idx
+    #             loopL1 = 0
+                loopL2 = 0
+            else:
+    #             loopL1 += 1 
+                loopL2 += 1
+
+            if loopL1 >= max1 and loopL1 <= max2 and loopL2 > delta:
+                print("calc2", loopL1, loopL2, tempLi, tempLv)
+                l_idx.append(tempLi) 
+                l_v.append(tempLv) 
+                loopL1 = -1
+                loopL1 = -1
+                lowB = False
+                tempLv = 99999
+                tempLi = None
+        if row.low < tempLv:
+            tempLv = row.low
+            tempLi = idx
+            lowB = True
+            loopL1 = 0
+            loopL2 = 0
+    return pd.DataFrame(data = l_v, index = l_idx, columns = ['low'])
+
 def main_param(argv):
     st_begin = ''
     st_end = ''
@@ -366,7 +412,7 @@ if __name__ == '__main__':
     print("calc paras: st-start= %s, st-end= %s, back_time = %s, func = %s, valid-date=%s" % (st_start, st_end, back_time, funcInput, valid_calc_date))
     
     if pchk == '':
-        pchk = 'tdx_DQSZQ'
+        pchk = 'tdx_DQS'
 #     print('date-stamp', time.mktime(time.strptime(back_time, '%Y-%m-%d')))
 #     exit(0)
     
@@ -385,7 +431,7 @@ if __name__ == '__main__':
     func1 = ['tdx_czhs', 'tdx_hm', 'tdx_dhmcl', 'tdx_sxp', 'tdx_hmdr', 'tdx_tpcqpz', 'tdx_jmmm', 'tdx_nmddl', 'tdx_swl', 'tdx_yaogu']
     func2 = ['tdx_niugu', 'tdx_buerfameng', 'tdx_yaoguqidong', 'tdx_ygqd_test', 'tdx_blftxg', 'tdx_cptlzt', 'tdx_yhzc', 'tdx_yhzc_macd', 'tdx_yhzc_kdj']
     func3 = ['tdx_bjmm', 'tdx_bjmm_jzmd', 'tdx_bjmm_yhzc', 'tdx_bjmm_new', 'tdx_sxjm', 'tdx_ltt', 'tdx_blft', 'tdx_cci_xg', 'tdx_WYZBUY', 'tdx_bdzh']
-    func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX', 'tdx_TLBXXF'] ##, 'tdx_LDX'
+    func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX'] ##, 'tdx_LDX'
     func5 = ['tdx_WYZ17MA', 'tdx_qszn', 'tdx_cci', 'tdx_ngqd', 'tdx_bollxg_start', 'tdx_DQS', 'tdx_JZZCJSD', 'tdx_CDYTDXG', 'tdx_BOLL_EMA', 'tdx_hjy']
     func6 = ['tdx_LLXGSQ', 'tdx_WWDGWY', 'tdx_WWXGSQ', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_WWKDJJC', 'tdx_SHYM', 'tdx_QIANFU', 'tdx_HW168QS']
     func7 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM', 'tdx_21PPQTP'] ##
@@ -410,7 +456,7 @@ if __name__ == '__main__':
             break
         else:
             nowtime = datetime.datetime.now().time()
-            if nowtime > datetime.time(15, 32, 0):
+            if nowtime > datetime.time(15, 10, 0):
                 print("end calcl")
                 break
             if nowtime > datetime.time(11, 35, 0) and nowtime < datetime.time(13, 5, 0):
