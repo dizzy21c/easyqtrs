@@ -35,8 +35,8 @@ def check_now_positino(codeA, dataA, loss = True):
         if len(data) == 0:
             continue
         syl = data.pcfNcfTTM
-        if syl.iloc[-2] < 0 and loss == False:
-            continue
+#         if syl.iloc[-2] < 0 and loss == False:
+#             continue
         data = pytdx_last_data(data)
         vma5 = REF(MA(data.volume, 5),1)
         vma10 = REF(MA(data.volume, 10),1)
