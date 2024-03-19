@@ -443,10 +443,15 @@ if __name__ == '__main__':
 #     , tdx_WYZ17MA, tdx_qszn, tdx_cci, tdx_ngqd, tdx_bollxg_start, tdx_DQS, tdx_JZZCJSD, tdx_CDYTDXG, tdx_BOLL_EMA, tdx_hjy \
 #     , tdx_LLXGSQ, tdx_WWDGWY, tdx_WWXGSQ, tdx_WWYHXG, tdx_WWMACDJC, tdx_SHYM, tdx_QIANFU, tdx_HW168QS \
 #     '
+    funcN = ['tdx_DQS', 'tdx_JZZCJSD', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_WWKDJJC']
     if funcInput == '':
         func = func1 + func2 + func3 + func4 + func5 + func6 + func7
     else:
         func = funcInput.split(',')
+
+    if funcInput == '' and calcType == 'N':
+        func = funcN
+        
     
 #     func = func[:2] ## for test
 #     if calcType == 'N':
