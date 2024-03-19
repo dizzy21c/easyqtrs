@@ -298,21 +298,25 @@ def tdx_nmddl(data):
     H = data.high
     L = data.low
     C = data.close
-    VAR1=(HHV(H,13)-LLV(L,13))
-    VAR2=(HHV(H,13)-C)
-    VAR3=(C-LLV(L,13))
-    VAR4=VAR2/VAR1*100-70
-    VAR5=(C-LLV(L,55))/(HHV(H,55)-LLV(L,55))*100
+    # VAR1=(HHV(H,13)-LLV(L,13))
+    # VAR2=(HHV(H,13)-C)
+    # VAR3=(C-LLV(L,13))
+    # VAR4=VAR2/VAR1*100-70
+    # VAR5=(C-LLV(L,55))/(HHV(H,55)-LLV(L,55))*100
     VAR6=(2*C+H+L)/4
-    VAR7=SMA((VAR3/VAR1*100),3,1)
+    # VAR7=SMA((VAR3/VAR1*100),3,1)
     VAR8=LLV(L,34)
-    VAR9=SMA(VAR7,3,1)-SMA(VAR4,9,1)
-    VAR10=IF(VAR9>100,VAR9-100,0)
+    # VAR9=SMA(VAR7,3,1)-SMA(VAR4,9,1)
+    # VAR10=IF(VAR9>100,VAR9-100,0)
     VARA=HHV(H,34)
     诺曼底防线=EMA((VAR6-VAR8)/(VARA-VAR8)*100,8)
     BB=EMA(诺曼底防线,5)
+    NB = 诺曼底防线-BB
+    XG1 = IFAND6(BB < 20, REF(NB<0,5), REF(NB<0,4), REF(NB<0,3), REF(NB<0,2), REF(NB<0,1), True, False)
+    # XG2 = CROSS(诺曼底防线>BB,0.5)
+    XG2 = IFAND(CROSS(诺曼底防线>BB, 0.5), 诺曼底防线 < 25, True, False)
     # Q:BB < 20 AND REF(诺曼底防线-BB<0,5) AND REF(诺曼底防线-BB<0,4) AND REF(诺曼底防线-BB<0,3) AND REF(诺曼底防线-BB<0,2) AND REF(诺曼底防线-BB<0,1) {AND 诺曼底防线<30} AND CROSS(诺曼底防线>BB,0.5),LINETHICK0;
-    建仓=IF(诺曼底防线-BB>0,1,0)
+#     建仓=IF(诺曼底防线-BB>0,1,0)
     # 离场:STICKLINE(诺曼底防线-BB<0,诺曼底防线,BB,3,0),COLORGREEN;
     # 乐滋滋炒股:STICKLINE(诺曼底防线>0 AND 诺曼底防线-BB>=0,2,8,2,0),COLORFF00FF;
     # 休息:STICKLINE(诺曼底防线>0 AND 诺曼底防线-BB<0,2,8,2,0),COLORFFFF00;
@@ -324,7 +328,8 @@ def tdx_nmddl(data):
     # STICKLINE(Q,诺曼底防线,Q,1,0),COLOR00CCEE;
     # STICKLINE(Q,诺曼底防线,Q,0.1,0),COLOR00FFFF;
     # DRAWTEXT(Q,诺曼底防线,'建'),COLOR0000FF;
-    return 建仓, -1, False
+    XG = IFAND(XG1, XG2, 1, 0)
+    return XG, -1, False
 
 def tdx_swl(data):
     # {A42.耍无赖}

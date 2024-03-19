@@ -11,7 +11,47 @@ from multiprocessing import Process, Pool, cpu_count, Manager
 
 import baostock as bs
 import pandas as pd
+import time
+import signal
 
+# 自定义超时异常
+class TimeoutError(Exception):
+    def __init__(self, msg):
+        super(TimeoutError, self).__init__()
+        self.msg = msg
+  
+  
+def time_out(interval, callback):
+    def decorator(func):
+        def handler(signum, frame):
+            raise TimeoutError("run func timeout")
+  
+        def wrapper(*args, **kwargs):
+            try:
+                signal.signal(signal.SIGALRM, handler)
+                signal.alarm(interval)       # interval秒后向进程发送SIGALRM信号
+                result = func(*args, **kwargs)
+                signal.alarm(0)              # 函数在规定时间执行完后关闭alarm闹钟
+                return result
+            except TimeoutError as e:
+                callback(e)
+        return wrapper
+    return decorator
+
+def timeout_callback(e):
+    print(e.msg)
+# @time_out(2, timeout_callback)
+# def task1():
+#     print("task1 start")
+#     time.sleep(3)
+#     print("task1 end")
+
+# @time_out(2, timeout_callback)
+# def task2():
+#     print("task2 start")
+#     time.sleep(1)
+#     print("task2 end")
+    
 minutes_field = "date,time,code,open,high,low,close,volume,amount,adjustflag"
 day_field = "date,code,open,high,low,close,volume,amount,adjustflag,turn,pctChg,peTTM,pbMRQ,psTTM,pcfNcfTTM"
 w_m_field = "date,code,open,high,low,close,volume,amount,adjustflag,turn,pctChg"
@@ -74,7 +114,7 @@ def save_from_tdx_file(strPathFileName, today):
     #     if idx == 1:
     #     break
 
-
+@time_out(5, timeout_callback)
 def fetch_k_day(code="sh.600606", p_begin_day: str = '2023-01-01', p_end_day: str = None):
     # 详细指标参数，参见“历史行情指标参数”章节；“分钟线”参数与“日线”参数不同。“分钟线”不包含指数。
     # 分钟线指标：date,time,code,open,high,low,close,volume,amount,adjustflag,turn,pctChg,
