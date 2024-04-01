@@ -3164,6 +3164,78 @@ def tdx_BOLL_EMA(data, refFlg = False):
     else:
         return XG, -1, False
 
+## 黄金眼和黄金坑
+def tdx_HJYHK(data, refFlg = False):
+    OPEN = data.open
+    CLOSE = data.close
+    C = data.close
+    O = data.open
+    HIGH = data.high
+    LOW = data.low
+    VOL = data.volume    
+    N1=1.2
+    N2=3
+
+    AA1=REF(CLOSE,2)<REF(OPEN,2)
+    AA21=REF(CLOSE,1)<REF(OPEN,1)
+    AA22=REF(CLOSE,1)>REF(OPEN,1)
+    AA44= REF(CLOSE,1)<= REF(OPEN,2)  
+    AA55= REF(CLOSE,2)<= REF(CLOSE,3)
+    AA33= C>=0.997*REF(OPEN,2)  
+    AA66= REF(CLOSE,1)<= REF(CLOSE,2) 
+    AA5=C>O  
+    AA6= IFAND4(C>REF(OPEN,1), AA21,  AA66, AA5, True, False)
+    AAJ1= IFAND4(AA1, AA22,  AA44,   AA33, True, False)
+    AAJ2= IFAND3(AA55,  C>REF(C,1), AA5, True, False)
+    AAJ= IFAND(AAJ1, AAJ2, True, False)
+    AAJG= IFOR(AAJ, AA6, True, False)
+
+    VVV1=IF( AAJ,VOL+REF(VOL,1),VOL)
+    VVV2=IF( AAJ,REF(VOL,2),REF(VOL,1))
+    AA4=VVV1>VVV2
+    AA=  IFAND(AA4, AAJG, True, False)
+    BB1=VVV1/VVV2>N1
+    BB2=VVV1/VVV2<N2
+    BB3=VVV2/MA(VOL, 100)<1
+    BB=IFAND3(BB1, BB2, BB3, True, False)
+    CVV1=IF( AA22,C,C)
+    CVV2=IF( AA22,REF(C,2),REF(C,1))
+    CC=(CVV1-CVV2)/CVV2>0.02
+    BY= IFAND3(AA, BB, CC, True, False)
+    BR = MA(CLOSE,8)+MA(CLOSE,8)-REF(MA(CLOSE,8),1)  ###****
+
+    FR=IF(MA(CLOSE,13)<BR,BR,MA(CLOSE,13)) #,COLORFF00FF,NODRAW
+    YR=FR-(EMA(C,3)-FR) #,COLORRED,LINETHICK2
+#     XGC=IF(YR>AN3,YR,0) #,COLORBROWN,LINETHICK2
+    F2=BARSLAST(EMA(C,3)<=EMA(C,5))
+    F3=IF(EMA(C,3)>=EMA(C,3),EMA(C,5),0)
+
+    F5=F3##IF(CURRBARSCOUNT<CONST(F2+3),F3,0) #,COLORGREEN,LINETHICK4
+    OUTF=CROSS(F5,YR)
+    
+    XX10=EMA(CLOSE,3)-EMA(CLOSE,89)
+    XX11=EMA(XX10,21)
+    XX12=(XX10-XX11)*10
+    XX13=POW(XX12,3)*0.1+POW(XX12,2)
+    SYY=IF(XX12>0.015,XX13,0)/45  ##￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥
+    XX14=EMA(CLOSE,2)-EMA(CLOSE,55)
+    XX15=EMA(XX14,13)
+    XX16=2*(XX14-XX15)
+    ZLL=(POW(XX16,3)*0.1+POW(XX16,1))*3  #￥￥￥￥￥￥￥￥￥￥￥￥￥
+    TT0=CROSS(ZLL,SYY)  
+    TT1=IFAND(TT0, BY, True, False) #$$$$$$$$$$$$
+    
+
+    TYP =  (HIGH + LOW + CLOSE)/3
+    CCI14 = (TYP-MA(TYP,14))/(0.015*AVEDEV(TYP,14))
+    HJK = IFAND(CROSS(CCI14,0), C>MA(C,20)*0.97, True, False)
+
+    XG =  IFAND(HJK, IFOR(OUTF, TT1, True, False), True, False)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+
 ## 黄金眼
 def tdx_hjy(data, refFlg = False):
     OPEN = data.open

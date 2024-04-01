@@ -432,7 +432,7 @@ if __name__ == '__main__':
     func2 = ['tdx_niugu', 'tdx_buerfameng', 'tdx_yaoguqidong', 'tdx_ygqd_test', 'tdx_blftxg', 'tdx_cptlzt', 'tdx_yhzc', 'tdx_yhzc_macd', 'tdx_yhzc_kdj']
     func3 = ['tdx_bjmm', 'tdx_bjmm_jzmd', 'tdx_bjmm_yhzc', 'tdx_bjmm_new', 'tdx_sxjm', 'tdx_ltt', 'tdx_blft', 'tdx_cci_xg', 'tdx_WYZBUY', 'tdx_bdzh']
     func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX'] ##, 'tdx_LDX'
-    func5 = ['tdx_WYZ17MA', 'tdx_qszn', 'tdx_cci', 'tdx_ngqd', 'tdx_bollxg_start', 'tdx_DQS', 'tdx_JZZCJSD', 'tdx_CDYTDXG', 'tdx_BOLL_EMA', 'tdx_hjy']
+    func5 = ['tdx_WYZ17MA', 'tdx_qszn', 'tdx_cci', 'tdx_ngqd', 'tdx_bollxg_start', 'tdx_DQS', 'tdx_JZZCJSD', 'tdx_CDYTDXG', 'tdx_BOLL_EMA', 'tdx_HJYHK']
     func6 = ['tdx_LLXGSQ', 'tdx_WWDGWY', 'tdx_WWXGSQ', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_WWKDJJC', 'tdx_SHYM', 'tdx_QIANFU', 'tdx_HW168QS']
     func7 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM', 'tdx_21PPQTP'] ##
 
