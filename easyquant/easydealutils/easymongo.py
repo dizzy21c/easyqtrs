@@ -419,9 +419,15 @@ class MongoIo(object):
         else:
             dtd = self.db[table].find({'code': code},{"_id":0})
         return pd.DataFrame(list(dtd))
-
-    def get_stock_list(self, code=None, notST = True, market = None):
-        table = 'stock_list'
+    
+    def get_stock_list(self, code=None, notST = True, market = None, codeFlg = 'stock'):
+        if codeFlg == 'index':
+            table = 'index_list'
+        elif codeFlg == 'etf':
+            table = 'etf_list'
+        else:
+            table = 'stock_list'
+        
         query = {}
         noc = {"_id":0, "volunit":0, "sec":0, "sse":0,  "decimal_point":0}
         if market != None:

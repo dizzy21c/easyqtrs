@@ -32,9 +32,26 @@ def getCodeList(dataType = 'position'):
     if dataType == 'all':
         mongo = MongoIo()
         return list(mongo.get_stock_list().index)
+    elif dataType == 'idx':
+        mongo = MongoIo()
+        return list(mongo.get_stock_list(codeFlg='index').index)
+    elif dataType == 'etf':
+        mongo = MongoIo()
+        return list(mongo.get_stock_list(codeFlg='etf').index)
     elif dataType == 'position':
         mongo = MongoIo()
         return list(mongo.get_positions().index)
+    elif dataType[:5] == 'days:':
+        ## dataType = 'days:2024-01-01:12:tdx_xxxx'
+        dts = dataType.split(':')
+        mongo = MongoIo()
+        date = dts[1]
+        nums = dts[2]
+        if len(dts) == 4:
+            return mongo.day_select_data('day-select-ff',date, int(nums), dts[3])
+        else:
+            return mongo.day_select_data('day-select-ff',date, int(nums))
+#         return list(mongo.get_positions().index)
     else:
         df = pd.read_csv(dataType, sep='\t', encoding='iso-8859-1')
         if len(df) > 1:
@@ -42,6 +59,13 @@ def getCodeList(dataType = 'position'):
             return list(df.iloc[:-1,0])
         else:
             return []
+#     else:
+#         df = pd.read_csv(dataType, sep='\t', encoding='iso-8859-1')
+#         if len(df) > 1:
+#             # return list(df['代码'])[:-1]
+#             return list(df.iloc[:-1,0])
+#         else:
+#             return []
 
 def getCodelistFromFile(tdxFileName):
   codeDf = pd.read_csv(tdxFileName, sep='\t', encoding='iso-8859-1')
