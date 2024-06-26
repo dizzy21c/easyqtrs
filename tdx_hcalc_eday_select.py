@@ -53,12 +53,18 @@ databuf_mongo_cond = Manager().dict()
 pool_size = cpu_count()
 # executor = ThreadPoolExecutor(max_workers=pool_size)
 codeDatas = []
+codeNameDf = None
 # class DataSinaEngine(SinaEngine):
 #     EventType = 'data-sina'
 #     PushInterval = 10
 #     config = "stock_list"
 
 # dataSrc = DataSinaEngine()
+def codeName(df, code):
+    try:
+        return df.loc[code]['name']
+    except:
+        return code
 
 def do_get_data_mp(key, codelist, st_start, st_end, pre_check_func):
 #     print("do_get_data_mp", key)
@@ -73,7 +79,10 @@ def do_get_data_mp(key, codelist, st_start, st_end, pre_check_func):
 #     func_sell = func_nameA[1]
 #     databuf_mongo = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end)
 #     print("code-list", codelist[:100])
-    databuf_mongo[key] = mongo_mp.get_index_day(codelist, st_start=st_start, st_end = st_end)
+    if idxCalcFlg:
+        databuf_mongo[key] = mongo_mp.get_index_day(codelist, st_start=st_start, st_end = st_end)
+    else:
+        databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end, qfq=1)
 #     print("do_get_data_mp", key, len(databuf_mongo[key]))
     result = pd.DataFrame()
     if len(databuf_mongo[key]) > 0:
@@ -260,14 +269,14 @@ def do_day_select(key, codelist, backDates, func_nameA, calcType):
 #                     all_calc_data[outKey]['func'].append(func_calc)
 #                     all_calc_data[outKey]['score'] += 1
 #                 else:
-                all_calc_data[outKey] = {'_id':outKey, 'code': code, 'date': out_t, 'close': close, 'pct': pct, 'open': tOpen, 'high':high, 'low': low, 'nClose': nClose, 'nOpen': nOpen, 'noPct': noPct, 'n2oPct': n2oPct, 'n2cPct': n2cPct, 'func': ins_func, 'score':1, 'date_stamp':date_stamp}
+                all_calc_data[outKey] = {'_id':outKey, 'code': code, 'name':"%s-%s"%(code,codeName(codeNameDf, code)), 'date': out_t, 'close': close, 'pct': pct, 'open': tOpen, 'high':high, 'low': low, 'nClose': nClose, 'nOpen': nOpen, 'noPct': noPct, 'n2oPct': n2oPct, 'n2cPct': n2cPct, 'func': ins_func, 'score':1, 'date_stamp':date_stamp}
 #                 print("all-calc-data", all_calc_data)
 #                 break
 #                 if code == '000028':
 #                     print('step3', out_t, valid_calc_date, all_calc_data[outKey])
 
         ins_datas = []
-        tblName = 'day-select-idx'
+        tblName = 'day-select-%s' % all_data
         if calcType == 'N':##NOW:
             tblName = 'day-select-idx-%s' % tblFlg
         if len(all_calc_data) > 0:
@@ -420,11 +429,17 @@ if __name__ == '__main__':
 #     exit(0)
     
 #     st_start = '1990-01-01'
-#     all_data = 'all'
-#     all_data = 'etf'
-    codelist1 = getCodeList('etf')
-    codelist2 = getCodeList('idx')
-    codelist = codelist1 + codelist2
+    if all_data == '':
+        all_data = 'stock'
+#     all_data = 'etf-kj'
+    idxCalcFlg = False
+    if all_data == 'etf-jk' or all_data == 'index-tdx':
+        idxCalcFlg = True
+
+    codeNameDf = getCodeNameList(all_data)
+    codelist = getCodeList(all_data)
+#     codelist2 = getCodeList('index-idx')
+#     codelist = codelist1 + codelist2
     if calcType == 'T':
         codelist = codelist[:32] ## for test
     # func = "test"
@@ -437,16 +452,16 @@ if __name__ == '__main__':
     # print(data_day)
     # indices_rsrsT = tdx_func(data_day)
     func1 = ['tdx_czhs', 'tdx_hm', 'tdx_dhmcl', 'tdx_sxp', 'tdx_hmdr', 'tdx_tpcqpz', 'tdx_jmmm', 'tdx_nmddl', 'tdx_swl', 'tdx_yaogu']
-    func21 = ['tdx_niugu', 'tdx_buerfameng', 'tdx_yaoguqidong', 'tdx_ygqd_test', 'tdx_blftxg', 'tdx_cptlzt', 'tdx_yhzc', 'tdx_yhzc_macd', 'tdx_yhzc_kdj']
-    func2 = ['tdx_niugu', 'tdx_buerfameng', 'tdx_yaoguqidong', 'tdx_blftxg', 'tdx_cptlzt', 'tdx_yhzc', 'tdx_yhzc_macd', 'tdx_yhzc_kdj']
+    func2 = ['tdx_niugu', 'tdx_buerfameng', 'tdx_yaoguqidong', 'tdx_ygqd_test', 'tdx_blftxg', 'tdx_cptlzt', 'tdx_yhzc', 'tdx_yhzc_macd', 'tdx_yhzc_kdj']
     func3 = ['tdx_bjmm', 'tdx_bjmm_jzmd', 'tdx_bjmm_yhzc', 'tdx_bjmm_new', 'tdx_sxjm', 'tdx_ltt', 'tdx_blft', 'tdx_cci_xg', 'tdx_WYZBUY', 'tdx_bdzh']
-    func41 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX'] ##, 'tdx_LDX'
-    func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_zttj', 'tdx_zttj1', 'tdx_TLBXX'] ##, 'tdx_LDX'
+    func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX'] ##, 'tdx_LDX'
     func5 = ['tdx_WYZ17MA', 'tdx_qszn', 'tdx_cci', 'tdx_ngqd', 'tdx_bollxg_start', 'tdx_DQS', 'tdx_JZZCJSD', 'tdx_CDYTDXG', 'tdx_BOLL_EMA', 'tdx_HJYHK']
     func6 = ['tdx_LLXGSQ', 'tdx_WWDGWY', 'tdx_WWXGSQ', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_WWKDJJC', 'tdx_SHYM', 'tdx_QIANFU', 'tdx_HW168QS']
-    func71 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM', 'tdx_21PPQTP'] ##
-    func7 = ['tdx_JGCM'] ##
-
+    func7 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM', 'tdx_21PPQTP'] ##
+    if idxCalcFlg:
+        func2 = ['tdx_niugu', 'tdx_buerfameng', 'tdx_yaoguqidong', 'tdx_blftxg', 'tdx_cptlzt', 'tdx_yhzc', 'tdx_yhzc_macd', 'tdx_yhzc_kdj']
+        func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_zttj', 'tdx_zttj1', 'tdx_TLBXX'] ##, 'tdx_LDX'
+        func7 = ['tdx_JGCM'] ##
 #     func = 'tdx_czhs, tdx_hm, tdx_dhmcl, tdx_sxp, tdx_hmdr, tdx_tpcqpz, tdx_jmmm, tdx_nmddl, tdx_swl, tdx_yaogu \
 #     , tdx_niugu, tdx_buerfameng, tdx_yaoguqidong, tdx_ygqd_test, tdx_blftxg, tdx_cptlzt, tdx_yhzc, tdx_yhzc_macd, tdx_yhzc_kdj, tdx_sxp_yhzc \
 #     , tdx_bjmm, tdx_bjmm_jzmd, tdx_bjmm_yhzc, tdx_bjmm_new, tdx_sxjm, tdx_ltt, tdx_blft, tdx_cci_xg, tdx_WYZBUY, tdx_bdzh \

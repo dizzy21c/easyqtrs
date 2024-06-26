@@ -421,15 +421,19 @@ class MongoIo(object):
         return pd.DataFrame(list(dtd))
     
     def get_stock_list(self, code=None, notST = True, market = None, codeFlg = 'stock'):
-        if codeFlg == 'index':
-            table = 'index_list'
-        elif codeFlg == 'etf':
-            table = 'etf_list'
-        else:
-            table = 'stock_list'
-        
+#         if codeFlg == 'index':
+#             table = 'index_list'
+#         elif codeFlg == 'etf':
+#             table = 'etf_list'
+#         elif codeFlg == 'etf-kj':
+#             table = 'etf_list'
+#         elif codeFlg == 'etf':
+#             table = 'etf_list'
+#         else:
+#             table = 'stock_list'
+        table = "%s_list" % codeFlg
         query = {}
-        noc = {"_id":0, "volunit":0, "sec":0, "sse":0,  "decimal_point":0}
+        noc = {"_id":0, "volunit":0, "sec":0, "sse":0, "decimal_point":0, "pre_close":0}
         if market != None:
             query['sse'] = '%s' % market
         if notST:

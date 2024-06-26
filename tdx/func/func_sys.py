@@ -28,16 +28,24 @@ def get_prev_date(calcDate, step = 1):
         cDate = cDate + datetime.timedelta(-2)
         return datetime.datetime.strftime(cDate,'%Y-%m-%d')
 
-def getCodeList(dataType = 'position'):
+def getCodeNameList(dataType = 'position'):
     if dataType == 'all':
+        dataType = 'stock'
+    mongo = MongoIo()
+    return mongo.get_stock_list(codeFlg=dataType)
+
+def getCodeList(dataType = 'position'):
+    if dataType == 'stock' or dataType[:3] == 'etf' or dataType[:5]== 'index':
+#         if dataType == 'all':
+#             dataType = 'stock'
         mongo = MongoIo()
-        return list(mongo.get_stock_list().index)
-    elif dataType == 'idx':
-        mongo = MongoIo()
-        return list(mongo.get_stock_list(codeFlg='index').index)
-    elif dataType == 'etf':
-        mongo = MongoIo()
-        return list(mongo.get_stock_list(codeFlg='etf').index)
+        return list(mongo.get_stock_list(codeFlg=dataType).index)
+#     elif dataType == 'idx':
+#         mongo = MongoIo()
+#         return list(mongo.get_stock_list(codeFlg='index').index)
+#     elif dataType == 'etf':
+#         mongo = MongoIo()
+#         return list(mongo.get_stock_list(codeFlg='etf').index)
     elif dataType == 'position':
         mongo = MongoIo()
         return list(mongo.get_positions().index)
