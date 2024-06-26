@@ -3164,8 +3164,39 @@ def tdx_BOLL_EMA(data, refFlg = False):
     else:
         return XG, -1, False
 
+##点石成金
+def tdx_DSCJ(data, refFlg = False):
+    CLOSE = data.close
+    VOL = data.volume
+    FSHORT=21
+    FLONG=5
+    多空线 = EMA(CLOSE,FLONG)
+    操盘线 = EMA(CLOSE,FSHORT)
+    卖信号 = IFAND(REF(操盘线,1)<=REF(多空线,1), 操盘线>多空线, True, False)
+    买信号 = IFAND(REF(操盘线,1)>=REF(多空线,1), 操盘线<多空线, True, False)
+    
+    XG = IF(买信号, 1, 0)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+
 ## 黄金眼和黄金坑
 def tdx_HJYHK(data, refFlg = False):
+    XG = tdx_HJYHK_inner(data)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+
+def tdx_HJYHK2(data, refFlg = False):
+    XG = tdx_HJYHK_inner(data, 2)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+    
+def tdx_HJYHK_inner(data, flg = 1):
     OPEN = data.open
     CLOSE = data.close
     C = data.close
@@ -3230,12 +3261,14 @@ def tdx_HJYHK(data, refFlg = False):
     CCI14 = (TYP-MA(TYP,14))/(0.015*AVEDEV(TYP,14))
     HJK = IFAND(CROSS(CCI14,0), C>MA(C,20)*0.97, True, False)
 
-    XG =  IFAND(HJK, IFOR(OUTF, TT1, True, False), True, False)
-    if refFlg:
-        return REF(XG, 1), -1, False
+#     XG =  IFAND(HJK, IFOR(OUTF, TT1, True, False), True, False)
+    if flg == 1:
+        return IFAND(HJK, OUTF, 1, 0)
+    elif flg == 2:
+        return IFAND(HJK, TT1, 1, 0)
     else:
-        return XG, -1, False
-
+        return IFAND(HJK, IFOR(OUTF, TT1, True, False), 1, 0)
+    
 ## 黄金眼
 def tdx_hjy(data, refFlg = False):
     OPEN = data.open
