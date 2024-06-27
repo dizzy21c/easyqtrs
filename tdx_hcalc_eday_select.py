@@ -433,7 +433,8 @@ if __name__ == '__main__':
         all_data = 'stock'
 #     all_data = 'etf-kj'
     idxCalcFlg = False
-    if all_data == 'etf-jk' or all_data == 'index-tdx':
+    if all_data[:3] == 'etf' or all_data[:5] == 'index':
+        print("all-data", all_data)
         idxCalcFlg = True
 
     codeNameDf = getCodeNameList(all_data)
@@ -458,10 +459,10 @@ if __name__ == '__main__':
     func5 = ['tdx_WYZ17MA', 'tdx_qszn', 'tdx_cci', 'tdx_ngqd', 'tdx_bollxg_start', 'tdx_DQS', 'tdx_JZZCJSD', 'tdx_CDYTDXG', 'tdx_BOLL_EMA', 'tdx_HJYHK']
     func6 = ['tdx_LLXGSQ', 'tdx_WWDGWY', 'tdx_WWXGSQ', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_WWKDJJC', 'tdx_SHYM', 'tdx_QIANFU', 'tdx_HW168QS']
     func7 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM', 'tdx_21PPQTP'] ##
-    if idxCalcFlg:
-        func2 = ['tdx_niugu', 'tdx_buerfameng', 'tdx_yaoguqidong', 'tdx_blftxg', 'tdx_cptlzt', 'tdx_yhzc', 'tdx_yhzc_macd', 'tdx_yhzc_kdj']
-        func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_zttj', 'tdx_zttj1', 'tdx_TLBXX'] ##, 'tdx_LDX'
-        func7 = ['tdx_JGCM'] ##
+#     if idxCalcFlg:
+#         func2 = ['tdx_niugu', 'tdx_buerfameng', 'tdx_yaoguqidong', 'tdx_blftxg', 'tdx_cptlzt', 'tdx_yhzc', 'tdx_yhzc_macd', 'tdx_yhzc_kdj']
+#         func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_zttj', 'tdx_zttj1', 'tdx_TLBXX'] ##, 'tdx_LDX'
+#         func7 = ['tdx_JGCM'] ##
 #     func = 'tdx_czhs, tdx_hm, tdx_dhmcl, tdx_sxp, tdx_hmdr, tdx_tpcqpz, tdx_jmmm, tdx_nmddl, tdx_swl, tdx_yaogu \
 #     , tdx_niugu, tdx_buerfameng, tdx_yaoguqidong, tdx_ygqd_test, tdx_blftxg, tdx_cptlzt, tdx_yhzc, tdx_yhzc_macd, tdx_yhzc_kdj, tdx_sxp_yhzc \
 #     , tdx_bjmm, tdx_bjmm_jzmd, tdx_bjmm_yhzc, tdx_bjmm_new, tdx_sxjm, tdx_ltt, tdx_blft, tdx_cci_xg, tdx_WYZBUY, tdx_bdzh \
