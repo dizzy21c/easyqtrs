@@ -377,6 +377,6 @@ if __name__ == '__main__':
             sys.exit()
 
         codelist = getCodeList('stock', notST = False)
-        codelist = codelist[:30]
+#         codelist = codelist[:30]
         get_data(codelist)
         update_data(codelist)
