@@ -376,8 +376,7 @@ if __name__ == '__main__':
             print('login respond  error_msg:' + lg.error_msg)
             sys.exit()
 
-        codelist = getCodeList('stock')
-        codelist = codelist[:20]
-        codelist.append('600348')
+        codelist = getCodeList('stock', notST = False)
+        codelist = codelist[:30]
         get_data(codelist)
         update_data(codelist)

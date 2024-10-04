@@ -34,12 +34,12 @@ def getCodeNameList(dataType = 'position'):
     mongo = MongoIo()
     return mongo.get_stock_list(codeFlg=dataType)
 
-def getCodeList(dataType = 'position'):
+def getCodeList(dataType = 'position', notST = True):
     if dataType == 'stock' or dataType == 'all' or dataType[:3] == 'etf' or dataType[:5]== 'index':
         if dataType == 'all':
             dataType = 'stock'
         mongo = MongoIo()
-        return list(mongo.get_stock_list(codeFlg=dataType).index)
+        return list(mongo.get_stock_list(codeFlg=dataType, notST = notST).index)
 #     elif dataType == 'idx':
 #         mongo = MongoIo()
 #         return list(mongo.get_stock_list(codeFlg='index').index)
