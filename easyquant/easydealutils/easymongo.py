@@ -343,6 +343,16 @@ class MongoIo(object):
         if dataChk is not None and len(dataChk) > 0:
             self.db[table].remove(dataChk)
 
+    def removeData(self, table, query):
+        self.db[table].remove(query)
+
+    def removeStockDataByCode(self, code = None):
+        table = 'stock_day_qfq'
+        if code == None:
+            return
+        query = {"code":"{}".format(code)}
+        self.removeData(table, query)
+
     def save_data_min(self, data, idx=0):
         if idx == 0:
             pass

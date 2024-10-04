@@ -4207,4 +4207,77 @@ def tdx_21PPQTP(data, refFlg = False):
         return REF(XG, 1), -1, False
     else:
         return XG, -1, False
-        
+
+# {趋势买卖}
+def tdx_QSMM(data, refFlg = False):
+    OPEN = data.open
+    CLOSE = data.close
+    C = data.close
+    O = data.open
+    HIGH = data.high
+    LOW = data.low
+    VOL = data.volume    
+    N = 20
+    N1 = 7
+    N2 = 69
+    T1 = 1
+    M3 = EMA(CLOSE,3)
+    M8 = EMA(CLOSE,8)#,COLOR008000
+    M13 = EMA(M8,13)#,COLOR0000FF
+    M62 = EMA(M8,55)#,COLORF0F000
+    VAR1 = EMA(M13,62)
+    M81 = EMA(M62,81) #,COLOR00FFFF
+    M144 = EMA(VAR1,144) #,LINETHICK2,COLOR0000FF
+    M250 = EMA(VAR1,250)#,POINTDOT,LINETHICK2,COLORF00FF0
+    VAR2 =(CLOSE+HIGH+LOW)/(3)
+    VAR3 =(EMA(VAR2,10))*(T1)
+    VAR4 = (REF(VAR3,1))*(T1)
+    VAR5 = ((REF(HIGH,1)+REF(LOW,1))/(2))*(T1)
+    VAR6 = MA(CLOSE,N)+((2)*(STD(CLOSE,N)))*(T1)
+    SOLD1 = CROSS(VAR3,VAR4) 
+    SOLD2 = CROSS(VAR5,VAR6)
+    VAR7 = REF(CLOSE,1)
+    VAR8 = ((SMA(MAX(CLOSE-VAR7,0),N1,1))/(SMA(ABS(CLOSE-VAR7),N1,1)))*(100)
+    VAR9 = CROSS(N2,VAR8)
+    VARA = FILTER(VAR9,4)
+    SOLD3 = VARA
+
+    VARB = ((2)*(CLOSE)+HIGH+LOW)/(4)
+    VARC = LLV(LOW,34)
+    VARD = HHV(HIGH,34)
+    VARE = (EMA(((VARB-VAR1)/(VAR5-VAR1))*(100),7))*(T1)
+    VARF = (EMA((0.667)*(REF(VARE,1))+(0.333)*(VARE),5))*(T1)
+    # DRAWTEXT(IF(((COUNT((CLOSE<REF(CLOSE,1)),8))/(8)>0.6) AND (VOL>=(1.5)*(MA(VOL,5))) AND COUNT((VARE>=VARF),3) AND (REF(LOW,1)=LLV(LOW,120)),1,0),LOW,'●买进'),COLORFF00FF
+    MJTJ1 = ((COUNT((CLOSE<REF(CLOSE,1)),8))/(8)>0.6)
+    MJTJ2 = (VOL>=(1.5)*(MA(VOL,5)))
+    MJTJ3 = COUNT((VARE>=VARF),3)
+    MJTJ4 = (REF(LOW,1)==LLV(LOW,120))
+    XG = IFAND4(MJTJ1, MJTJ2, MJTJ3, MJTJ4,1,0)
+
+    # DRAWTEXT(IF(((COUNT((CLOSE<REF(CLOSE,1)),13))/(13)>0.6) AND COUNT((VARE>VARF),6) AND (REF(LOW,5)=LLV(LOW,120)) AND REF((CLOSE>=OPEN),4) AND REF((CLOSE>OPEN),3) AND REF((CLOSE>OPEN),2) AND REF((OPEN>CLOSE),1) AND (OPEN>REF(CLOSE,1)),1,0),LOW,'●买进'),COLOR00FFFF
+    MJ2TJ1 = ((COUNT((CLOSE<REF(CLOSE,1)),13))/(13)>0.6)
+    MJ2TJ2 = COUNT((VARE>VARF),6)
+    MJ2TJ3 = (REF(LOW,5)==LLV(LOW,120))
+    MJ2TJ4 = REF((CLOSE>=OPEN),4) 
+    MJ2TJ5 = REF((CLOSE>OPEN),3)
+    MJ2TJ6 = REF((CLOSE>OPEN),2)
+    MJ2TJ7 = REF((OPEN>CLOSE),1)
+    MJ2TJ8 = (OPEN>REF(CLOSE,1))
+    # MJ2TJ9 = 
+    MJ21 = IFAND4(MJ2TJ1, MJ2TJ2, MJ2TJ3, MJ2TJ4, True, False)
+    MJ21 = IFAND4(MJ2TJ5, MJ2TJ6, MJ2TJ7, MJ2TJ8, True, False)
+    XG2 = IFAND(MJ21, MJ21, 1, 0)
+
+    VAR10 = (MA(CLOSE,80)-(MA(CLOSE,10))/(3))*(T1)
+    # DRAWTEXT(IF((CLOSE<VAR10) AND ((VOL)/(240)>(MA(VOL,5))/(240)) AND (CLOSE>(REF(CLOSE,1))*(1.08)) AND (CLOSE<(MA(CLOSE,13))*(1.3)),1,0),LOW,'●抄底'),COLOR0000FF
+    CDTJ1 = CLOSE<VAR10
+    CDTJ2 = ((VOL)/(240)>(MA(VOL,5))/(240))
+    CDTJ3 = (CLOSE>(REF(CLOSE,1))*(1.08))
+    CDTJ4 = (CLOSE<(MA(CLOSE,13))*(1.3))
+    XG3 =IFAND4(CDTJ1, CDTJ2, CDTJ3, CDTJ4, 1, 0)
+    XG = (XG1 + XG2 + XG3 ) > 0
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+     

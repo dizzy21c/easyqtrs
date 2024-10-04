@@ -100,7 +100,7 @@ def do_init_data_buf(code):
     # mongo = MongoIo()
     # if idx == 0:
     mongo = MongoIo()
-    data_day = mongo.get_stock_day(code=code, st_start="2019-01-01")
+    data_day = mongo.get_stock_day(code=code, st_start="2019-01-01", qfq=1)
         # data_min = mc.get_stock_min_realtime(code=code, freq=freq)
     # else:
     #     data_day = mongo.get_index_day(code=code)
@@ -178,11 +178,11 @@ def do_get_data_mp(key, codelist, st_start, st_end, calcType=''):
     mongo_mp = MongoIo()
     # start_t = datetime.datetime.now()
     # print("begin-get_data do_get_data_mp: key=%s, time=%s" %( key,  start_t))
-    databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end=st_end)
+    databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end=st_end, qfq=1)
     if calcType == 'B':
         td = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(1)
         st_backtime = td.strftime('%Y-%m-%d')
-        databuf_mongo_r[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime, st_end=st_backtime)
+        databuf_mongo_r[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime, st_end=st_backtime, qfq=1)
         td2 = datetime.datetime.strptime(st_end, '%Y-%m-%d') + datetime.timedelta(2)
         while True:
 #             td2 = datetime.datetime.strptime(st_bakN, '%Y-%m-%d') + datetime.timedelta(2)
@@ -190,7 +190,7 @@ def do_get_data_mp(key, codelist, st_start, st_end, calcType=''):
             if st_backtime2 > datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(1), '%Y-%m-%d'):
                 databuf_mongo_rn[key] = pd.DataFrame()
                 break
-            databuf_mongo_rn[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime2, st_end=st_backtime2)
+            databuf_mongo_rn[key] = mongo_mp.get_stock_day(codelist, st_start=st_backtime2, st_end=st_backtime2, qfq=1)
             if len(databuf_mongo_rn[key]) == 0:
 #                 print("continue", st_backtime2)
                 st_endN = st_backtime2
@@ -456,9 +456,9 @@ def tdx_func(key, newdatas, func_name, code_list = None, calcType=''):
                     last_price = datal['close'][-1]
                 except:
                     dataln = None
-                    print("last-date=0, code=", code)
-                    last_price = 0
-                    continue
+#                     print("last-date=0, code=", code)
+                    last_price = newdata['now']
+#                     continue
                 try:
                     dataln = datam_rn.query("code=='%s'" % code)
                 except:

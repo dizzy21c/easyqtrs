@@ -58,7 +58,7 @@ def getCodeList(dataType = 'position'):
         if len(dts) == 4:
             return mongo.day_select_data('day-select-ff',date, int(nums), dts[3])
         else:
-            return mongo.day_select_data('day-select-ff',date, int(nums))
+            return mongo.day_select_data('day-select-stock',date, int(nums))
 #         return list(mongo.get_positions().index)
     else:
         df = pd.read_csv(dataType, sep='\t', encoding='iso-8859-1')

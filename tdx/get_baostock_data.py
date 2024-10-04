@@ -213,8 +213,9 @@ def do_update_data_mp(tblName, mongo_mpd, xcode, key):
         
     if len(codeData) > 0:
         today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
-        p_begin_day = codeData.index[-1][0].strftime("%Y-%m-%d")
-        p_begin_day = get_next_date(p_begin_day)
+        p_begin_day = codeData.index[-1][0].strftime("%Y-%m-%d") ##倒数2条
+        fq1Close = codeData.iloc[-1].close
+#         p_begin_day = get_next_date(p_begin_day)
         p_begin_year = int(p_begin_day[:4])
         p_end_day = '%s-12-31' % p_begin_year
 #         if p_begin_day > p_end_day:
@@ -228,7 +229,18 @@ def do_update_data_mp(tblName, mongo_mpd, xcode, key):
                 p_begin_day = '%s-01-01' % ldate
                 p_end_day = '%s-12-31' % ldate
             tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
-            ins_mongo_data(mongo_mpd, tdata, xcode)
+            fq2Close = float(tdata.iloc[0].close)
+            if fq1Close == fq2Close:
+                ins_mongo_data(mongo_mpd, tdata[1:], xcode)
+            else:
+                mongo_mpd.removeStockDataByCode(xcode)
+                year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
+                for ldate in range(1990,int(year)+1):
+                    p_begin_day = '%s-01-01' % ldate
+                    p_end_day = '%s-12-31' % ldate
+                    tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
+                    ins_mongo_data(mongo_mpd, tdata, xcode)
+                
 #         if len(tdata) > 0:
 #             akey = tdata.columns.values
 #             ins_data = []
@@ -365,5 +377,7 @@ if __name__ == '__main__':
             sys.exit()
 
         codelist = getCodeList('stock')
+        codelist = codelist[:20]
+        codelist.append('600348')
         get_data(codelist)
         update_data(codelist)
