@@ -70,6 +70,7 @@ def h_l_line(p_df, t=21,period=1000,fn=None,cur_idx=0, cup = True, firstCalc = T
     # 获取最新的period条数据
     # df1 = p_df.tail(period).reset_index(drop=True)
     df1 = p_df[['close','high','low','date','code']].copy()
+    code = df1.iloc[0].code
     df1['top']=''
     df1['cv'] = 0 #添加一列为后续保留值准备
     high = df1['high']
@@ -185,7 +186,8 @@ def h_l_line(p_df, t=21,period=1000,fn=None,cur_idx=0, cup = True, firstCalc = T
         #     data = data.append(df1.iloc[last:last + 1])
         #     break
     #结束了，把当前点加入到数据有效点中
-    print("n1", n, ci, cv, lt, ih, il, ihv, ilv, cup)
+    dateLast = df1.tail(1).date
+    print("n1", code, dateLast, n, ci, cv, lt, ih, il, ihv, ilv, cup)
     df1.loc[ci, 'cv'] = cv
     df1.loc[ci,'top'] = 'e'
     # data = data.append(df1.iloc[ci:ci + 1])
@@ -219,7 +221,7 @@ def update_data(codelist,tblName, calcStep):
 #     j = 0
 #     for i in range(4,5): #code_dict.keys():
     for i in code_dict.keys():
-        print("do_update_data_mp data for ", i)
+#         print("do_update_data_mp data for ", i)
         pool.apply_async(do_update_data_mp, args=(tblName, code_dict[i], i, calcStep))
 #         for xcode in code_dict[i]:
 #             pool.apply_async(do_update_data_mp, args=(tblName, mongo_mpd, code, i))
@@ -260,12 +262,13 @@ def ins_mongo_data(mongo_mpd, tdata, code):
         #     print(row.tolist())
         if len(ins_data) > 0:
             try:
-                mongo_mpd.save(tblName, ins_data)
-            except:
-                print("ins error", code)
+                mongo_mpd.saveOrUpdate(tblName, ins_data)
+            except Exception as e:
+#             except as E:
+                print("ins error", code, e)
     
 def do_update_data_mp(tblName, codeList, key, calcStep):
-#     print("do update data for ", tblName, "... ...", codeList, key)   
+#     print("do update data for ", tblName, "... ...", len(codeList), key)   
     mongo_mpd = MongoIo()
 #     for xcode in codeList:
 #         print(key, xcode)
@@ -276,74 +279,82 @@ def do_update_data_mp(tblName, codeList, key, calcStep):
 #     else:
 #         code = "sh.%s" % xcode
     for xcode in codeList:
-#         print(key, xcode)
-        if len(databuf_mongo[key]) == 0:
-            codeData = []
-        else:
-            codeData = databuf_mongo[key].query(" code == '%s'" % xcode)
-#             print("pass2", len(codeData))
-        ##debug
-    #     if xcode == '300088':
-    #         print(key, xcode, len(codeData), len(databuf_mongo[key]))
+        print("step1", key, xcode)
+        try:
+            if len(databuf_mongo[key]) == 0:
+                codeData = []
+            else:
+                codeData = databuf_mongo[key].query(" code == '%s'" % xcode)
+    #             print("pass2", len(codeData))
+#             print("step2", len(codeData), xcode)
+            ##debug
+        #     if xcode == '300088':
+        #         print(key, xcode, len(codeData), len(databuf_mongo[key]))
 
-        if len(codeData) > 0:
-#             print("pass")
-            calcHLData = codeData.tail(3)
-            if len(calcHLData) == 3:
-#                 print('calcHLData1',calcHLData)
-                st_start = calcHLData.iloc[0].date
-#                 cup = calcHLData.iloc[0].top == 'u'
-#                 iindex = calcHLData.iloc[0]['index']
-#                 st_start2 = calcHLData.iloc[1].date
-#                 iindex2 = calcHLData.iloc[1]['index']
-#                 iperiod = calcHLData.iloc[1]['period']
-                idKey = calcHLData.iloc[2]['_id']
-#                 print('st_start', st_start, cup)
-                srcData = mongo_mpd.get_stock_day(code=[xcode], st_start=st_start, st_end = '2030-12-31', qfq=1)
+            if len(codeData) > 0:
+    #             print("pass")
+                calcHLData = codeData.tail(3)
+                if xcode == '000001':
+                    print("step3", calcHLData)
+                if len(calcHLData) == 3:
+    #                 print('calcHLData1',calcHLData)
+                    st_start = calcHLData.iloc[0].date
+    #                 cup = calcHLData.iloc[0].top == 'u'
+    #                 iindex = calcHLData.iloc[0]['index']
+    #                 st_start2 = calcHLData.iloc[1].date
+    #                 iindex2 = calcHLData.iloc[1]['index']
+    #                 iperiod = calcHLData.iloc[1]['period']
+                    idKey = calcHLData.iloc[2]['_id']
+    #                 print('st_start', st_start, cup)
+                    srcData = mongo_mpd.get_stock_day(code=[xcode], st_start=st_start, st_end = '2030-12-31', qfq=1)
+                    srcData = srcData.reset_index()
+                    dstHLData=h_l_line(srcData, t=calcStep)
+    #                 print('calcHLData20',dstHLData)
+                    if xcode == '000001':
+#                         print("step3", calcHLData)
+                        print("step4", len(dstHLData), xcode, st_start, len(srcData))
+                    if len(dstHLData) >= 3:
+    #                     dstHLData.loc[1,'index']=iindex2 + dstHLData.iloc[1]['period'] - iperiod
+    #                     print('calcHLData21',dstHLData.iloc[2:])
+                        mongo_mpd.removeData(tblName, {'_id':idKey})
+                        ins_mongo_data(mongo_mpd, dstHLData.iloc[2:], xcode)
+        #         today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
+        #         p_begin_day = codeData.index[-1][0].strftime("%Y-%m-%d") ##倒数2条
+        #         fq1Close = codeData.iloc[-1].close
+        # #         p_begin_day = get_next_date(p_begin_day)
+        #         p_begin_year = int(p_begin_day[:4])
+        #         p_end_day = '%s-12-31' % p_begin_year
+        # #         if p_begin_day > p_end_day:
+        # #             p_end_day = '%s-12-31' % p_begin_year
+        #         if p_begin_day > today:
+        #             ##last data
+        #             return
+        #         year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
+        #         for ldate in range(p_begin_year,int(year)+1):
+        #             if ldate > p_begin_year:
+        #                 p_begin_day = '%s-01-01' % ldate
+        #                 p_end_day = '%s-12-31' % ldate
+        #             tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
+        #             fq2Close = float(tdata.iloc[0].close)
+        #             if fq1Close == fq2Close:
+        #                 ins_mongo_data(mongo_mpd, tdata[1:], xcode)
+        #             else:
+        #                 mongo_mpd.removeStockDataByCode(xcode)
+        #                 year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
+        #                 for ldate in range(1990,int(year)+1):
+        #                     p_begin_day = '%s-01-01' % ldate
+        #                     p_end_day = '%s-12-31' % ldate
+        #                     tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
+        #                     ins_mongo_data(mongo_mpd, tdata, xcode)
+            else:
+                srcData = mongo_mpd.get_stock_day(code=[xcode], st_start='1990-01-01', st_end = '2030-12-31', qfq=1)
+    #             print(srcData.head())
                 srcData = srcData.reset_index()
                 dstHLData=h_l_line(srcData, t=calcStep)
-#                 print('calcHLData20',dstHLData)
-                if len(dstHLData) >= 3:
-#                     dstHLData.loc[1,'index']=iindex2 + dstHLData.iloc[1]['period'] - iperiod
-                    print('calcHLData21',dstHLData.iloc[2:])
-                    mongo_mpd.removeData(tblName, {'_id':idKey})
-                    ins_mongo_data(mongo_mpd, dstHLData.iloc[2:], xcode)
-    #         today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
-    #         p_begin_day = codeData.index[-1][0].strftime("%Y-%m-%d") ##倒数2条
-    #         fq1Close = codeData.iloc[-1].close
-    # #         p_begin_day = get_next_date(p_begin_day)
-    #         p_begin_year = int(p_begin_day[:4])
-    #         p_end_day = '%s-12-31' % p_begin_year
-    # #         if p_begin_day > p_end_day:
-    # #             p_end_day = '%s-12-31' % p_begin_year
-    #         if p_begin_day > today:
-    #             ##last data
-    #             return
-    #         year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
-    #         for ldate in range(p_begin_year,int(year)+1):
-    #             if ldate > p_begin_year:
-    #                 p_begin_day = '%s-01-01' % ldate
-    #                 p_end_day = '%s-12-31' % ldate
-    #             tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
-    #             fq2Close = float(tdata.iloc[0].close)
-    #             if fq1Close == fq2Close:
-    #                 ins_mongo_data(mongo_mpd, tdata[1:], xcode)
-    #             else:
-    #                 mongo_mpd.removeStockDataByCode(xcode)
-    #                 year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
-    #                 for ldate in range(1990,int(year)+1):
-    #                     p_begin_day = '%s-01-01' % ldate
-    #                     p_end_day = '%s-12-31' % ldate
-    #                     tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
-    #                     ins_mongo_data(mongo_mpd, tdata, xcode)
-        else:
-            srcData = mongo_mpd.get_stock_day(code=[xcode], st_start='1990-01-01', st_end = '2030-12-31', qfq=1)
-#             print(srcData.head())
-            srcData = srcData.reset_index()
-            dstHLData=h_l_line(srcData, t=calcStep)
-            if len(dstHLData) > 0:
-                ins_mongo_data(mongo_mpd, dstHLData, xcode)
-
+                if len(dstHLData) > 0:
+                    ins_mongo_data(mongo_mpd, dstHLData, xcode)
+        except Exception as e:
+            print("error", xcode, e)
 def get_data(codelist):
     start_t = datetime.datetime.now()
     year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
@@ -399,6 +410,6 @@ if __name__ == '__main__':
 #     exit(0)
     codelist = getCodeList('stock', notST = False)
 #     codelist = codelist[:8]
-#     print(codelist)
+#     print("codelist",len(codelist))
     get_data(codelist)
     update_data(codelist, tblName, calcStep)

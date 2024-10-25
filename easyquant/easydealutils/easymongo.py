@@ -334,9 +334,14 @@ class MongoIo(object):
         if type(data) is list:
             self.db[table].insert_many(data)
         else:
-            self.db[table].insert_many(
-                [data]
-            )
+            self.db[table].insert_many([data])
+
+    def saveOrUpdate(self, table, data):
+        if type(data) is list:
+            for x in data:
+                self.db[table].save(x)
+        else:
+            self.db[table].save(data)
 
     def remove(self, table, keyId):
         dataChk = self.db[table].find_one({'_id': keyId})

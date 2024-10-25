@@ -146,7 +146,7 @@ def fetch_k_day(code="sh.600606", p_begin_day: str = '2023-01-01', p_end_day: st
     # result.to_csv(p_file, index=False, mode='a+', header=True)
     return result
 
-def update_data(codelist):
+def update_data(codelist, start = 0):
     start_t = datetime.datetime.now()
     print("begin-update_data:", start_t)
     mongo_mpd = MongoIo()
@@ -157,7 +157,7 @@ def update_data(codelist):
 #     for i in range(4,5): #code_dict.keys():
     for i in code_dict.keys():
 #         pool.apply_async(do_update_data_mp, args=(i, code_dict[i]))
-        for xcode in code_dict[i]:
+        for xcode in code_dict[i][start:]:
             j += 1
             print("do update data for ", xcode, "... ...", j, len(codelist))
             do_update_data_mp(tblName, mongo_mpd, xcode, i)
@@ -228,19 +228,24 @@ def do_update_data_mp(tblName, mongo_mpd, xcode, key):
             if ldate > p_begin_year:
                 p_begin_day = '%s-01-01' % ldate
                 p_end_day = '%s-12-31' % ldate
-            tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
-            fq2Close = float(tdata.iloc[0].close)
-            if fq1Close == fq2Close:
-                ins_mongo_data(mongo_mpd, tdata[1:], xcode)
-            else:
-                mongo_mpd.removeStockDataByCode(xcode)
-                year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
-                for ldate in range(1990,int(year)+1):
-                    p_begin_day = '%s-01-01' % ldate
-                    p_end_day = '%s-12-31' % ldate
-                    tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
-                    ins_mongo_data(mongo_mpd, tdata, xcode)
-                
+            for i in range(0,5):
+                tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
+                try:
+                    fq2Close = float(tdata.iloc[0].close)
+                    if fq1Close == fq2Close:
+                        ins_mongo_data(mongo_mpd, tdata[1:], xcode)
+                    else:
+                        mongo_mpd.removeStockDataByCode(xcode)
+                        year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
+                        for ldate in range(1990,int(year)+1):
+                            p_begin_day = '%s-01-01' % ldate
+                            p_end_day = '%s-12-31' % ldate
+                            tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
+                            ins_mongo_data(mongo_mpd, tdata, xcode)
+                    break
+                except Exception as e:
+                    time.sleep(3)
+                    continue
 #         if len(tdata) > 0:
 #             akey = tdata.columns.values
 #             ins_data = []
@@ -310,7 +315,7 @@ def do_update_data_mp(tblName, mongo_mpd, xcode, key):
 #     print("code-list", codelist[:100])
 #     databuf_mongo[key] = mongo_mp.get_stock_day(codelist, st_start=st_start, st_end = st_end, qfq=1)
 
-def get_data(codelist):
+def get_data(codelist, start = 0):
     start_t = datetime.datetime.now()
     year = datetime.datetime.strftime(datetime.datetime.now(),'%Y')
     print("begin-get_data:", start_t)
@@ -319,7 +324,7 @@ def get_data(codelist):
     # print("get-data", code_dict)
     pool = Pool(cpu_count())
     for i in code_dict.keys():
-        pool.apply_async(do_get_data_mp, args=(i, code_dict[i], '%s-01-01' % year, '%s-12-31' % year))
+        pool.apply_async(do_get_data_mp, args=(i, code_dict[i][start:], '%s-01-01' % year, '%s-12-31' % year))
 
     pool.close()
     pool.join()
@@ -377,6 +382,26 @@ if __name__ == '__main__':
             sys.exit()
 
         codelist = getCodeList('stock', notST = False)
-#         codelist = codelist[:30]
-        get_data(codelist)
-        update_data(codelist)
+        start = 0
+        if len(sys.argv) >= 3: 
+#             codelist = codelist[int(sys.argv[2]):]
+            pool_size = cpu_count()
+            start = int(int(sys.argv[2]) / pool_size)
+            print("start", start, len(codelist), pool_size)
+#         if len(sys.argv) >= 4: 
+#             codelist = codelist[:int(sys.argv[3])]
+        get_data(codelist, start)
+        update_data(codelist, start)
+    elif sys.argv[1] == 'test-sdk':
+        lg = bs.login()
+        # 显示登陆返回信息
+        if lg.error_code != '0':
+            print('login respond error_code:' + lg.error_code)
+            print('login respond  error_msg:' + lg.error_msg)
+            sys.exit()
+        code = sys.argv[2]
+#         update_data([sys.argv[2]])
+        p_begin_day = '%s-01-01' % sys.argv[3]
+        p_end_day = '%s-12-31' % sys.argv[3]
+        tdata = fetch_k_day(code, p_begin_day = p_begin_day, p_end_day = p_end_day)
+        print(tdata.tail())

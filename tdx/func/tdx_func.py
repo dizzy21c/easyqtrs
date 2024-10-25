@@ -3875,7 +3875,7 @@ def tdx_ZJSH(data, refFlg = False):
     else:
         return XG, -1, False
 
-def tdx_JGCM(data, refFlg = False):
+def _tdx_jigouchouma(data):
     # {机构筹码}
     VOL = data.volume
     CLOSE = data.close
@@ -3925,69 +3925,133 @@ def tdx_JGCM(data, refFlg = False):
     FXSM1 = IFAND4(XA_30<=XA_8 , XA_30<=XA_9 , XA_30<=XA_10 , XA_31>=XA_8 , True, False)
     FXSM2 = IFAND3(XA_31>=XA_17 , XA_26>0 , XA_29>0, True, False)
 #     发现私募入场 = IFAND(FXSM1, FXSM2,1,0) #,COLORGREEN,LINETHICK2
-    XG = IFAND(FXSM1, FXSM2,1,0) #,COLORGREEN,LINETHICK2
+    发现私募入场 = IFAND(FXSM1, FXSM2,1,0) #,COLORGREEN,LINETHICK2
+    短线指标 = IFAND4(CROSS(XA_18,XA_19) , IFAND(XA_18<0, XA_19 < - 0.2, True, False) , XA_21>45 , XA_26>0, (-10),0)
+    XA_32 = (CLOSE-LLV(LOW,27))/(HHV(HIGH,27)-LLV(LOW,27))*100
+    # XA_33 = REVERSE(XA_32)
+    XA_34 = SMA(XA_32,3,1)
+    趋势 = SMA(XA_34,3,1)
+    人气 = SMA(趋势,3,1)
+    出击 = IFAND(CROSS(趋势,人气), 趋势<30,20,0)
+    短卖 = IFAND(CROSS(人气,趋势), 人气>75,85,100)
+    return (发现私募入场,短线指标,趋势,人气,出击,短卖)
+    
+def tdx_JGCM(data, refFlg = False):
+    # {机构筹码}
+#     VOL = data.volume
+#     CLOSE = data.close
+#     C = data.close
+#     HIGH = data.high
+#     H = data.high
+#     LOW = data.low
+#     L = data.low
+#     OPEN = data.open
+#     O = data.open
+#     AMOUNT = data.amount
+
+#     XA_1 = REF(LOW,1)
+#     XA_2 = SMA(ABS(LOW-XA_1),3,1)/SMA(MAX(LOW-XA_1,0),3,1)*100
+#     XA_3 = EMA(IF(CLOSE*1.2,XA_2*10,XA_2/10),3)
+#     XA_3_1 = EMA(XA_2*10,3)
+#     XA_4 = LLV(LOW,38)
+#     XA_5 = HHV(XA_3,38)
+#     XA_6 = IF(LLV(LOW,90),1,0)
+#     XA_7 = EMA(IF(LOW<=XA_4,(XA_3+XA_5*2)/2,0),3)/618*XA_6
+#     # 机构筹码:STICKLINE(XA_7,0,XA_7,6,1),COLORRED
+#     # 超大户筹码 = EMA(IF(LOW<=LLV(LOW,30),SMA(ABS(LOW-REF(LOW,1)),30,1)/SMA(MAX(LOW-REF(LOW,1),0),30,1),0),3)*10#,STICK
+#     XA_8 = MA(CLOSE,5)
+#     XA_9 = MA(CLOSE,10)
+#     XA_10 = MA(CLOSE,30)
+#     XA_11 = MA(CLOSE,60)
+#     XA_12 = SUM(CLOSE*VOL*100,4)/SUM(VOL*100,4)
+#     # XA_13 = INTPART(XA_12*100)/100
+#     # XA_14 = SUM(CLOSE*VOL*100,7)/SUM(VOL*100,7)
+#     # XA_15 = INTPART(XA_14*100)/100
+#     XA_16 = SUM(CLOSE*VOL*100,28)/SUM(VOL*100,28)
+#     XA_17 = (XA_16.fillna(0)*100).astype(int)/100 #INTPART(XA_16*100)/100
+#     XA_18 = EMA(CLOSE,5)-EMA(CLOSE,10)
+#     XA_19 = EMA(XA_18,9)
+#     XA_20 = 0-100*(HHV(CLOSE,5)-CLOSE)/(HHV(CLOSE,5)-LLV(LOW,5))+100
+#     XA_21 = 0-100*(HHV(CLOSE,10)-CLOSE)/(HHV(CLOSE,10)-LLV(LOW,10))+100
+#     XA_22 = 0-100*(HHV(CLOSE,20)-CLOSE)/(HHV(CLOSE,20)-LLV(LOW,20))+100
+#     XA_23 = 0-100*(HHV(CLOSE,30)-CLOSE)/(HHV(CLOSE,30)-LLV(LOW,30))+100
+#     XA_24 = REF(XA_19,1)
+#     XA_25 = XA_19
+#     XA_26 = XA_25-XA_24
+#     XA_27 = REF(XA_18,1)
+#     XA_28 = XA_18
+#     XA_29 = XA_28-XA_27
+#     XA_30 = OPEN
+#     XA_31 = CLOSE
+#     FXSM1 = IFAND4(XA_30<=XA_8 , XA_30<=XA_9 , XA_30<=XA_10 , XA_31>=XA_8 , True, False)
+#     FXSM2 = IFAND3(XA_31>=XA_17 , XA_26>0 , XA_29>0, True, False)
+# #     发现私募入场 = IFAND(FXSM1, FXSM2,1,0) #,COLORGREEN,LINETHICK2
+    (发现私募入场,_,_,_,_,_) = _tdx_jigouchouma(data) #,COLORGREEN,LINETHICK2
+    XG = 发现私募入场
     if refFlg:
         return REF(XG, 1), -1, False
     else:
         return XG, -1, False
     
 def tdx_JGCM_QSRQ(data, refFlg = False):
-    # {机构筹码}
-    VOL = data.volume
-    CLOSE = data.close
-    C = data.close
-    HIGH = data.high
-    H = data.high
-    LOW = data.low
-    L = data.low
-    OPEN = data.open
-    O = data.open
-    AMOUNT = data.amount
+#     # {机构筹码}
+#     VOL = data.volume
+#     CLOSE = data.close
+#     C = data.close
+#     HIGH = data.high
+#     H = data.high
+#     LOW = data.low
+#     L = data.low
+#     OPEN = data.open
+#     O = data.open
+#     AMOUNT = data.amount
 
-    XA_1 = REF(LOW,1)
-    XA_2 = SMA(ABS(LOW-XA_1),3,1)/SMA(MAX(LOW-XA_1,0),3,1)*100
-    XA_3 = EMA(IF(CLOSE*1.2,XA_2*10,XA_2/10),3)
-    XA_4 = LLV(LOW,38)
-    XA_5 = HHV(XA_3,38)
-    XA_6 = IF(LLV(LOW,90),1,0)
-    XA_7 = EMA(IF(LOW<=XA_4,(XA_3+XA_5*2)/2,0),3)/618*XA_6
-    # 机构筹码 = STICKLINE(XA_7,0,XA_7,6,1),COLORRED
-    # DRAWTEXT(XA_7,50,18),COLORRED
-    超大户筹码 = EMA(IF(LOW<=LLV(LOW,30),SMA(ABS(LOW-REF(LOW,1)),30,1)/SMA(MAX(LOW-REF(LOW,1),0),30,1),0),3)*10 #,STICK,COLORYELLOW,LINETHICK2
-    XA_8 = MA(CLOSE,5)
-    XA_9 = MA(CLOSE,10)
-    XA_10 = MA(CLOSE,30)
-    XA_11 = MA(CLOSE,60)
-    XA_12 = SUM(CLOSE*VOL*100,4)/SUM(VOL*100,4)
-    # XA_13 = INTPART(XA_12*100)/100
-    XA_14 = SUM(CLOSE*VOL*100,7)/SUM(VOL*100,7)
-    # XA_15 = INTPART(XA_14*100)/100
-    XA_16 = SUM(CLOSE*VOL*100,28)/SUM(VOL*100,28)
-    XA_17 = XA_16 # INTPART(XA_16*100)/100
-    XA_18 = EMA(CLOSE,5)-EMA(CLOSE,10)
-    XA_19 = EMA(XA_18,9)
-    XA_20 = 0-100*(HHV(CLOSE,5)-CLOSE)/(HHV(CLOSE,5)-LLV(LOW,5))+100
-    XA_21 = 0-100*(HHV(CLOSE,10)-CLOSE)/(HHV(CLOSE,10)-LLV(LOW,10))+100
-    XA_22 = 0-100*(HHV(CLOSE,20)-CLOSE)/(HHV(CLOSE,20)-LLV(LOW,20))+100
-    XA_23 = 0-100*(HHV(CLOSE,30)-CLOSE)/(HHV(CLOSE,30)-LLV(LOW,30))+100
-    XA_24 = REF(XA_19,1)
-    XA_25 = XA_19
-    XA_26 = XA_25-XA_24
-    XA_27 = REF(XA_18,1)
-    XA_28 = XA_18
-    XA_29 = XA_28-XA_27
-    XA_30 = OPEN
-    XA_31 = CLOSE
-    # 发现私募入场 = IF(XA_30<=XA_8 AND XA_30<=XA_9 AND XA_30<=XA_10 AND XA_31>=XA_8 AND XA_31>=XA_17 AND XA_26>0 AND XA_29>0,(-10),0) #,COLORGREEN,LINETHICK2
-    # 短线指标 = IF(CROSS(XA_18,XA_19) AND XA_18<0 AND XA_19<0-0.2 AND XA_21>45 AND XA_26>0,(-10),0) #,COLORWHITE
-    XA_32 = (CLOSE-LLV(LOW,27))/(HHV(HIGH,27)-LLV(LOW,27))*100
-    # XA_33 = REVERSE(XA_32)
-    XA_34 = SMA(XA_32,3,1)
-    趋势 = SMA(XA_34,3,1) #,COLORRED,LINETHICK2
-    人气 = SMA(趋势,3,1) #,COLORYELLOW,LINETHICK2
-    出击 = IFAND(CROSS(趋势,人气), 趋势<30,20,0) #,COLORWHITE,LINETHICK2
-    短卖 = IFAND(CROSS(人气,趋势), 人气>75,85,100) #,COLOR008000,LINETHICK2
-    XGL = IF(CROSS(趋势,人气),1,0)
+#     XA_1 = REF(LOW,1)
+#     XA_2 = SMA(ABS(LOW-XA_1),3,1)/SMA(MAX(LOW-XA_1,0),3,1)*100
+#     XA_3 = EMA(IF(CLOSE*1.2,XA_2*10,XA_2/10),3)
+#     XA_4 = LLV(LOW,38)
+#     XA_5 = HHV(XA_3,38)
+#     XA_6 = IF(LLV(LOW,90),1,0)
+#     XA_7 = EMA(IF(LOW<=XA_4,(XA_3+XA_5*2)/2,0),3)/618*XA_6
+#     # 机构筹码 = STICKLINE(XA_7,0,XA_7,6,1),COLORRED
+#     # DRAWTEXT(XA_7,50,18),COLORRED
+#     超大户筹码 = EMA(IF(LOW<=LLV(LOW,30),SMA(ABS(LOW-REF(LOW,1)),30,1)/SMA(MAX(LOW-REF(LOW,1),0),30,1),0),3)*10 #,STICK,COLORYELLOW,LINETHICK2
+#     XA_8 = MA(CLOSE,5)
+#     XA_9 = MA(CLOSE,10)
+#     XA_10 = MA(CLOSE,30)
+#     XA_11 = MA(CLOSE,60)
+#     XA_12 = SUM(CLOSE*VOL*100,4)/SUM(VOL*100,4)
+#     # XA_13 = INTPART(XA_12*100)/100
+#     XA_14 = SUM(CLOSE*VOL*100,7)/SUM(VOL*100,7)
+#     # XA_15 = INTPART(XA_14*100)/100
+#     XA_16 = SUM(CLOSE*VOL*100,28)/SUM(VOL*100,28)
+#     XA_17 = XA_16 # INTPART(XA_16*100)/100
+#     XA_18 = EMA(CLOSE,5)-EMA(CLOSE,10)
+#     XA_19 = EMA(XA_18,9)
+#     XA_20 = 0-100*(HHV(CLOSE,5)-CLOSE)/(HHV(CLOSE,5)-LLV(LOW,5))+100
+#     XA_21 = 0-100*(HHV(CLOSE,10)-CLOSE)/(HHV(CLOSE,10)-LLV(LOW,10))+100
+#     XA_22 = 0-100*(HHV(CLOSE,20)-CLOSE)/(HHV(CLOSE,20)-LLV(LOW,20))+100
+#     XA_23 = 0-100*(HHV(CLOSE,30)-CLOSE)/(HHV(CLOSE,30)-LLV(LOW,30))+100
+#     XA_24 = REF(XA_19,1)
+#     XA_25 = XA_19
+#     XA_26 = XA_25-XA_24
+#     XA_27 = REF(XA_18,1)
+#     XA_28 = XA_18
+#     XA_29 = XA_28-XA_27
+#     XA_30 = OPEN
+#     XA_31 = CLOSE
+#     # 发现私募入场 = IF(XA_30<=XA_8 AND XA_30<=XA_9 AND XA_30<=XA_10 AND XA_31>=XA_8 AND XA_31>=XA_17 AND XA_26>0 AND XA_29>0,(-10),0) #,COLORGREEN,LINETHICK2
+#     # 短线指标 = IF(CROSS(XA_18,XA_19) AND XA_18<0 AND XA_19<0-0.2 AND XA_21>45 AND XA_26>0,(-10),0) #,COLORWHITE
+#     XA_32 = (CLOSE-LLV(LOW,27))/(HHV(HIGH,27)-LLV(LOW,27))*100
+#     # XA_33 = REVERSE(XA_32)
+#     XA_34 = SMA(XA_32,3,1)
+#     趋势 = SMA(XA_34,3,1) #,COLORRED,LINETHICK2
+#     人气 = SMA(趋势,3,1) #,COLORYELLOW,LINETHICK2
+#     出击 = IFAND(CROSS(趋势,人气), 趋势<30,20,0) #,COLORWHITE,LINETHICK2
+#     短卖 = IFAND(CROSS(人气,趋势), 人气>75,85,100) #,COLOR008000,LINETHICK2
+#     XGL = IF(CROSS(趋势,人气),1,0)
+    (_,_,_,_,出击,_) = _tdx_jigouchouma(data) #,COLORGREEN,LINETHICK2
+    XGL = 出击
     if refFlg:
         return REF(XGL, 1), -1, False
     else:
