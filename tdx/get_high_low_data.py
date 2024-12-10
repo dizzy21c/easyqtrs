@@ -185,19 +185,23 @@ def h_l_line(p_df, t=21,period=1000,fn=None,cur_idx=0, cup = True, firstCalc = T
         #     df1.loc[last, 'cv'] = df1.iloc[last].close
         #     data = data.append(df1.iloc[last:last + 1])
         #     break
+#     print("d1", data.tail(5))
     #结束了，把当前点加入到数据有效点中
     dateLast = df1.tail(1).date
-    print("n1", code, dateLast, n, ci, cv, lt, ih, il, ihv, ilv, cup)
+#     print("n1", code, dateLast, n, ci, cv, lt, ih, il, ihv, ilv, cup)
+    if ci != df1.index.max():
+        ci = df1.index.max()
     df1.loc[ci, 'cv'] = cv
     df1.loc[ci,'top'] = 'e'
     # data = data.append(df1.iloc[ci:ci + 1])
     data = pd.concat([data,df1.iloc[ci:ci + 1]])
-    if ci != df1.index.max():
-        # 当前点不是最后一个点，则把最后一个点加入到数据点中
-        df1.loc[df1.index.max(), 'cv'] = df1.iloc[df1.index.max()].close
-        # data = data.append(df1.tail(1))
-        data = pd.concat([data,df1.tail(1)])
-
+#     print("d2", data.tail(5))
+#     if ci != df1.index.max():
+#         # 当前点不是最后一个点，则把最后一个点加入到数据点中
+#         df1.loc[df1.index.max(), 'cv'] = df1.iloc[df1.index.max()].close
+#         # data = data.append(df1.tail(1))
+#         data = pd.concat([data,df1.tail(1)])
+#     print("d3", data.tail(5))
     data = data.reset_index(drop=False)
     # 计算高低点转换的交易日数量即时间周期
     data['period'] = (data['index'] - data['index'].shift(1)).fillna(0)
@@ -210,6 +214,28 @@ def h_l_line(p_df, t=21,period=1000,fn=None,cur_idx=0, cup = True, firstCalc = T
     # 对日期进行转换
     data['date']=dateS.apply(lambda x:x.strftime('%Y-%m-%d'))
     return data
+
+def update_data(codelist,tblName, calcStep):
+    start_t = datetime.datetime.now()
+    print("begin-update_data:", start_t)
+#     tblName = 'stock_day_qfq'
+    pool_size = cpu_count()
+    code_dict = codelist2dict(codelist, pool_size)
+    pool = Pool(pool_size)
+#     j = 0
+#     for i in range(4,5): #code_dict.keys():
+    for i in code_dict.keys():
+#         print("do_update_data_mp data for ", i)
+        pool.apply_async(do_update_data_mp, args=(tblName, code_dict[i], i, calcStep))
+#         for xcode in code_dict[i]:
+#             pool.apply_async(do_update_data_mp, args=(tblName, mongo_mpd, code, i))
+# #             do_update_data_mp(tblName, mongo_mpd, xcode, i)
+    pool.close()
+    pool.join()
+
+    end_t = datetime.datetime.now()
+    # print("data-total-len:", len(dataR))
+    print(end_t, 'update_data spent:{}'.format((end_t - start_t)))
 
 def update_data(codelist,tblName, calcStep):
     start_t = datetime.datetime.now()
@@ -293,10 +319,10 @@ def do_update_data_mp(tblName, codeList, key, calcStep):
 
             if len(codeData) > 0:
     #             print("pass")
-                calcHLData = codeData.tail(3)
-                if xcode == '000001':
-                    print("step3", calcHLData)
-                if len(calcHLData) == 3:
+                calcHLData = codeData.tail(4)
+#                 if xcode == '000001':
+#                     print("step3", calcHLData)
+                if len(calcHLData) == 4:
     #                 print('calcHLData1',calcHLData)
                     st_start = calcHLData.iloc[0].date
     #                 cup = calcHLData.iloc[0].top == 'u'
@@ -304,20 +330,23 @@ def do_update_data_mp(tblName, codeList, key, calcStep):
     #                 st_start2 = calcHLData.iloc[1].date
     #                 iindex2 = calcHLData.iloc[1]['index']
     #                 iperiod = calcHLData.iloc[1]['period']
-                    idKey = calcHLData.iloc[2]['_id']
-    #                 print('st_start', st_start, cup)
+#                     idKey = calcHLData.iloc[1]['_id']
+                    mongo_mpd.removeData(tblName, {'_id':calcHLData.iloc[1]['_id']})
+                    mongo_mpd.removeData(tblName, {'_id':calcHLData.iloc[2]['_id']})
+                    mongo_mpd.removeData(tblName, {'_id':calcHLData.iloc[3]['_id']})
+                    #                 print('st_start', st_start, cup)
                     srcData = mongo_mpd.get_stock_day(code=[xcode], st_start=st_start, st_end = '2030-12-31', qfq=1)
                     srcData = srcData.reset_index()
                     dstHLData=h_l_line(srcData, t=calcStep)
     #                 print('calcHLData20',dstHLData)
-                    if xcode == '000001':
+#                     if xcode == '000001':
 #                         print("step3", calcHLData)
-                        print("step4", len(dstHLData), xcode, st_start, len(srcData))
-                    if len(dstHLData) >= 3:
+#                         print("step4", len(dstHLData), xcode, st_start, len(srcData))
+                    if len(dstHLData) >= 1:
     #                     dstHLData.loc[1,'index']=iindex2 + dstHLData.iloc[1]['period'] - iperiod
     #                     print('calcHLData21',dstHLData.iloc[2:])
-                        mongo_mpd.removeData(tblName, {'_id':idKey})
-                        ins_mongo_data(mongo_mpd, dstHLData.iloc[2:], xcode)
+#                         mongo_mpd.removeData(tblName, {'_id':idKey})
+                        ins_mongo_data(mongo_mpd, dstHLData.iloc[1:], xcode)
         #         today = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
         #         p_begin_day = codeData.index[-1][0].strftime("%Y-%m-%d") ##倒数2条
         #         fq1Close = codeData.iloc[-1].close

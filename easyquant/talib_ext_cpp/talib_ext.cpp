@@ -620,6 +620,23 @@ void winner_list(int nCount, float *pfOut, float *pfHigh, float *pfLow, float *p
     }
     free(dpOutChipList);
 }
+
+
+void valueWhen_list(int nCount, float *piOut, bool *piIn, float* pfIn)
+{
+  float preV = pfIn[0];
+  
+  for (int i = 0; i < nCount; i++)
+  {
+    if (piIn[i]) {
+      piOut[i] = pfIn[i];
+      preV = pfIn[i];
+    } else {
+      piOut[i] = preV;
+    }
+  }
+}
+
 //=============================================================================
 // 输出函数1号：线段高低点标记信号
 //=============================================================================
@@ -648,7 +665,6 @@ void filter2(int nCount, bool *piOut, bool *piIn, int iIn)
 {
   filter_list2(nCount, piOut, piIn, iIn);
 }
-
 
 void hhv(int nCount, float *pfOut, float *pfIn, int *piIn2)
 {
@@ -680,3 +696,9 @@ void ema(int nCount, float *piOut, float *pfIn, int iIn)
 {
   ema_list(nCount, piOut, pfIn, iIn);
 }
+
+void valueWhen(int nCount, float *pfOut, bool *piIn, float* pfIn)
+{
+  valueWhen_list(nCount, pfOut, piIn, pfIn);
+}
+

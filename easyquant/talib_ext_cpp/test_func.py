@@ -101,6 +101,23 @@ def WINNERA(Data,Price = None):
     lib.winner(ncount, np_OUT, np_H, np_L, np_V, np_A, np_C, np_Turnover)
     # lib.winner(ncount, np_OUT, np_S, np_W)
     return pd.Series(np.asarray(np_OUT), dtype=np.float64, index=Data.index)
+
+def VALUEWHEN(COND, VALUE):
+    ncount = len(COND)
+    tf_p = c_float * ncount
+    np_OUT = tf_p(0)
+    
+    na_Cond = np.asarray(COND).astype(np.bool)
+    na_VALUE = np.asarray(VALUE).astype(np.float32)
+    # na_NS=np.asarray(NS).astype(np.int32)
+
+    np_Cond = cast(na_Cond.ctypes.data, POINTER(c_bool))
+    np_Value = cast(na_VALUE.ctypes.data, POINTER(c_float))
+    # np_N=cast(na_NS.ctypes.data, POINTER(c_int))
+    lib.valueWhen(ncount, np_OUT, np_Cond, np_Value)
+    return pd.Series(np.asarray(np_OUT), index=COND.index)
+
+
 #
 # def COST(Data, Percent, Capital):
 #     # print(Capital, type(Capital))
@@ -150,8 +167,10 @@ start_t = datetime.datetime.now()
 # out2 = WINNERA(data)
 # print(out2[-1:])
 print("cost ...")
-out2 = COSTA(data, 25)
-print(out2[-1:])
+# out2 = COSTA(data, 25)
+# print(data.close)
+out2 = VALUEWHEN(data.close > 6, data.close)
+print(out2[-5:])
 
 # out=eval("%s" % sys.argv[2])(data, None)
 # end_t = datetime.datetime.now()

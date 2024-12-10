@@ -63,6 +63,8 @@ extern "C" {
   DLL_PUBLIC void filter2(int nCount, bool *piOut, bool *piIn, int iIn);
     
   DLL_PUBLIC void ema(int nCount, float *piOut, float *pfIn, int iIn2);
+    
+  DLL_PUBLIC void valueWhen(int nCount, float *pfOut, bool *piIn, float* pfIn);
 
     // subBuf* subBuf_new(){ return new subBuf(); }
     // int subBuf_sub(subBuf* subfuf, char* data, int num, char* outData){ subfuf->cursubBuf(data, num, outData); }

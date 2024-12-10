@@ -812,3 +812,18 @@ def POW(Series, N):
 
 def SQRT(Series):
     return talib.SQRT(Series)
+
+def VALUEWHEN(COND, VALUE):
+    ncount = len(COND)
+    tf_p = c_float * ncount
+    np_OUT = tf_p(0)
+    
+    na_Cond = np.asarray(COND).astype(np.bool)
+    na_VALUE = np.asarray(VALUE).astype(np.float32)
+    # na_NS=np.asarray(NS).astype(np.int32)
+
+    np_Cond = cast(na_Cond.ctypes.data, POINTER(c_bool))
+    np_Value = cast(na_VALUE.ctypes.data, POINTER(c_float))
+    # np_N=cast(na_NS.ctypes.data, POINTER(c_int))
+    lib.valueWhen(ncount, np_OUT, np_Cond, np_Value)
+    return pd.Series(np.asarray(np_OUT), index=COND.index)

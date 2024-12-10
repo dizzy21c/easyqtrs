@@ -76,13 +76,13 @@ def getCodeList(dataType = 'position', notST = True):
 #             return []
 
 def getCodelistFromFile(tdxFileName):
-  codeDf = pd.read_csv(tdxFileName, sep='\t', encoding='iso-8859-1')
-#   return list(codeDf['代码'])[:-1]
-  return list(codeDf.iloc[:-1,0])
+    codeDf = pd.read_csv(tdxFileName, sep='\t', encoding='iso-8859-1')
+#     return list(codeDf['代码'])[:-1]
+    return list(codeDf.iloc[:-1,0])
   
 def getCodeListFromMongo(mongo):
 #   pool_size = cpu_count()
-  return list(mongo.get_stock_list().index)
+    return list(mongo.get_stock_list().index)
 #   return (pool_size, codelist2dict(codelist, pool_size))
 #   subcode_len = math.ceil(len(codelist) / pool_size)
   # executor = ProcessPoolExecutor(max_workers=pool_size * 2)
