@@ -4057,6 +4057,15 @@ def tdx_JGCM_QSRQ(data, refFlg = False):
     else:
         return XGL, -1, False
 
+def tdx_JGCM_DX(data, refFlg = False):
+#     # {机构筹码}
+    (_,短线,_,_,_,_) = _tdx_jigouchouma(data) #,COLORGREEN,LINETHICK2
+    XGL = 短线
+    if refFlg:
+        return REF(XGL, 1), -1, False
+    else:
+        return XGL, -1, False
+
 def tdx_ZQNG(data, refFlg = False, NN = 3):
     ## 中期牛股
     # {选股条件：四色主图刚出第一个红K，四量图3条（可调NN参数）以上红色，量能饱和度红色}
@@ -4344,4 +4353,30 @@ def tdx_QSMM(data, refFlg = False):
         return REF(XG, 1), -1, False
     else:
         return XG, -1, False
-     
+
+## {金蜘蛛主图}
+def tdx_JZZCMX(data, refFlg = False):
+#     N = 20
+    V = data.volume
+    AMOUNT = data.amount
+    CLOSE = data.close
+    
+    AJ_JY = AMOUNT/100/V
+    JYGOLD = V==HHV(V,60)
+    BHV = BARSLAST(JYGOLD)
+    JYGOLDAJ = VALUEWHEN(JYGOLD,AJ_JY)
+
+    JYLV = FILTER(V==LLV(V,43),5)
+    BLV = BARSLAST(JYLV)
+    JYLVAJ = VALUEWHEN(JYLV,AJ_JY) #,NODRAW;{     60日最低量当日的均价}
+    TJ1 = IFAND3(REF(CLOSE,1) < JYGOLDAJ, CLOSE > JYGOLDAJ, BHV > 10, True, False)
+    TJ2 = IFAND3(REF(CLOSE,1) < JYLVAJ, CLOSE > JYLVAJ, BLV > 40, True, False)
+    XG = IFOR(TJ1, TJ2, 1, 0)
+    if refFlg:
+        return REF(XG, 1), -1, False
+    else:
+        return XG, -1, False
+    
+# BOLL:MA(CLOSE,N);
+# UB:BOLL+1.85*STD(CLOSE,N);
+    

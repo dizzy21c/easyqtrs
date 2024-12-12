@@ -457,7 +457,7 @@ if __name__ == '__main__':
     func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_sl5560', 'tdx_lbqs', 'tdx_zttj', 'tdx_zttj1', 'tdx_cmfx', 'tdx_TLBXX'] ##, 'tdx_LDX'
     func5 = ['tdx_WYZ17MA', 'tdx_qszn', 'tdx_cci', 'tdx_ngqd', 'tdx_bollxg_start', 'tdx_DQS', 'tdx_JZZCJSD', 'tdx_CDYTDXG', 'tdx_BOLL_EMA', 'tdx_HJYHK']
     func6 = ['tdx_LLXGSQ', 'tdx_WWDGWY', 'tdx_WWXGSQ', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_WWKDJJC', 'tdx_SHYM', 'tdx_QIANFU', 'tdx_HW168QS']
-    func7 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM', 'tdx_21PPQTP'] ##
+    func7 = ['tdx_sxzsl', 'tdx_ZQNG', 'tdx_JGCM', 'tdx_21PPQTP', 'tdx_DSCJ', 'tdx_JZZCMX', 'tdx_JGCM_DX'] ##
     if idxCalcFlg:
         func2 = ['tdx_niugu', 'tdx_buerfameng', 'tdx_yaoguqidong', 'tdx_blftxg', 'tdx_cptlzt', 'tdx_yhzc', 'tdx_yhzc_macd', 'tdx_yhzc_kdj']
         func4 = ['tdx_skdj_lstd', 'tdx_lyqd', 'tdx_zttj', 'tdx_zttj1', 'tdx_TLBXX'] ##, 'tdx_LDX'
@@ -469,7 +469,8 @@ if __name__ == '__main__':
 #     , tdx_WYZ17MA, tdx_qszn, tdx_cci, tdx_ngqd, tdx_bollxg_start, tdx_DQS, tdx_JZZCJSD, tdx_CDYTDXG, tdx_BOLL_EMA, tdx_hjy \
 #     , tdx_LLXGSQ, tdx_WWDGWY, tdx_WWXGSQ, tdx_WWYHXG, tdx_WWMACDJC, tdx_SHYM, tdx_QIANFU, tdx_HW168QS \
 #     '
-    funcN = ['tdx_DQS', 'tdx_JZZCJSD', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_WWKDJJC','tdx_sl5560', 'tdx_HJYHK', 'tdx_TLBXX', 'tdx_DSCJ']
+#     funcN = ['tdx_DQS', 'tdx_JZZCJSD', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_WWKDJJC','tdx_sl5560', 'tdx_HJYHK', 'tdx_TLBXX', 'tdx_DSCJ', 'tdx_JZZCMX', 'tdx_JGCM_DX']
+    funcN = ['tdx_DQS', 'tdx_JZZCJSD', 'tdx_WWYHXG', 'tdx_WWMACDJC', 'tdx_WWKDJJC','tdx_HJYHK', 'tdx_TLBXX', 'tdx_DSCJ', 'tdx_JZZCMX', 'tdx_JGCM_DX']
 #     funcN = ['tdx_sl5560', 'tdx_HJYHK']
     if funcInput == '':
         func = func1 + func2 + func3 + func4 + func5 + func6 + func7
