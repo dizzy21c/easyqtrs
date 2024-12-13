@@ -3926,14 +3926,14 @@ def _tdx_jigouchouma(data):
     FXSM2 = IFAND3(XA_31>=XA_17 , XA_26>0 , XA_29>0, True, False)
 #     发现私募入场 = IFAND(FXSM1, FXSM2,1,0) #,COLORGREEN,LINETHICK2
     发现私募入场 = IFAND(FXSM1, FXSM2,1,0) #,COLORGREEN,LINETHICK2
-    短线指标 = IFAND4(CROSS(XA_18,XA_19) , IFAND(XA_18<0, XA_19 < - 0.2, True, False) , XA_21>45 , XA_26>0, (-10),0)
+    短线指标 = IFAND4(CROSS(XA_18,XA_19) , IFAND(XA_18<0, XA_19 < - 0.2, True, False) , XA_21>45 , XA_26>0, 1,0)
     XA_32 = (CLOSE-LLV(LOW,27))/(HHV(HIGH,27)-LLV(LOW,27))*100
     # XA_33 = REVERSE(XA_32)
     XA_34 = SMA(XA_32,3,1)
     趋势 = SMA(XA_34,3,1)
     人气 = SMA(趋势,3,1)
-    出击 = IFAND(CROSS(趋势,人气), 趋势<30,20,0)
-    短卖 = IFAND(CROSS(人气,趋势), 人气>75,85,100)
+    出击 = IFAND(CROSS(趋势,人气), 趋势<30,1,0)
+    短卖 = IFAND(CROSS(人气,趋势), 人气>75,1,0)
     return (发现私募入场,短线指标,趋势,人气,出击,短卖)
     
 def tdx_JGCM(data, refFlg = False):
