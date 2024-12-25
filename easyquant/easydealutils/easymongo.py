@@ -228,7 +228,7 @@ class MongoIo(object):
         if type == 'D':
             data = self._get_data_day(code, table, st_start, st_end, qfq)
         else:
-            data = self._get_data_min(code, table, st_start, st_end, type)
+            data = self._get_data_day(code, table, st_start, st_end, type)
             # if isinstance(code, list):
             #     dtd=self.db[table].find({'code':{'$in':code},'date':{'$gte':self.dateStr2stamp(st_start), "$lte":self.dateStr2stamp(st_end)}, 'type':type},{"_id": 0})
             # else:

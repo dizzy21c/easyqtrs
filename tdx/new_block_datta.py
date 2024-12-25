@@ -10,8 +10,15 @@ class MongoIo(object):
         client = mongo.MongoClient(host, port)
         self.db = client[database]
         
-    def get_day_select_tops(self, ins_day = '2024-02-06', min_nums = 10):
-        tblName = 'day-select-ff'
+    def get_day_select_tops(self, ins_day = '2024-02-06', min_nums = 10, calcFun = None):
+        tblName = 'day-select-stock'
+        if calcFun is None:
+            match_cond = { 'sum_score': { '$gte': min_nums } }
+        else:
+            if type(calcFun) is str:
+                calcFun = [calcFun]
+            match_cond = { 'sum_score': { '$gte': min_nums }, 'funcs': {'$in': calcFun }}
+        print("match_cond", match_cond)
         cursor = self.db[tblName].aggregate( #aggregate_sql)
         [
                 { '$match':{                'date':{'$eq': ins_day}            }},
@@ -20,7 +27,7 @@ class MongoIo(object):
                         'funcs': {'$push': '$func'},
                         'sum_score': {'$sum': '$score'}
                 }}
-                ,{ '$match': { 'sum_score': { '$gte': min_nums }         }}
+                ,{ '$match': match_cond }
                 ,{ '$sort':{'sum_score':-1} }
         ])
         res = pd.DataFrame([item for item in cursor])
@@ -44,9 +51,12 @@ class MongoIo(object):
                 f.write('%d%s\n' % (flg, row['_id']))
     
 if __name__ == '__main__':
-    print('example python.exe .\tdx\new_block_datta.py 2024-02-05 12 ZW3')
+    print('example python.exe .\tdx\new_block_datta.py 2024-02-05 12 ZW3 [tdx_JGCM_DX]')
     print('argv', sys.argv)
-    mg = MongoIo()
-    res = mg.get_day_select_tops(sys.argv[1], int(sys.argv[2]))
-    # print(res)
-    mg.init_blk(res, sys.argv[3])
+    mg = MongoIo(host = 'mgdb')
+    if len(sys.argv) == 4:
+        res = mg.get_day_select_tops(sys.argv[1], int(sys.argv[2]))
+    elif len(sys.argv) == 5:
+        res = mg.get_day_select_tops(sys.argv[1], int(sys.argv[2]), sys.argv[4])
+    print(res)
+#     mg.init_blk(res, sys.argv[3])
